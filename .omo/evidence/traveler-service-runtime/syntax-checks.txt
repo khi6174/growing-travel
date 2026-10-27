@@ -1,0 +1,15 @@
+Traveler wireframe runtime syntax verification
+UTC: 2026-10-27T11:02:50.7949117Z
+Scenario: standalone traveler board and app modules parse without syntax errors.
+Binary observable: node --check exit code is zero for both modules.
+Browser behavior: not verified by this artifact; root integration QA pending.
+Invocation: node --check wireframes/traveler-service/app.mjs
+Exit code: 0
+Output: (none)
+SHA256: 07676FEE43754AEBBE8694FE179428442308F2E9CF186088EAEA399F51335B9F
+Nonblank noncomment lines: 143
+Invocation: node --check wireframes/traveler-service/model.mjs
+Exit code: 0
+Output: (none)
+SHA256: 47D16770939B22ACACED101370CFAF64610ABF1691DBCCDD523BD20888BB8344
+Nonblank noncomment lines: 37

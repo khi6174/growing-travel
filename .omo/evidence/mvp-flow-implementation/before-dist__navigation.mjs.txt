@@ -1,0 +1,17 @@
+// Screen availability never changes the user's inputs, draft, or saved courses.
+export const SCREENS = Object.freeze(['profile', 'trip', 'regions', 'experiences', 'course', 'saved', 'benefits']);
+export function resolveScreen(requested, { profileValid = true, comparisonReady = false, recommendationsReady = false, hasCourse = false } = {}) {
+  if (!SCREENS.includes(requested)) return 'profile';
+  if (requested === 'profile' || requested === 'saved' || requested === 'benefits') return requested;
+  // An existing draft remains readable even when the newly edited inputs are invalid.
+  if (requested === 'course' && hasCourse) return 'course';
+  if (!profileValid) return 'profile';
+  if (requested === 'trip') return 'trip';
+  if (!comparisonReady && !recommendationsReady) return 'trip';
+  if (requested === 'regions') return comparisonReady ? 'regions' : 'trip';
+  if (!recommendationsReady) return comparisonReady ? 'regions' : 'trip';
+  return 'experiences';
+}
+export function parentScreen(screen) {
+  return { profile: 'profile', trip: 'profile', regions: 'trip', experiences: 'regions', course: 'experiences', saved: 'trip', benefits:'profile' }[screen] ?? 'profile';
+}

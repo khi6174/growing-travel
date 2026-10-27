@@ -1,0 +1,17 @@
+✔ real null aggregates never become zero and selected places form round trip (20.3663ms)
+✔ user times apply only to matching directed legs; reorder discards obsolete overrides (2.5384ms)
+✔ regular closure is excluded; unknown stairs do not become accessible (1.1049ms)
+✔ map links encode names and use explicit search fallback when coordinates unknown (1.25ms)
+✔ snapshot validator rejects tampered sums, order, references, URLs and coordinates (9.9728ms)
+✔ historical official description is validated from saved snapshot without catalog rebuild (3.269ms)
+✔ input bounds, dates, duplicate selections and references fail before saving (4.2978ms)
+✔ mixed real and legacy store preserves old request history and idempotence (31.3169ms)
+✔ pre-student historical request bytes coexist unchanged with new real course (14.4296ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 414.2414

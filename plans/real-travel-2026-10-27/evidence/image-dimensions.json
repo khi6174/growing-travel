@@ -1,0 +1,261 @@
+[
+  {
+    "file": "all-times-entered-390.raw",
+    "size": [
+      375,
+      2968
+    ]
+  },
+  {
+    "file": "benefit-coupons-390-after.raw",
+    "size": [
+      390,
+      843
+    ]
+  },
+  {
+    "file": "benefits-1280-after.raw",
+    "size": [
+      1264,
+      3820
+    ]
+  },
+  {
+    "file": "benefits-1440-before.raw",
+    "size": [
+      1424,
+      4207
+    ]
+  },
+  {
+    "file": "benefits-390-after.raw",
+    "size": [
+      375,
+      3898
+    ]
+  },
+  {
+    "file": "benefits-390-before.raw",
+    "size": [
+      375,
+      4396
+    ]
+  },
+  {
+    "file": "benefits-390-repeat.raw",
+    "size": [
+      375,
+      3898
+    ]
+  },
+  {
+    "file": "course-1280-after.raw",
+    "size": [
+      1264,
+      2825
+    ]
+  },
+  {
+    "file": "course-1440-before.raw",
+    "size": [
+      1424,
+      2078
+    ]
+  },
+  {
+    "file": "course-390-before.raw",
+    "size": [
+      375,
+      2092
+    ]
+  },
+  {
+    "file": "course-390-initial.raw",
+    "size": [
+      375,
+      2660
+    ]
+  },
+  {
+    "file": "course-390-repeat.raw",
+    "size": [
+      375,
+      2801
+    ]
+  },
+  {
+    "file": "course-reopened-390-after.raw",
+    "size": [
+      375,
+      2801
+    ]
+  },
+  {
+    "file": "course-reordered-390.raw",
+    "size": [
+      375,
+      2686
+    ]
+  },
+  {
+    "file": "course-saved-390.raw",
+    "size": [
+      375,
+      1583
+    ]
+  },
+  {
+    "file": "experiences-390-after.raw",
+    "size": [
+      375,
+      1207
+    ]
+  },
+  {
+    "file": "gangneung-course-390-final.raw",
+    "size": [
+      375,
+      3052
+    ]
+  },
+  {
+    "file": "gapyeong-course-390.raw",
+    "size": [
+      375,
+      2763
+    ]
+  },
+  {
+    "file": "home-1280-after.raw",
+    "size": [
+      1264,
+      1062
+    ]
+  },
+  {
+    "file": "home-1440-before.raw",
+    "size": [
+      1424,
+      1323
+    ]
+  },
+  {
+    "file": "home-390-after.raw",
+    "size": [
+      375,
+      1014
+    ]
+  },
+  {
+    "file": "home-390-before.raw",
+    "size": [
+      375,
+      1275
+    ]
+  },
+  {
+    "file": "home-390-final.raw",
+    "size": [
+      375,
+      811
+    ]
+  },
+  {
+    "file": "home-390-repeat.raw",
+    "size": [
+      375,
+      1074
+    ]
+  },
+  {
+    "file": "kakao-transit.raw",
+    "size": [
+      1280,
+      720
+    ]
+  },
+  {
+    "file": "kakao-walk.raw",
+    "size": [
+      1280,
+      720
+    ]
+  },
+  {
+    "file": "korail.raw",
+    "size": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "file": "legacy-preserved-390.raw",
+    "size": [
+      375,
+      2077
+    ]
+  },
+  {
+    "file": "optional-profile-error-390.raw",
+    "size": [
+      375,
+      811
+    ]
+  },
+  {
+    "file": "place-detail-390-after.raw",
+    "size": [
+      375,
+      811
+    ]
+  },
+  {
+    "file": "profile-390-after.raw",
+    "size": [
+      375,
+      971
+    ]
+  },
+  {
+    "file": "regions-390-after.raw",
+    "size": [
+      375,
+      1643
+    ]
+  },
+  {
+    "file": "regions-final-390.raw",
+    "size": [
+      375,
+      1399
+    ]
+  },
+  {
+    "file": "saved-390-after.raw",
+    "size": [
+      375,
+      1488
+    ]
+  },
+  {
+    "file": "saved-390-before.raw",
+    "size": [
+      375,
+      1448
+    ]
+  },
+  {
+    "file": "time-invalid-390.raw",
+    "size": [
+      375,
+      811
+    ]
+  },
+  {
+    "file": "trip-390-after.raw",
+    "size": [
+      375,
+      901
+    ]
+  }
+]

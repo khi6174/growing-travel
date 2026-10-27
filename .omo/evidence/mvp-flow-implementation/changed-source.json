@@ -1,0 +1,32 @@
+[
+  {
+    "path": "dist/index.html",
+    "sha256": "a92d40b60df883909cd2ae9a964ea499e09cd16a8fc9f3ad7c3fe26851d2b690",
+    "nonblankNonCommentLines": 146,
+    "beforeNonblankNonCommentLines": 139
+  },
+  {
+    "path": "dist/app.mjs",
+    "sha256": "e006585d310c0ea772ac8588dcfaefeb7148fc0a7b54e697d95588367fb30f0a",
+    "nonblankNonCommentLines": 678,
+    "beforeNonblankNonCommentLines": 706
+  },
+  {
+    "path": "dist/navigation.mjs",
+    "sha256": "b9d63c38920fb37b91b00ce0b365106da405845f9f5a37ff964dae3c9f4c5389",
+    "nonblankNonCommentLines": 18,
+    "beforeNonblankNonCommentLines": 15
+  },
+  {
+    "path": "dist/screen-navigation.mjs",
+    "sha256": "b986db6825ea0dae7b735d4debfc28e40c4ebc8de103c10c256de49731e57f82",
+    "nonblankNonCommentLines": 83,
+    "beforeNonblankNonCommentLines": 0
+  },
+  {
+    "path": "tests/navigation.test.mjs",
+    "sha256": "46567cc6053417d37faf35e556eb95da18e6128d260a964c371a852d2196e12d",
+    "nonblankNonCommentLines": 47,
+    "beforeNonblankNonCommentLines": 32
+  }
+]

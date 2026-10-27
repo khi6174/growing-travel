@@ -1,0 +1,3 @@
+Browser tab: 9, Title: "코레일 - 마음을 잇다 당신의 코레일", URL: "https://www.korail.com/intro".
+There has been no change in the accessibility tree.
+The focused UI element is 1 AXWebArea 코레일 - 마음을 잇다 당신의 코레일, URL: korail.com/intro

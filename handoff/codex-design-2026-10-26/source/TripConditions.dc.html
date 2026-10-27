@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>여행 조건</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance}
+button,a,label,select,input{touch-action:manipulation;-webkit-tap-highlight-color:rgba(54,81,232,.15)}
+button,a{cursor:pointer}
+:focus-visible{outline:3px solid #3651E8;outline-offset:2px}
+button:hover,a:hover{filter:brightness(.94)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+a{color:#202124}a:hover{color:#3651E8}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #ECEEF1; color: #202124; font-family: 'Gothic A1', system-ui, sans-serif; font-size: 15px; line-height: 1.6; word-break: keep-all; overflow: hidden">
+  <header style="flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; padding: 8px 16px 10px 8px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <button type="button" aria-label="이전 단계" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #202124; border-radius: 12px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+      <p style="margin: 0; font-size: 15px; font-weight: 700">여행 만들기</p>
+      <p style="margin: 0; font-size: 13px; font-weight: 700; color: #55575C">2 / 5</p>
+    </div>
+    <div role="progressbar" aria-label="여행 만들기 진행" aria-valuemin="1" aria-valuemax="5" aria-valuenow="2" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding-left: 8px">
+      <div style="height: 4px; border-radius: 2px; background: #3651E8"></div>
+      <div style="height: 4px; border-radius: 2px; background: #3651E8"></div>
+      <div style="height: 4px; border-radius: 2px; background: #8E9197"></div>
+      <div style="height: 4px; border-radius: 2px; background: #8E9197"></div>
+      <div style="height: 4px; border-radius: 2px; background: #8E9197"></div>
+    </div>
+  </header>
+
+  <main style="flex-grow: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 4px 16px 12px">
+    <div style="padding: 0 4px">
+      <h1 style="margin: 0; font-size: 26px; line-height: 1.25; font-weight: 800; letter-spacing: -0.02em">이번 여행 조건</h1>
+      <p style="margin: 2px 0 0; font-size: 13px; color: #55575C">역·지역·시간·가격은 시연용 가상 자료로 비교해요.</p>
+    </div>
+
+    <form style="background: #FFFFFF; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="tc-from" style="font-size: 13px; font-weight: 700">출발역</label>
+          <select id="tc-from" name="departureId" style="min-height: 48px; padding: 0 10px; border: 1.5px solid #8E9197; border-radius: 12px; background: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700; color: #202124">
+            <option selected>가상 중앙역</option>
+            <option>가상 동쪽역</option>
+          </select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="tc-date" style="font-size: 13px; font-weight: 700">날짜</label>
+          <input id="tc-date" name="date" type="date" value="2026-11-07" style="min-height: 48px; box-sizing: border-box; padding: 0 10px; border: 1.5px solid #8E9197; border-radius: 12px; font: inherit; font-size: 15px; font-weight: 700; color: #202124">
+        </div>
+      </div>
+      <p style="margin: -10px 0 0; font-size: 12px; color: #55575C">출발역은 내 설정의 거주지와 따로 정해요.</p>
+
+      <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 6px">
+        <legend style="padding: 0; margin-bottom: 6px; font-size: 13px; font-weight: 700">쓸 수 있는 시간</legend>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+          <label style="min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid #8E9197; border-radius: 12px; font-size: 14px; font-weight: 600"><input type="radio" name="tc-time" style="margin: 0; accent-color: #3651E8">3시간</label>
+          <label style="min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 2px solid #3651E8; background: #EEF1FD; border-radius: 12px; font-size: 14px; font-weight: 800"><input type="radio" name="tc-time" checked style="margin: 0; accent-color: #3651E8">5시간</label>
+          <label style="min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid #8E9197; border-radius: 12px; font-size: 14px; font-weight: 600"><input type="radio" name="tc-time" style="margin: 0; accent-color: #3651E8">8시간</label>
+        </div>
+      </fieldset>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <label for="tc-budget" style="font-size: 13px; font-weight: 700">1인 예산</label>
+          <div style="display: flex; align-items: center; gap: 4px; min-height: 48px; padding: 0 12px; border: 1.5px solid #8E9197; border-radius: 12px; box-sizing: border-box">
+            <input id="tc-budget" name="budget" autocomplete="off" type="text" inputmode="numeric" value="30,000" style="flex-grow: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 15px; font-weight: 700; color: #202124; background: transparent">
+            <span style="font-size: 14px; color: #55575C">원</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <p id="tc-party-label" style="margin: 0; font-size: 13px; font-weight: 700">인원</p>
+          <div role="group" aria-labelledby="tc-party-label" style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 2px; border: 1.5px solid #8E9197; border-radius: 12px; box-sizing: border-box">
+            <button type="button" aria-label="인원 줄이기" aria-disabled="true" style="width: 44px; height: 44px; border: 0; background: transparent; color: #A7AAB0; font: inherit; font-size: 20px; font-weight: 700">−</button>
+            <span style="font-size: 15px; font-weight: 700">혼자 1명</span>
+            <button type="button" aria-label="인원 늘리기" style="width: 44px; height: 44px; border: 0; background: transparent; color: #202124; font: inherit; font-size: 20px; font-weight: 700">+</button>
+          </div>
+        </div>
+      </div>
+
+      <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 6px">
+        <legend style="padding: 0; margin-bottom: 6px; font-size: 13px; font-weight: 700">하루 걷기 한도</legend>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+          <label style="min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid #8E9197; border-radius: 12px; font-size: 14px; font-weight: 600"><input type="radio" name="tc-walk" style="margin: 0; accent-color: #3651E8">30분</label>
+          <label style="min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 2px solid #3651E8; background: #EEF1FD; border-radius: 12px; font-size: 14px; font-weight: 800"><input type="radio" name="tc-walk" checked style="margin: 0; accent-color: #3651E8">60분</label>
+          <label style="min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid #8E9197; border-radius: 12px; font-size: 14px; font-weight: 600"><input type="radio" name="tc-walk" style="margin: 0; accent-color: #3651E8">90분</label>
+        </div>
+      </fieldset>
+
+      <label style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px">
+        <span style="display: flex; flex-direction: column">
+          <span style="font-size: 14px; font-weight: 700">계단 있는 곳 피하기</span>
+          <span style="font-size: 12px; color: #55575C">가상 설정 기준이에요. 실제 접근성은 확인되지 않았어요.</span>
+        </span>
+        <input type="checkbox" role="switch" checked style="flex-shrink: 0; width: 44px; height: 26px; margin: 0; accent-color: #3651E8">
+      </label>
+    </form>
+  </main>
+
+  <div style="flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; padding: 10px 16px 12px; background: #ECEEF1; border-top: 1px solid #D3D6DB">
+    <a href="TripRegions.dc.html" style="min-height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #3651E8; color: #FFFFFF; font-size: 16px; font-weight: 700; text-decoration: none">지역·혜택 비교하기</a>
+    <p style="margin: 0; text-align: center; font-size: 12px; color: #55575C">탭을 옮겨도 입력한 조건은 그대로 남아요.</p>
+  </div>
+
+  <nav aria-label="주요 메뉴" style="flex-shrink: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 0 12px calc(14px + env(safe-area-inset-bottom)); padding: 6px; background: #202124; border-radius: 24px">
+    <a href="#" aria-current="page" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: #3651E8; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 800; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"></path></svg>여행</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"></path><path d="M14 8v1.5M14 11.25v1.5M14 14.5v1.5"></path></svg>혜택</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"></path></svg>저장한 코스</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>내 설정</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

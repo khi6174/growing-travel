@@ -1,0 +1,21 @@
+✔ unprepared deep links return to the input step without inventing comparisons or courses (6.0862ms)
+✔ invalid settings cannot be bypassed by entering trip or recommendation screens (0.866ms)
+✔ existing draft remains readable while newly edited settings or comparisons are stale (1.2878ms)
+✔ comparison, recommendation and saved-course re-entry use only available stages (5.3455ms)
+✔ parent navigation is bounded inside the flow and does not mutate readiness state (9.6843ms)
+✔ benefits can be opened on first use with missing or invalid settings without requiring a trip (1.1404ms)
+✔ home and current settings remain reachable with invalid or missing travel inputs (1.2089ms)
+✔ legacy profile route stays the travel preference step while settings has its own main tab (1.2716ms)
+✔ metadata uses comma separators while keeping Korean administrative names intact (4.4603ms)
+✔ unspaced metadata enumerations use commas without splitting administrative names (1.2383ms)
+✔ formatting metadata retains actual route order and its arrows (1.0454ms)
+✔ real publication metadata keeps currentness uncertainty and separates it from a personal match (21.742ms)
+✔ formatting leaves real official data, evidence, and matching output unchanged (5.3735ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 696.6139

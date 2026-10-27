@@ -1,0 +1,18 @@
+✔ real null aggregates never become zero and selected places form round trip (47.9377ms)
+✔ user times apply only to matching directed legs; reorder discards obsolete overrides (7.8512ms)
+✔ regular closure is excluded; unknown stairs do not become accessible (1.778ms)
+✔ map links encode names and use explicit search fallback when coordinates unknown (2.3372ms)
+✔ snapshot validator rejects tampered sums, order, references, URLs and coordinates (24.6599ms)
+✔ historical official description is validated from saved snapshot without catalog rebuild (14.8675ms)
+✔ optional geoSource validates safe links, labels and calendar dates on all saved point types (47.3848ms)
+✔ input bounds, dates, duplicate selections and references fail before saving (8.9197ms)
+✔ mixed real and legacy store preserves old request history and idempotence (107.5816ms)
+✔ pre-student historical request bytes coexist unchanged with new real course (48.7074ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 898.2025

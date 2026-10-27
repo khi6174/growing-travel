@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>저장한 코스</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance}
+button,a,label,select,input{touch-action:manipulation;-webkit-tap-highlight-color:rgba(54,81,232,.15)}
+button,a{cursor:pointer}
+:focus-visible{outline:3px solid #3651E8;outline-offset:2px}
+button:hover,a:hover{filter:brightness(.94)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+a{color:#202124}a:hover{color:#3651E8}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #ECEEF1; color: #202124; font-family: 'Gothic A1', system-ui, sans-serif; font-size: 15px; line-height: 1.6; word-break: keep-all; overflow: hidden">
+  <main style="flex-grow: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 20px 16px 16px">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; padding: 8px 4px 0">
+      <h1 style="margin: 0; font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.03em">저장한 코스</h1>
+      <p style="margin: 0 0 3px; font-size: 13px; font-weight: 600; color: #55575C">2개</p>
+    </div>
+
+    <div role="status" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 10px 10px 14px; background: #202124; color: #FFFFFF; border-radius: 12px">
+      <p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>‘가상 온유동 반나절’을 저장했어요</p>
+      <button type="button" aria-label="알림 닫기" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #C9CBD0; border-radius: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    </div>
+
+    <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">
+      <li>
+        <a href="TripCourse.dc.html" style="display: block; background: #FFFFFF; border-radius: 20px; border: 2px solid #3651E8; text-decoration: none; color: #202124">
+          <span style="display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 10px">
+            <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+              <span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 코스</span>
+              <span style="font-size: 12px; font-weight: 600; color: #55575C">방금 저장, 2026-10-26</span>
+            </span>
+            <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em">가상 온유동 반나절</span>
+            <span style="font-size: 14px; color: #3A3C40">안개정원 → 느린 서가 → 햇살 식탁</span>
+            <span style="font-size: 13px; color: #55575C">224분, 도보 59분, 1인 18,000원</span>
+          </span>
+          <span aria-hidden="true" style="display: block; margin: 0 16px; border-top: 2px dashed #E3E5E9"></span>
+          <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 0 14px 0 16px">
+            <span style="font-size: 12px; color: #55575C">저장 당시, 가상 중앙역, 11-07, 만 23세</span>
+            <span style="display: inline-flex; align-items: center; font-size: 13px; font-weight: 700; color: #3651E8; white-space: nowrap">다시 열기<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="#" style="display: block; background: #FFFFFF; border-radius: 20px; text-decoration: none; color: #202124">
+          <span style="display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 10px">
+            <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+              <span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 코스</span>
+              <span style="font-size: 12px; font-weight: 600; color: #55575C">2026-10-20</span>
+            </span>
+            <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em">가상 바람마을 물길 산책</span>
+            <span style="font-size: 14px; color: #3A3C40">바람 물길에서 빛 담기</span>
+            <span style="font-size: 13px; color: #55575C">165분, 도보 80분, 1인 11,000원</span>
+          </span>
+          <span aria-hidden="true" style="display: block; margin: 0 16px; border-top: 2px dashed #E3E5E9"></span>
+          <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 0 14px 0 16px">
+            <span style="font-size: 12px; color: #55575C">저장 당시, 가상 동쪽역, 10-25, 만 나이 미입력</span>
+            <span style="display: inline-flex; align-items: center; font-size: 13px; font-weight: 700; color: #3651E8; white-space: nowrap">다시 열기<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+          </span>
+        </a>
+      </li>
+    </ul>
+
+    <section aria-labelledby="sc-rule" style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border: 2px dashed #8E9197; border-radius: 12px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#55575C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg>
+      <div>
+        <h2 id="sc-rule" style="margin: 0; font-size: 14px; font-weight: 800">저장 당시 조건은 기록으로만 보여요</h2>
+        <p style="margin: 0; font-size: 13px; color: #55575C">코스를 다시 열어도 지금 혜택 비교에 쓰는 내 조건은 바뀌지 않아요.</p>
+      </div>
+    </section>
+  </main>
+
+  <nav aria-label="주요 메뉴" style="flex-shrink: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 0 12px calc(14px + env(safe-area-inset-bottom)); padding: 6px; background: #202124; border-radius: 24px">
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"></path></svg>여행</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"></path><path d="M14 8v1.5M14 11.25v1.5M14 14.5v1.5"></path></svg>혜택</a>
+    <a href="#" aria-current="page" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: #3651E8; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 800; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"></path></svg>저장한 코스</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>내 설정</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+✔ unprepared deep links return to the input step without inventing comparisons or courses (2.1287ms)
+✔ invalid settings cannot be bypassed by entering trip or recommendation screens (0.4665ms)
+✔ existing draft remains readable while newly edited settings or comparisons are stale (0.371ms)
+✔ comparison, recommendation and saved-course re-entry use only available stages (2.4016ms)
+✔ parent navigation is bounded inside the flow and does not mutate readiness state (2.2215ms)
+✔ benefits can be opened on first use with missing or invalid settings without requiring a trip (0.4487ms)
+✔ home and current settings remain reachable with invalid or missing travel inputs (0.4646ms)
+✔ legacy profile route stays the travel preference step while settings has its own main tab (0.3767ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 206.9756

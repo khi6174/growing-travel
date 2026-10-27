@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-10-24T07:00:59.249Z",
+  "scope": "Local documentation structure only; not product tests or real-world verification.",
+  "requiredFileCount": 14,
+  "markdownFileCount": 13,
+  "localLinkCount": 76,
+  "identifierDefinitionCount": 64,
+  "identifierReferenceCount": 287,
+  "sourceSnapshotSha256": "36bd1f6844233e3519b9f0ea00814630685ff7bcd04b77180a6e227325f2d9ea",
+  "sourceSnapshotMatches": true,
+  "pdfSnapshotSha256": "7215d95321d48559e7a148e682deb9ee4c8f166cb86d02bc5ea964db240a2af5",
+  "pdfSnapshotMatches": true,
+  "plannedAcceptanceCount": 13,
+  "detectedDataFiles": [],
+  "dataScanLimit": "Filename inventory only; prose and synthetic/real-world claims require manual review.",
+  "failures": [],
+  "passed": true
+}

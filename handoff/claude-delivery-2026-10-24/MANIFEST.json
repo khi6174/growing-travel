@@ -1,0 +1,68 @@
+{
+  "package": "Growing Travel - Claude and Claude Design handoff",
+  "createdAt": "2026-10-24T21:26:35.5709717+09:00",
+  "scope": "Documents and existing demo screenshots; no executable app or browser data",
+  "fileCount": 12,
+  "files": [
+    {
+      "path": "00_START_HERE.md",
+      "bytes": 4549,
+      "sha256": "2abff7a1de9518eb60298170d0198bf22615a1d9b3e0e4f5ccda86e0d65fa8a4"
+    },
+    {
+      "path": "01_CLAUDE/PASTE_THIS_REQUEST.txt",
+      "bytes": 3136,
+      "sha256": "36e890484529a360df534a4a26653f268c91c1147556552d0a244cf3f1dc4ea0"
+    },
+    {
+      "path": "01_CLAUDE/PRODUCT_AND_DEVELOPMENT_BRIEF.md",
+      "bytes": 10660,
+      "sha256": "1bf5593b291b39b897fb5ba20ee58664c238a87f42856ffa8b023927a16a2007"
+    },
+    {
+      "path": "02_CLAUDE_DESIGN/DESIGN_BRIEF.md",
+      "bytes": 12021,
+      "sha256": "60f5b7202fac2ece3f1d246ccbe72ed1e0b986d5469338ee1bdbc2474a4569f7"
+    },
+    {
+      "path": "02_CLAUDE_DESIGN/PASTE_THIS_REQUEST.txt",
+      "bytes": 3423,
+      "sha256": "73ce0fed957dec92f788af2a41d347f76c8014e763c33159f8b74cc0d77bed47"
+    },
+    {
+      "path": "03_SCREENS/01_CURRENT_CANDIDATE.png",
+      "bytes": 47339,
+      "sha256": "0ae212be757bd930b301ea8ce0b0d8659eb8acd907e60978a8dfd31a2888151f"
+    },
+    {
+      "path": "03_SCREENS/02_CURRENT_NEEDS_INFO.png",
+      "bytes": 41990,
+      "sha256": "d36928a31a3d8cee2d6fe82d150389c625ec33eb1cf9881dcbfa859b6f0d5b1a"
+    },
+    {
+      "path": "03_SCREENS/03_EARLIER_TRAVEL.png",
+      "bytes": 32597,
+      "sha256": "2a21ec1bfa2760c7a0826d1c9e1c375359a4419bdfe18fb6258f669b840c7ed1"
+    },
+    {
+      "path": "03_SCREENS/04_EARLIER_BENEFITS.png",
+      "bytes": 38120,
+      "sha256": "367b860d75800940537f9e45002ec97b8ecc12b6a91a2402c5ced58e5b71a4c2"
+    },
+    {
+      "path": "03_SCREENS/SCREEN_GUIDE.md",
+      "bytes": 2464,
+      "sha256": "64db01b431074ceb47ba96424651d489e82c1236cd547b5c281f6c14d8e4f021"
+    },
+    {
+      "path": "04_REFERENCE/BENEFIT_SOURCES.md",
+      "bytes": 10395,
+      "sha256": "f1f3a8b0745ec59af8bdf51c5d8e5827d7d3b3a482bc23eb044e6b66414ff2a6"
+    },
+    {
+      "path": "04_REFERENCE/VERIFICATION_SCOPE.md",
+      "bytes": 2834,
+      "sha256": "f66183301aa098236baede48838c5dd70556669cbf4a01ced848341c07d465c0"
+    }
+  ]
+}

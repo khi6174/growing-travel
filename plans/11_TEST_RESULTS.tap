@@ -1,0 +1,508 @@
+TAP version 13
+# Subtest: published application dates include boundaries and expire independently of use period
+ok 1 - published application dates include boundaries and expire independently of use period
+  ---
+  duration_ms: 24.6616
+  type: 'test'
+  ...
+# Subtest: unknown, malformed, index-only and synthetic sources never claim a current application period
+ok 2 - unknown, malformed, index-only and synthetic sources never claim a current application period
+  ---
+  duration_ms: 1.5573
+  type: 'test'
+  ...
+# Subtest: filters exclude synthetic examples and have an honest empty state without mutating the catalog
+ok 3 - filters exclude synthetic examples and have an honest empty state without mutating the catalog
+  ---
+  duration_ms: 13.3232
+  type: 'test'
+  ...
+# Subtest: calendar comparison uses Korea time across the UTC day boundary
+ok 4 - calendar comparison uses Korea time across the UTC day boundary
+  ---
+  duration_ms: 240.6933
+  type: 'test'
+  ...
+# Subtest: real catalog ranks supported age/residence candidates above birth-year and unread source uncertainty
+ok 5 - real catalog ranks supported age/residence candidates above birth-year and unread source uncertainty
+  ---
+  duration_ms: 11.729
+  type: 'test'
+  ...
+# Subtest: real museum student branch preserves undergraduate uncertainty and never requires Seoul residence
+ok 6 - real museum student branch preserves undergraduate uncertainty and never requires Seoul residence
+  ---
+  duration_ms: 2.8962
+  type: 'test'
+  ...
+# Subtest: inclusive age bounds yield candidates but never eligibility approval and preserve remaining checks
+ok 7 - inclusive age bounds yield candidates but never eligibility approval and preserve remaining checks
+  ---
+  duration_ms: 24.3404
+  type: 'test'
+  ...
+# Subtest: missing and invalid required age stay unknown rather than becoming zero or a failed condition
+ok 8 - missing and invalid required age stay unknown rather than becoming zero or a failed condition
+  ---
+  duration_ms: 3.063
+  type: 'test'
+  ...
+# Subtest: birth-year cohorts use age only for certain non-overlap, never as birth-year verification
+ok 9 - birth-year cohorts use age only for certain non-overlap, never as birth-year verification
+  ---
+  duration_ms: 2.3062
+  type: 'test'
+  ...
+# Subtest: birth-year upper bound preserves uncertainty for all plausible earlier years
+ok 10 - birth-year upper bound preserves uncertainty for all plausible earlier years
+  ---
+  duration_ms: 1.8954
+  type: 'test'
+  ...
+# Subtest: residence rules read residence only and do not substitute a destination or invent locality
+ok 11 - residence rules read residence only and do not substitute a destination or invent locality
+  ---
+  duration_ms: 2.6114
+  type: 'test'
+  ...
+# Subtest: known residence mismatch takes precedence over another missing personal condition
+ok 12 - known residence mismatch takes precedence over another missing personal condition
+  ---
+  duration_ms: 1.0935
+  type: 'test'
+  ...
+# Subtest: student self-report distinguishes omission, no and yes without inferring from age
+ok 13 - student self-report distinguishes omission, no and yes without inferring from age
+  ---
+  duration_ms: 4.5537
+  type: 'test'
+  ...
+# Subtest: unused profile fields are not requested and missing all fields cannot invent a match
+ok 14 - unused profile fields are not requested and missing all fields cannot invent a match
+  ---
+  duration_ms: 1.7152
+  type: 'test'
+  ...
+# Subtest: unverified or malformed criteria never make a candidate or reject users using unsupported conditions
+ok 15 - unverified or malformed criteria never make a candidate or reject users using unsupported conditions
+  ---
+  duration_ms: 1.7668
+  type: 'test'
+  ...
+# Subtest: unsupported top-level AND criteria cannot silently qualify or exclude a user
+ok 16 - unsupported top-level AND criteria cannot silently qualify or exclude a user
+  ---
+  duration_ms: 2.1926
+  type: 'test'
+  ...
+# Subtest: period is separate from personal fit: future and ended are not current, unknown dates stay uncertain
+ok 17 - period is separate from personal fit: future and ended are not current, unknown dates stay uncertain
+  ---
+  duration_ms: 1.4639
+  type: 'test'
+  ...
+# Subtest: ranking groups candidates before unknowns, mismatches and dates while preserving stable source order
+ok 18 - ranking groups candidates before unknowns, mismatches and dates while preserving stable source order
+  ---
+  duration_ms: 2.1161
+  type: 'test'
+  ...
+# Subtest: OR age alternatives qualify independently of student input and explain only the matching branch
+ok 19 - OR age alternatives qualify independently of student input and explain only the matching branch
+  ---
+  duration_ms: 5.4139
+  type: 'test'
+  ...
+# Subtest: OR student alternative distinguishes no, unknown and unverified undergraduate status
+ok 20 - OR student alternative distinguishes no, unknown and unverified undergraduate status
+  ---
+  duration_ms: 4.0469
+  type: 'test'
+  ...
+# Subtest: OR keeps publication boundaries and fails closed on unsupported alternative schemas
+ok 21 - OR keeps publication boundaries and fails closed on unsupported alternative schemas
+  ---
+  duration_ms: 3.6342
+  type: 'test'
+  ...
+# Subtest: only the verified museum student alternative receives a student-route indicator in the real catalog
+ok 22 - only the verified museum student alternative receives a student-route indicator in the real catalog
+  ---
+  duration_ms: 12.8948
+  type: 'test'
+  ...
+# Subtest: student-route indicators fail closed for unverified, synthetic and unsupported rule schemas
+ok 23 - student-route indicators fail closed for unverified, synthetic and unsupported rule schemas
+  ---
+  duration_ms: 1.6755
+  type: 'test'
+  ...
+# Subtest: a student route does not claim that a young non-student qualified through the student alternative
+ok 24 - a student route does not claim that a young non-student qualified through the student alternative
+  ---
+  duration_ms: 22.8679
+  type: 'test'
+  ...
+# Subtest: unknown undergraduate status and a known mismatch keep their actual reasons
+ok 25 - unknown undergraduate status and a known mismatch keep their actual reasons
+  ---
+  duration_ms: 4.2549
+  type: 'test'
+  ...
+# Subtest: short summaries retain publication boundary priority and never invent fallback eligibility
+ok 26 - short summaries retain publication boundary priority and never invent fallback eligibility
+  ---
+  duration_ms: 2.7271
+  type: 'test'
+  ...
+# Subtest: presentation and student filtering do not mutate matches, source data, input, or ranking
+ok 27 - presentation and student filtering do not mutate matches, source data, input, or ranking
+  ---
+  duration_ms: 6.7154
+  type: 'test'
+  ...
+# Subtest: AC01: destination undecided is valid, input is copied and duplicates normalized
+ok 28 - AC01: destination undecided is valid, input is copied and duplicates normalized
+  ---
+  duration_ms: 12.858
+  type: 'test'
+  ...
+# Subtest: AC01: missing, negative, fractional and out-of-range time and unknown interests fail by field
+ok 29 - AC01: missing, negative, fractional and out-of-range time and unknown interests fail by field
+  ---
+  duration_ms: 4.8818
+  type: 'test'
+  ...
+# Subtest: AC02: rules-based recommendations connect context to known synthetic evidence
+ok 30 - AC02: rules-based recommendations connect context to known synthetic evidence
+  ---
+  duration_ms: 19.7903
+  type: 'test'
+  ...
+# Subtest: AC03: empty or constraint-incompatible candidates produce no-match, never fallback fiction
+ok 31 - AC03: empty or constraint-incompatible candidates produce no-match, never fallback fiction
+  ---
+  duration_ms: 24.1048
+  type: 'test'
+  ...
+# Subtest: AC03: unknown experience and evidence references are rejected
+ok 32 - AC03: unknown experience and evidence references are rejected
+  ---
+  duration_ms: 7.5614
+  type: 'test'
+  ...
+# Subtest: AC04/AC08: all fixture records are explicitly synthetic and private/non-demo candidates are excluded
+ok 33 - AC04/AC08: all fixture records are explicitly synthetic and private/non-demo candidates are excluded
+  ---
+  duration_ms: 3.0817
+  type: 'test'
+  ...
+# Subtest: AC03: a structurally valid but constraint-violating response is rejected at the boundary
+ok 34 - AC03: a structurally valid but constraint-violating response is rejected at the boundary
+  ---
+  duration_ms: 6.9915
+  type: 'test'
+  ...
+# Subtest: AC05: order, evidence and labels survive draft construction; transitions remain unknown
+ok 35 - AC05: order, evidence and labels survive draft construction; transitions remain unknown
+  ---
+  duration_ms: 5.6198
+  type: 'test'
+  ...
+# Subtest: AC05: empty/unknown/duplicate selections fail; over-budget draft is marked rather than fabricated feasible
+ok 36 - AC05: empty/unknown/duplicate selections fail; over-budget draft is marked rather than fabricated feasible
+  ---
+  duration_ms: 2.2145
+  type: 'test'
+  ...
+# Subtest: AC04: removing a saved draft synthetic marker or editing evidence fails validation
+ok 37 - AC04: removing a saved draft synthetic marker or editing evidence fails validation
+  ---
+  duration_ms: 4.2694
+  type: 'test'
+  ...
+# Subtest: AC08: recommendation does not mutate inputs or perform storage writes
+ok 38 - AC08: recommendation does not mutate inputs or perform storage writes
+  ---
+  duration_ms: 1.9622
+  type: 'test'
+  ...
+# Subtest: pre-extension v1 fixture opens unchanged; new journey course coexists and reopens with input, evidence and benefit status
+ok 39 - pre-extension v1 fixture opens unchanged; new journey course coexists and reopens with input, evidence and benefit status
+  ---
+  duration_ms: 164.7718
+  type: 'test'
+  ...
+# Subtest: legacy course can still be edited without fabricating new profile or journey fields
+ok 40 - legacy course can still be edited without fabricating new profile or journey fields
+  ---
+  duration_ms: 4.5859
+  type: 'test'
+  ...
+# Subtest: pre-student journey snapshot and request history remain byte-for-byte intact on read and coexist with student courses
+ok 41 - pre-student journey snapshot and request history remain byte-for-byte intact on read and coexist with student courses
+  ---
+  duration_ms: 75.3663
+  type: 'test'
+  ...
+# Subtest: pre-student journey can be edited and reopened without inferring university status
+ok 42 - pre-student journey can be edited and reopened without inferring university status
+  ---
+  duration_ms: 18.2071
+  type: 'test'
+  ...
+# Subtest: journey/course disagreement and tampered costs, synthetic flags, benefit state and legs are rejected
+ok 43 - journey/course disagreement and tampered costs, synthetic flags, benefit state and legs are rejected
+  ---
+  duration_ms: 9.3506
+  type: 'test'
+  ...
+# Subtest: station transit plus walking-only experience remains consistent between region and experience recommendation
+ok 44 - station transit plus walking-only experience remains consistent between region and experience recommendation
+  ---
+  duration_ms: 4.9442
+  type: 'test'
+  ...
+# Subtest: trip requires a valid calendar day, departure and integer limits; optional identity is not required
+ok 45 - trip requires a valid calendar day, departure and integer limits; optional identity is not required
+  ---
+  duration_ms: 188.1463
+  type: 'test'
+  ...
+# Subtest: region comparison uses solo and stair constraints and never invents compatible experiences
+ok 46 - region comparison uses solo and stair constraints and never invents compatible experiences
+  ---
+  duration_ms: 13.4485
+  type: 'test'
+  ...
+# Subtest: walking, total time and per-person budget change suitability without silently relaxing inputs
+ok 47 - walking, total time and per-person budget change suitability without silently relaxing inputs
+  ---
+  duration_ms: 3.1026
+  type: 'test'
+  ...
+# Subtest: fictional itinerary includes both station connections, preserves order, totals party costs without a benefit deduction
+ok 48 - fictional itinerary includes both station connections, preserves order, totals party costs without a benefit deduction
+  ---
+  duration_ms: 6.9971
+  type: 'test'
+  ...
+# Subtest: missing route data remains unknown and is never counted as a zero-minute complete journey
+ok 49 - missing route data remains unknown and is never counted as a zero-minute complete journey
+  ---
+  duration_ms: 2.568
+  type: 'test'
+  ...
+# Subtest: known lower bounds expose exceeded limits even when another route segment is missing
+ok 50 - known lower bounds expose exceeded limits even when another route segment is missing
+  ---
+  duration_ms: 3.2421
+  type: 'test'
+  ...
+# Subtest: selection rejects other-region, unknown, duplicate, solo-incompatible and stair-incompatible items
+ok 51 - selection rejects other-region, unknown, duplicate, solo-incompatible and stair-incompatible items
+  ---
+  duration_ms: 3.8476
+  type: 'test'
+  ...
+# Subtest: synthetic benefits differentiate missing personal inputs, age boundaries, residence mismatch and travel-date periods
+ok 52 - synthetic benefits differentiate missing personal inputs, age boundaries, residence mismatch and travel-date periods
+  ---
+  duration_ms: 2.1833
+  type: 'test'
+  ...
+# Subtest: benefits-first sorting uses candidate count without labelling unavailable travel suitable
+ok 53 - benefits-first sorting uses candidate count without labelling unavailable travel suitable
+  ---
+  duration_ms: 3.0754
+  type: 'test'
+  ...
+# Subtest: official references stay separate from synthetic matches and expose source age and verification limits
+ok 54 - official references stay separate from synthetic matches and expose source age and verification limits
+  ---
+  duration_ms: 2.8202
+  type: 'test'
+  ...
+# Subtest: normalization and comparisons leave caller inputs unchanged
+ok 55 - normalization and comparisons leave caller inputs unchanged
+  ---
+  duration_ms: 3.1586
+  type: 'test'
+  ...
+# Subtest: unprepared deep links return to the input step without inventing comparisons or courses
+ok 56 - unprepared deep links return to the input step without inventing comparisons or courses
+  ---
+  duration_ms: 8.6341
+  type: 'test'
+  ...
+# Subtest: invalid settings cannot be bypassed by entering trip or recommendation screens
+ok 57 - invalid settings cannot be bypassed by entering trip or recommendation screens
+  ---
+  duration_ms: 0.7265
+  type: 'test'
+  ...
+# Subtest: existing draft remains readable while newly edited settings or comparisons are stale
+ok 58 - existing draft remains readable while newly edited settings or comparisons are stale
+  ---
+  duration_ms: 0.5306
+  type: 'test'
+  ...
+# Subtest: comparison, recommendation and saved-course re-entry use only available stages
+ok 59 - comparison, recommendation and saved-course re-entry use only available stages
+  ---
+  duration_ms: 0.8155
+  type: 'test'
+  ...
+# Subtest: parent navigation is bounded inside the flow and does not mutate readiness state
+ok 60 - parent navigation is bounded inside the flow and does not mutate readiness state
+  ---
+  duration_ms: 6.8609
+  type: 'test'
+  ...
+# Subtest: benefits can be opened on first use with missing or invalid settings without requiring a trip
+ok 61 - benefits can be opened on first use with missing or invalid settings without requiring a trip
+  ---
+  duration_ms: 0.5829
+  type: 'test'
+  ...
+# Subtest: personal settings are optional except interests; age and residence are separate from a trip departure
+ok 62 - personal settings are optional except interests; age and residence are separate from a trip departure
+  ---
+  duration_ms: 8.8489
+  type: 'test'
+  ...
+# Subtest: student status is optional self-report, never inferred from age or residence and rejects unsupported values
+ok 63 - student status is optional self-report, never inferred from age or residence and rejects unsupported values
+  ---
+  duration_ms: 10.5388
+  type: 'test'
+  ...
+# Subtest: pre-student v1 settings load without rewriting storage and gain unspecified status only on explicit save
+ok 64 - pre-student v1 settings load without rewriting storage and gain unspecified status only on explicit save
+  ---
+  duration_ms: 4.0881
+  type: 'test'
+  ...
+# Subtest: profile validation catches unsupported ages, residences, interests and walking limits by field
+ok 65 - profile validation catches unsupported ages, residences, interests and walking limits by field
+  ---
+  duration_ms: 3.7533
+  type: 'test'
+  ...
+# Subtest: profile store saves only on explicit save, round-trips and deletes its own key without touching courses
+ok 66 - profile store saves only on explicit save, round-trips and deletes its own key without touching courses
+  ---
+  duration_ms: 1.9204
+  type: 'test'
+  ...
+# Subtest: profile parse errors and invalid envelopes are preserved on load and save
+ok 67 - profile parse errors and invalid envelopes are preserved on load and save
+  ---
+  duration_ms: 3.445
+  type: 'test'
+  ...
+# Subtest: profile storage read, quota, read-back and delete errors never claim success
+ok 68 - profile storage read, quota, read-back and delete errors never claim success
+  ---
+  duration_ms: 3.1226
+  type: 'test'
+  ...
+# Subtest: loopback demo serves only public assets and no write APIs
+ok 69 - loopback demo serves only public assets and no write APIs
+  ---
+  duration_ms: 3685.2962
+  type: 'test'
+  ...
+# Subtest: AC06: save and new store instance re-read preserve title, order, evidence and fictional markers
+ok 70 - AC06: save and new store instance re-read preserve title, order, evidence and fictional markers
+  ---
+  duration_ms: 48.7415
+  type: 'test'
+  ...
+# Subtest: AC05/AC07: unacknowledged uncertainty cannot save and source draft is preserved
+ok 71 - AC05/AC07: unacknowledged uncertainty cannot save and source draft is preserved
+  ---
+  duration_ms: 3.2579
+  type: 'test'
+  ...
+# Subtest: AC07: repeated and concurrent identical save keys produce one result
+ok 72 - AC07: repeated and concurrent identical save keys produce one result
+  ---
+  duration_ms: 10.8661
+  type: 'test'
+  ...
+# Subtest: AC07: stale versions reject without overwriting a newer course from another store
+ok 73 - AC07: stale versions reject without overwriting a newer course from another store
+  ---
+  duration_ms: 15.8432
+  type: 'test'
+  ...
+# Subtest: AC07: two simultaneous updates at one version cannot both overwrite
+ok 74 - AC07: two simultaneous updates at one version cannot both overwrite
+  ---
+  duration_ms: 15.0796
+  type: 'test'
+  ...
+# Subtest: AC07: quota/write failure reports SAVE_FAILED and preserves draft and earlier storage
+ok 75 - AC07: quota/write failure reports SAVE_FAILED and preserves draft and earlier storage
+  ---
+  duration_ms: 5.9142
+  type: 'test'
+  ...
+# Subtest: AC07: corrupt or tampered saved data is visible as an error and is never overwritten
+ok 76 - AC07: corrupt or tampered saved data is visible as an error and is never overwritten
+  ---
+  duration_ms: 7.2464
+  type: 'test'
+  ...
+# Subtest: AC07: unavailable storage does not silently become an empty collection
+ok 77 - AC07: unavailable storage does not silently become an empty collection
+  ---
+  duration_ms: 1.3522
+  type: 'test'
+  ...
+# Subtest: AC07: successful write with failed read-back can safely retry the original save key
+ok 78 - AC07: successful write with failed read-back can safely retry the original save key
+  ---
+  duration_ms: 8.6755
+  type: 'test'
+  ...
+# Subtest: metadata uses comma separators while keeping Korean administrative names intact
+ok 79 - metadata uses comma separators while keeping Korean administrative names intact
+  ---
+  duration_ms: 6.4221
+  type: 'test'
+  ...
+# Subtest: unspaced metadata enumerations use commas without splitting administrative names
+ok 80 - unspaced metadata enumerations use commas without splitting administrative names
+  ---
+  duration_ms: 0.6685
+  type: 'test'
+  ...
+# Subtest: formatting metadata retains actual route order and its arrows
+ok 81 - formatting metadata retains actual route order and its arrows
+  ---
+  duration_ms: 0.4683
+  type: 'test'
+  ...
+# Subtest: real publication metadata keeps currentness uncertainty and separates it from a personal match
+ok 82 - real publication metadata keeps currentness uncertainty and separates it from a personal match
+  ---
+  duration_ms: 14.4401
+  type: 'test'
+  ...
+# Subtest: formatting leaves real official data, evidence, and matching output unchanged
+ok 83 - formatting leaves real official data, evidence, and matching output unchanged
+  ---
+  duration_ms: 5.6206
+  type: 'test'
+  ...
+1..83
+# tests 83
+# suites 0
+# pass 83
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5167.1593

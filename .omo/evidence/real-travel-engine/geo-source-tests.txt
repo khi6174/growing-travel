@@ -1,0 +1,33 @@
+✔ pre-extension v1 fixture opens unchanged; new journey course coexists and reopens with input, evidence and benefit status (138.5981ms)
+✔ legacy course can still be edited without fabricating new profile or journey fields (3.8248ms)
+✔ pre-student journey snapshot and request history remain byte-for-byte intact on read and coexist with student courses (42.7237ms)
+✔ pre-student journey can be edited and reopened without inferring university status (10.8201ms)
+✔ journey/course disagreement and tampered costs, synthetic flags, benefit state and legs are rejected (10.4144ms)
+✔ station transit plus walking-only experience remains consistent between region and experience recommendation (6.3803ms)
+✔ real null aggregates never become zero and selected places form round trip (57.861ms)
+✔ user times apply only to matching directed legs; reorder discards obsolete overrides (7.5878ms)
+✔ regular closure is excluded; unknown stairs do not become accessible (2.3044ms)
+✔ map links encode names and use explicit search fallback when coordinates unknown (1.7657ms)
+✔ snapshot validator rejects tampered sums, order, references, URLs and coordinates (21.9936ms)
+✔ historical official description is validated from saved snapshot without catalog rebuild (16.3097ms)
+✔ optional geoSource validates safe links, labels and calendar dates on all saved point types (46.6018ms)
+✔ input bounds, dates, duplicate selections and references fail before saving (12.5552ms)
+✔ mixed real and legacy store preserves old request history and idempotence (101.9831ms)
+✔ pre-student historical request bytes coexist unchanged with new real course (37.318ms)
+✔ AC06: save and new store instance re-read preserve title, order, evidence and fictional markers (51.9814ms)
+✔ AC05/AC07: unacknowledged uncertainty cannot save and source draft is preserved (3.4258ms)
+✔ AC07: repeated and concurrent identical save keys produce one result (12.6536ms)
+✔ AC07: stale versions reject without overwriting a newer course from another store (13.0639ms)
+✔ AC07: two simultaneous updates at one version cannot both overwrite (8.6563ms)
+✔ AC07: quota/write failure reports SAVE_FAILED and preserves draft and earlier storage (8.6654ms)
+✔ AC07: corrupt or tampered saved data is visible as an error and is never overwritten (8.8929ms)
+✔ AC07: unavailable storage does not silently become an empty collection (1.6606ms)
+✔ AC07: successful write with failed read-back can safely retry the original save key (7.0933ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 995.2813

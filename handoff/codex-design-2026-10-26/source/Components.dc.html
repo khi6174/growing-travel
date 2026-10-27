@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>컴포넌트와 색·글꼴·간격</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#202124}a:hover{color:#3651E8}
+.sh{margin:0;font-size:28px;line-height:1.3;font-weight:800;letter-spacing:-0.02em}
+.sd{margin:4px 0 0;font-size:15px;color:#55575C}
+.lb{margin:0 0 8px;font-size:12px;font-weight:700;color:#55575C}
+.panel{background:#FFFFFF;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px}
+.tD{display:inline-block;padding:2px 8px;border-radius:6px;background:#202124;color:#FFFFFF;font-size:12px;font-weight:700}
+.tP{display:inline-block;padding:1px 7px;border-radius:6px;border:1.5px dashed #8E9197;color:#55575C;font-size:12px;font-weight:700}
+</style>
+</helmet>
+<div style="width: 1440px; height: 4300px; box-sizing: border-box; padding: 64px; display: flex; flex-direction: column; gap: 56px; background: #ECEEF1; color: #202124; font-family: 'Gothic A1', system-ui, sans-serif; font-size: 15px; line-height: 1.6; word-break: keep-all">
+
+  <header style="display: flex; align-items: flex-end; justify-content: space-between; gap: 32px">
+    <div>
+      <p style="margin: 0; font-size: 14px; font-weight: 700; color: #3651E8">Growing Travel · 디자인 기초 v0.1 · 2026-10-26</p>
+      <h1 style="margin: 4px 0 0; font-size: 44px; line-height: 1.2; font-weight: 800; letter-spacing: -0.03em">컴포넌트와 색 · 글꼴 · 간격</h1>
+      <p class="sd">지금까지 그린 혜택·조건·여행 화면에서 쓴 요소를 모았어요. 모바일 360~430px 폭 기준이에요.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 18px; background: #FFFFFF; border-radius: 14px; font-size: 13px">
+      <span><span class="tD">D 결정</span> 사용자가 정한 것 (D16·D17)</span>
+      <span><span class="tP">제안</span> 디자인 가정 · 아직 정하지 않은 것</span>
+    </div>
+  </header>
+
+  <section aria-labelledby="c-color" style="display: flex; flex-direction: column; gap: 20px">
+    <div>
+      <h2 id="c-color" class="sh">색 <span class="tD" style="vertical-align: middle">D16 흑연·코발트</span> <span class="tP" style="vertical-align: middle">세부 색은 제안</span></h2>
+      <p class="sd">대비는 색값으로 계산한 값이에요. 실기기 화면에서 확인한 값은 아니에요.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 16px">
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #202124"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">흑연</p><p style="margin: 0; font-size: 13px">#202124</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">글자 · 조건 카드 · 하단 메뉴 · 흰 글자 16.0:1</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #3651E8"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">코발트</p><p style="margin: 0; font-size: 13px">#3651E8</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">주 버튼 · 선택된 탭 · 후보 배지 · 흰 글자 6.0:1</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #EEF1FD; border-bottom: 1px solid #E3E5E9"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">코발트 옅음</p><p style="margin: 0; font-size: 13px">#EEF1FD</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">선택된 선택지 · 강조 경로 배경</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #ECEEF1; border-bottom: 1px solid #E3E5E9"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">바탕</p><p style="margin: 0; font-size: 13px">#ECEEF1</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">화면 바탕 · 보조 글자 6.3:1</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #FFFFFF; border-bottom: 1px solid #E3E5E9"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">표면</p><p style="margin: 0; font-size: 13px">#FFFFFF</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">카드 · 입력칸 · 시트</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #F6F7F9; border-bottom: 1px solid #E3E5E9"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">펼침 면</p><p style="margin: 0; font-size: 13px">#F6F7F9</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">펼친 상세 영역</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #55575C"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">보조 글자</p><p style="margin: 0; font-size: 13px">#55575C</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">메타 · 도움말 · 흰 바탕 7.3:1</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #C9CBD0"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">어두운 면 보조</p><p style="margin: 0; font-size: 13px">#C9CBD0</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">흑연 위 보조 글자 9.8:1</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #8E9197"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">테두리</p><p style="margin: 0; font-size: 13px">#8E9197</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">입력 · 칩 · 선택지 테두리 · 흰 바탕 3.2:1 (10-26 반영)</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #E3E5E9"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">구분선</p><p style="margin: 0; font-size: 13px">#E3E5E9</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">절취선 · 장식선 · 기간 아님 배지</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #FFE9C7; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #8A4500">#8A4500</div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">확인 필요</p><p style="margin: 0; font-size: 13px">#FFE9C7 / #8A4500</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">추가 확인 배지 · 6.0:1</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #FFF4E0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #6B3A00">#6B3A00</div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">주의</p><p style="margin: 0; font-size: 13px">#FFF4E0 / #6B3A00</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">한도 근접 경고 · 8.7:1</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #B3261E"></div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">오류</p><p style="margin: 0; font-size: 13px">#B3261E</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">입력·저장 오류 · 흰 바탕 6.5:1</p></div></div>
+      <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden"><div style="height: 72px; background: #EEF1FD; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #2A3FB8">#2A3FB8</div><div style="padding: 12px"><p style="margin: 0; font-size: 14px; font-weight: 800">코발트 진함</p><p style="margin: 0; font-size: 13px">#2A3FB8</p><p style="margin: 4px 0 0; font-size: 12px; color: #55575C">옅은 코발트 위 글자 · 지역 적합 표시 · 7.4:1</p></div></div>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+    <section aria-labelledby="c-type" class="panel">
+      <div>
+        <h2 id="c-type" class="sh">글꼴 <span class="tP" style="vertical-align: middle">제안 · Gothic A1</span></h2>
+        <p class="sd">한 가지 글꼴의 굵기로 위계를 나눠요. 본문 줄간격 1.6.</p>
+      </div>
+      <dl style="margin: 0; display: grid; grid-template-columns: 150px minmax(0, 1fr); column-gap: 16px; row-gap: 14px; align-items: baseline">
+        <dt style="font-size: 13px; color: #55575C">화면 제목 · 30–34 / 800</dt><dd style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2">혜택</dd>
+        <dt style="font-size: 13px; color: #55575C">단계 제목 · 26 / 800</dt><dd style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25">이번 여행 조건</dd>
+        <dt style="font-size: 13px; color: #55575C">섹션 제목 · 20 / 800</dt><dd style="margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">조건이 맞는 후보 2</dd>
+        <dt style="font-size: 13px; color: #55575C">카드 제목 · 17–18 / 800</dt><dd style="margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.02em">국립현대미술관 서울 무료관람</dd>
+        <dt style="font-size: 13px; color: #55575C">본문 · 15 / 400</dt><dd style="margin: 0; font-size: 15px">입력한 조건이 확인된 기준과 맞아요.</dd>
+        <dt style="font-size: 13px; color: #55575C">보조 본문 · 14 / 400</dt><dd style="margin: 0; font-size: 14px; color: #3A3C40">전시별 관람 조건, 현장 신분 확인 방식</dd>
+        <dt style="font-size: 13px; color: #55575C">메타 · 도움말 · 13 / 600</dt><dd style="margin: 0; font-size: 13px; font-weight: 600; color: #55575C">공고 기간 중 · 11-08까지</dd>
+        <dt style="font-size: 13px; color: #55575C">최소 글자 · 12 / 600</dt><dd style="margin: 0; font-size: 12px; font-weight: 600; color: #55575C">국립현대미술관 · 2026-10-24 확인</dd>
+        <dt style="font-size: 13px; color: #55575C">가상 태그 · 12 / 700</dt><dd style="margin: 0"><span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 지역</span> <span style="font-size: 13px; color: #55575C">11px에서 12px로 올렸어요</span></dd>
+      </dl>
+    </section>
+
+    <section aria-labelledby="c-space" class="panel">
+      <div>
+        <h2 id="c-space" class="sh">간격 · 모서리 · 크기 <span class="tP" style="vertical-align: middle">제안</span></h2>
+        <p class="sd">4px 단위로 맞추고, 손가락으로 누르는 곳은 44px 이상이에요.</p>
+      </div>
+      <div>
+        <p class="lb">간격 단계</p>
+        <div style="display: flex; align-items: flex-end; gap: 16px">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 4px; height: 32px; background: #3651E8"></div><span style="font-size: 12px">4</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 8px; height: 32px; background: #3651E8"></div><span style="font-size: 12px">8</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 12px; height: 32px; background: #3651E8"></div><span style="font-size: 12px">12</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 16px; height: 32px; background: #3651E8"></div><span style="font-size: 12px">16</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 20px; height: 32px; background: #3651E8"></div><span style="font-size: 12px">20</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 24px; height: 32px; background: #3651E8"></div><span style="font-size: 12px">24</span></div>
+          <p style="margin: 0 0 0 8px; font-size: 13px; color: #55575C">화면 좌우 16 · 카드 안쪽 16–18 · 카드 사이 10–12 · 섹션 사이 14–18</p>
+        </div>
+      </div>
+      <div>
+        <p class="lb">모서리</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 64px; height: 44px; border: 2px solid #202124; border-radius: 6px"></div><span style="font-size: 12px">6 태그</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 64px; height: 44px; border: 2px solid #202124; border-radius: 12px"></div><span style="font-size: 12px">12 입력·안내·요약칸</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 64px; height: 44px; border: 2px solid #202124; border-radius: 12px"></div><span style="font-size: 12px">20 카드</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 64px; height: 44px; border: 2px solid #202124; border-radius: 24px"></div><span style="font-size: 12px">24 메뉴</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 64px; height: 44px; border: 2px solid #202124; border-radius: 999px"></div><span style="font-size: 12px">알약 버튼</span></div>
+        </div>
+      </div>
+      <div>
+        <p class="lb">조작 크기</p>
+        <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-size: 14px">
+          <div style="padding: 10px 12px; background: #F4F5F7; border-radius: 12px"><dt style="font-size: 12px; color: #55575C">최소 터치 영역</dt><dd style="margin: 0; font-weight: 800">44 × 44</dd></div>
+          <div style="padding: 10px 12px; background: #F4F5F7; border-radius: 12px"><dt style="font-size: 12px; color: #55575C">주 버튼 높이</dt><dd style="margin: 0; font-weight: 800">52</dd></div>
+          <div style="padding: 10px 12px; background: #F4F5F7; border-radius: 12px"><dt style="font-size: 12px; color: #55575C">입력칸 높이</dt><dd style="margin: 0; font-weight: 800">48–52</dd></div>
+          <div style="padding: 10px 12px; background: #F4F5F7; border-radius: 12px"><dt style="font-size: 12px; color: #55575C">하단 메뉴 칸</dt><dd style="margin: 0; font-weight: 800">52 · 아래 여백 14</dd></div>
+        </dl>
+      </div>
+    </section>
+  </div>
+
+  <section aria-labelledby="c-badge" class="panel">
+    <div>
+      <h2 id="c-badge" class="sh">배지 · 표시</h2>
+      <p class="sd">색만으로 구분하지 않아요. 모든 상태에 아이콘과 글자를 함께 써요. 개인 조건 상태와 공고 상태는 한 배지로 합치지 않아요.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+      <div>
+        <p class="lb">개인 조건 상태 · 카드 위쪽 <span class="tD">D15 상태 · D16 색</span></p>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px">
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 5px 9px; background: #3651E8; color: #FFFFFF; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>조건이 맞는 후보</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 9px; background: #FFE9C7; color: #8A4500; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.8h.01"></path></svg>추가 확인 필요</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px 3px 9px; background: #FFFFFF; color: #202124; border: 1.5px solid #55575C; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12h8"></path></svg>알려진 조건 불일치</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 9px; background: #E3E5E9; color: #3A3C40; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>현재 기간 아님</span>
+          <p style="margin: 0; font-size: 13px; color: #55575C">순서: 후보 → 확인 필요 → 불일치 → 기간 아님</p>
+        </div>
+      </div>
+      <div>
+        <p class="lb">공고 상태 · 절취선 아래 글자로 <span class="tP">제안</span></p>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border: 1.5px solid #E3E5E9; border-radius: 14px; font-size: 14px">
+          <span><strong style="font-weight: 700">공고 기간 중</strong><span style="color: #55575C">, 11-08까지 · 마감 확인</span></span>
+          <span><strong style="font-weight: 700">상시 제도 안내</strong><span style="color: #55575C">, 종료일 없음</span></span>
+          <span><strong style="font-weight: 700">진행 확인 필요</strong><span style="color: #55575C">, 본문 미확인</span></span>
+          <span><strong style="font-weight: 700">시작 전</strong><span style="color: #55575C">, 12-01부터</span></span>
+          <span><strong style="font-weight: 700">기간 종료</strong><span style="color: #55575C">, 11-30에 끝남</span></span>
+        </div>
+        <p style="margin: 8px 0 0; font-size: 13px; color: #55575C">공고 상태는 배지로 만들지 않아 개인 상태와 섞이지 않아요.</p>
+      </div>
+      <div>
+        <p class="lb">보조 표시</p>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px">
+          <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; background: #ECEEF1; color: #3A3C40; border-radius: 8px; font-size: 12px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11v5c3 2 9 2 12 0v-5"></path></svg>학생 경로 있음</span>
+          <span style="font-size: 12px; color: #55575C; margin-top: -6px">공식 근거로 학생 조건이 확인된 혜택에만 <span class="tD">D17</span></span>
+          <span style="padding: 3px 8px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 예시 (신청 불가)</span>
+          <span style="display: flex; gap: 6px"><span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 지역</span><span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 경험</span><span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 코스</span></span>
+          <span style="display: flex; gap: 6px"><span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px; background: #EEF1FD; color: #2A3FB8; border-radius: 999px; font-size: 12px; font-weight: 800"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>시간·도보·예산 안</span><span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px; background: #FFE9C7; color: #8A4500; border-radius: 999px; font-size: 12px; font-weight: 800"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5M12 16.5h.01"></path></svg>맞는 경험 부족</span></span>
+          <span style="font-size: 12px; color: #55575C; margin-top: -6px">지역 적합 표시는 혜택 후보 배지보다 작고 옅게 <span class="tP">제안</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+    <section aria-labelledby="c-btn" class="panel">
+      <h2 id="c-btn" class="sh">버튼</h2>
+      <div><p class="lb">주 버튼 · 화면당 하나</p><button type="button" style="width: 100%; min-height: 52px; border: 0; border-radius: 999px; background: #3651E8; color: #FFFFFF; font: inherit; font-size: 16px; font-weight: 700">지역·혜택 비교하기</button></div>
+      <div><p class="lb">보조 버튼</p><button type="button" style="width: 100%; min-height: 52px; border: 1.5px solid #202124; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 16px; font-weight: 700">이번 비교에만 적용</button></div>
+      <div><p class="lb">외부 링크 · 공식 안내</p><a href="#" style="min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 999px; background: #3651E8; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none">공식 안내 열기<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg></a></div>
+      <div style="display: flex; align-items: flex-end; gap: 16px">
+        <div><p class="lb">카드 안 버튼</p><button type="button" style="min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #3651E8; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">이 지역 선택</button></div>
+        <div><p class="lb">글자 버튼</p><button type="button" style="min-height: 44px; padding: 0 8px; border: 0; background: transparent; color: #3651E8; font: inherit; font-size: 14px; font-weight: 700">자세히</button></div>
+        <div><p class="lb">아이콘</p><button type="button" aria-label="닫기" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 12px; background: #F4F5F7; color: #202124"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+      </div>
+      <div><p class="lb">비활성 · 이유를 함께 보여줘요</p><button type="button" aria-disabled="true" style="width: 100%; min-height: 52px; border: 0; border-radius: 999px; background: #E3E5E9; color: #55575C; font: inherit; font-size: 16px; font-weight: 700">내 설정에 저장하고 비교</button><p style="margin: 6px 0 0; font-size: 13px; color: #B3261E; font-weight: 600">만 나이를 고치면 적용할 수 있어요.</p></div>
+    </section>
+
+    <section aria-labelledby="c-filter" class="panel">
+      <h2 id="c-filter" class="sh">필터 · 탭 · 이동</h2>
+      <div><p class="lb">필터 칩 · 선택 / 기본 / 아이콘 <span class="tD">D17 학생 칩</span></p>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #202124; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">전체</button>
+          <button type="button" aria-pressed="false" style="min-height: 44px; padding: 0 16px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600">교통</button>
+          <button type="button" aria-pressed="false" style="min-height: 44px; display: inline-flex; align-items: center; gap: 5px; padding: 0 16px 0 12px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11v5c3 2 9 2 12 0v-5"></path></svg>학생 조건 있음</button>
+        </div>
+      </div>
+      <div><p class="lb">상태별 바로가기 · 0개는 테두리만</p>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 10px; background: #ECEEF1; border-radius: 16px">
+          <span style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FFFFFF; border-radius: 12px"><span style="font-size: 18px; font-weight: 800; line-height: 1.1">2</span><span style="font-size: 12px; font-weight: 600">후보</span></span>
+          <span style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FFFFFF; border-radius: 12px"><span style="font-size: 18px; font-weight: 800; line-height: 1.1">5</span><span style="font-size: 12px; font-weight: 600">확인 필요</span></span>
+          <span style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #8E9197; border-radius: 12px; color: #55575C"><span style="font-size: 18px; font-weight: 800; line-height: 1.1">0</span><span style="font-size: 12px; font-weight: 600">불일치</span></span>
+          <span style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #8E9197; border-radius: 12px; color: #55575C"><span style="font-size: 18px; font-weight: 800; line-height: 1.1">0</span><span style="font-size: 12px; font-weight: 600">기간 외</span></span>
+        </div>
+      </div>
+      <div><p class="lb">분할 선택 · 정렬</p>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #ECEEF1; border-radius: 14px">
+          <span style="min-height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #202124; color: #FFFFFF; font-size: 13px; font-weight: 700">조건에 맞는 순</span>
+          <span style="min-height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; color: #55575C; font-size: 13px; font-weight: 600">혜택 후보 많은 순</span>
+        </div>
+      </div>
+      <div><p class="lb">단계 표시줄 · 여행 만들기</p>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px"><div style="height: 4px; border-radius: 2px; background: #3651E8"></div><div style="height: 4px; border-radius: 2px; background: #3651E8"></div><div style="height: 4px; border-radius: 2px; background: #3651E8"></div><div style="height: 4px; border-radius: 2px; background: #8E9197"></div><div style="height: 4px; border-radius: 2px; background: #8E9197"></div></div>
+          <span style="font-size: 13px; font-weight: 700; color: #55575C">3 / 5</span>
+        </div>
+      </div>
+      <div><p class="lb">하단 메뉴 · 4개 <span class="tP">현재 시연 기준</span></p>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 6px; background: #202124; border-radius: 24px">
+          <span style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #C9CBD0; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"></path></svg>여행</span>
+          <span style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #3651E8; color: #FFFFFF; border-radius: 18px; font-size: 12px; font-weight: 800"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"></path><path d="M14 8v1.5M14 11.25v1.5M14 14.5v1.5"></path></svg>혜택</span>
+          <span style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #C9CBD0; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"></path></svg>저장한 코스</span>
+          <span style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #C9CBD0; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>내 설정</span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="c-input" class="panel">
+      <h2 id="c-input" class="sh">입력</h2>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="ci-a" style="font-size: 13px; font-weight: 700">기본 · 이름이 항상 보여요</label>
+        <input id="ci-a" type="text" value="가상 온유동 반나절" style="min-height: 48px; box-sizing: border-box; padding: 0 14px; border: 1.5px solid #8E9197; border-radius: 12px; font: inherit; font-size: 16px; font-weight: 700; color: #202124">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="ci-b" style="font-size: 13px; font-weight: 700">입력 중 · 단위와 비우기</label>
+        <div style="display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 8px 0 14px; border: 2px solid #3651E8; border-radius: 12px; box-sizing: border-box">
+          <input id="ci-b" type="number" value="23" aria-describedby="ci-b-h" style="flex-grow: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 17px; font-weight: 700; color: #202124; background: transparent">
+          <span style="font-size: 15px; color: #55575C">세</span>
+          <button type="button" style="min-height: 44px; padding: 0 10px; border: 0; background: transparent; color: #3651E8; font: inherit; font-size: 13px; font-weight: 700">비우기</button>
+        </div>
+        <p id="ci-b-h" style="margin: 0; font-size: 13px; color: #55575C">생년월일이 아닌 현재 만 나이예요.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="ci-c" style="font-size: 13px; font-weight: 700">오류 · 필드 바로 아래에 연결</label>
+        <input id="ci-c" type="number" value="230" aria-invalid="true" aria-describedby="ci-c-e" style="min-height: 52px; box-sizing: border-box; padding: 0 14px; border: 2px solid #B3261E; border-radius: 12px; font: inherit; font-size: 17px; font-weight: 700; color: #202124">
+        <p id="ci-c-e" style="margin: 0; display: flex; gap: 6px; font-size: 13px; font-weight: 600; color: #B3261E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5M12 16.5h.01"></path></svg>1부터 120 사이 숫자로 입력해 주세요. (시연 코드와 같은 범위)</p>
+      </div>
+      <fieldset style="margin: 0; padding: 0; border: 0">
+        <legend style="padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 700">선택지 타일 · 미입력 허용</legend>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+          <label style="min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid #8E9197; border-radius: 12px; font-size: 14px; font-weight: 600"><input type="radio" name="ci-s" style="margin: 0; accent-color: #3651E8">미입력</label>
+          <label style="min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 2px solid #3651E8; background: #EEF1FD; border-radius: 12px; font-size: 14px; font-weight: 800"><input type="radio" name="ci-s" checked style="margin: 0; accent-color: #3651E8">대학생</label>
+          <label style="min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid #8E9197; border-radius: 12px; font-size: 14px; font-weight: 600"><input type="radio" name="ci-s" style="margin: 0; accent-color: #3651E8">아님</label>
+        </div>
+      </fieldset>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div><p id="ci-p" class="lb">숫자 늘리고 줄이기</p>
+          <div role="group" aria-labelledby="ci-p" style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; border: 1.5px solid #8E9197; border-radius: 12px">
+            <button type="button" aria-label="줄이기" aria-disabled="true" style="width: 44px; height: 44px; border: 0; background: transparent; color: #A7AAB0; font: inherit; font-size: 20px; font-weight: 700">−</button>
+            <span style="font-size: 15px; font-weight: 700">혼자 1명</span>
+            <button type="button" aria-label="늘리기" style="width: 44px; height: 44px; border: 0; background: transparent; color: #202124; font: inherit; font-size: 20px; font-weight: 700">+</button>
+          </div>
+        </div>
+        <label style="display: flex; flex-direction: column; gap: 8px"><span class="lb" style="margin: 0">켜고 끄기</span><span style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 12px; border: 1.5px solid #8E9197; border-radius: 12px; font-size: 14px; font-weight: 700">계단 피하기<input type="checkbox" role="switch" checked style="width: 40px; height: 24px; margin: 0; accent-color: #3651E8"></span></label>
+      </div>
+    </section>
+  </div>
+
+  <section aria-labelledby="c-card" style="display: flex; flex-direction: column; gap: 20px">
+    <div>
+      <h2 id="c-card" class="sh">카드 <span class="tD" style="vertical-align: middle">D16 티켓 구조</span></h2>
+      <p class="sd">절취선 위는 내 조건, 아래는 공고·이동 같은 바깥 정보예요. 처음엔 요약만 보이고 눌러서 펼쳐요.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; align-items: start">
+      <div>
+        <p class="lb">혜택 카드 · 접힘</p>
+        <article style="background: #FFFFFF; border-radius: 20px">
+          <div style="padding: 16px 18px 10px; display: flex; flex-direction: column; gap: 6px">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px"><span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px; background: #FFE9C7; color: #8A4500; border-radius: 999px; font-size: 12px; font-weight: 700"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.8h.01"></path></svg>추가 확인 필요</span><span style="font-size: 12px; color: #55575C">숙박</span></div>
+            <p style="margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.02em">2026 대한민국 숙박세일 페스타</p>
+            <p style="margin: 0; font-size: 14px; color: #3A3C40">출생연도 기준이라 만 나이로는 확정할 수 없어요.</p>
+          </div>
+          <span aria-hidden="true" style="position: relative; display: block; height: 16px"><span style="position: absolute; left: -8px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: #ECEEF1"></span><span style="position: absolute; left: 18px; right: 18px; top: 7px; border-top: 2px dashed #D3D6DB"></span><span style="position: absolute; right: -8px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: #ECEEF1"></span></span>
+          <div style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 14px 0 18px; font-size: 13px"><span><strong>공고 기간 중</strong><span style="color: #55575C">, 11-08까지</span></span><span style="font-weight: 700; color: #3651E8">자세히 ⌄</span></div>
+        </article>
+      </div>
+      <div>
+        <p class="lb">혜택 카드 · 펼침</p>
+        <article style="background: #FFFFFF; border-radius: 20px; overflow: hidden">
+          <div style="padding: 16px 18px 10px; display: flex; flex-direction: column; gap: 6px">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px; background: #3651E8; color: #FFFFFF; border-radius: 999px; font-size: 12px; font-weight: 700"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>조건이 맞는 후보</span><span style="padding: 3px 8px; background: #ECEEF1; color: #3A3C40; border-radius: 8px; font-size: 12px; font-weight: 700">학생 경로 있음</span></div>
+            <p style="margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.02em">국립현대미술관 서울 무료관람</p>
+            <p style="margin: 0; font-size: 14px; color: #3A3C40">만 23세라서 ‘만 24세 이하’ 조건에 맞아요.</p>
+          </div>
+          <span aria-hidden="true" style="position: relative; display: block; height: 16px"><span style="position: absolute; left: -8px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: #ECEEF1"></span><span style="position: absolute; left: 18px; right: 18px; top: 7px; border-top: 2px dashed #D3D6DB"></span><span style="position: absolute; right: -8px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: #ECEEF1"></span></span>
+          <div style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 14px 0 18px; font-size: 13px"><span><strong>상시 제도 안내</strong></span><span style="font-weight: 700; color: #3651E8">접기 ⌃</span></div>
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 18px 16px; background: #F6F7F9; border-top: 1px solid #E3E5E9; font-size: 13px">
+            <p style="margin: 0"><strong>남은 확인</strong> · 전시별 관람 조건</p>
+            <p style="margin: 0; font-size: 12px; color: #55575C">국립현대미술관 · 2026-10-24 본문 확인</p>
+            <span style="min-height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #3651E8; color: #FFFFFF; font-size: 14px; font-weight: 700">공식 안내 열기 ↗</span>
+          </div>
+        </article>
+      </div>
+      <div>
+        <p class="lb">지역 카드 · 가상 자료</p>
+        <article style="background: #FFFFFF; border-radius: 20px; border: 2px solid #3651E8">
+          <div style="padding: 14px 16px 10px; display: flex; flex-direction: column; gap: 6px">
+            <div style="display: flex; gap: 6px"><span style="padding: 3px 9px; background: #EEF1FD; color: #2A3FB8; border-radius: 999px; font-size: 12px; font-weight: 800">✓ 시간·도보·예산 안</span><span style="padding: 1px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 지역</span></div>
+            <p style="margin: 0; font-size: 18px; font-weight: 800">가상 온유동</p>
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px">
+              <span style="padding: 6px 8px; background: #F4F5F7; border-radius: 10px; font-size: 13px; font-weight: 800">40분</span>
+              <span style="padding: 6px 8px; background: #FFF4E0; color: #6B3A00; border-radius: 10px; font-size: 13px; font-weight: 800">도보 59</span>
+              <span style="padding: 6px 8px; background: #F4F5F7; border-radius: 10px; font-size: 13px; font-weight: 800">18,000</span>
+            </div>
+          </div>
+          <div aria-hidden="true" style="margin: 0 16px; border-top: 2px dashed #E3E5E9"></div>
+          <div style="padding: 10px 16px 12px; font-size: 13px"><strong>가상 지역 혜택 후보 2</strong><span style="color: #55575C">, 신청 불가 예시</span></div>
+        </article>
+      </div>
+      <div>
+        <p class="lb">저장한 코스 카드</p>
+        <article style="background: #FFFFFF; border-radius: 20px">
+          <div style="padding: 14px 16px 10px; display: flex; flex-direction: column; gap: 4px">
+            <div style="display: flex; justify-content: space-between"><span style="padding: 1px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 코스</span><span style="font-size: 12px; color: #55575C">2026-10-26</span></div>
+            <p style="margin: 0; font-size: 17px; font-weight: 800">가상 온유동 반나절</p>
+            <p style="margin: 0; font-size: 13px; color: #3A3C40">안개정원 → 느린 서가 → 햇살 식탁</p>
+          </div>
+          <div aria-hidden="true" style="margin: 0 16px; border-top: 2px dashed #E3E5E9"></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; min-height: 48px; padding: 0 14px 0 16px; font-size: 12px; color: #55575C"><span>저장 당시 · 만 23세</span><span style="font-size: 13px; font-weight: 700; color: #3651E8">다시 열기 ›</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="c-fb" style="display: flex; flex-direction: column; gap: 20px">
+    <div>
+      <h2 id="c-fb" class="sh">오류 · 저장 피드백 · 빈 상태</h2>
+      <p class="sd">무엇이 그대로 남았는지와 다음에 할 일을 함께 알려줘요. 저장은 사용자가 눌렀을 때만 해요.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start">
+      <div><p class="lb">저장 완료 알림</p>
+        <div role="status" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 10px 10px 14px; background: #202124; color: #FFFFFF; border-radius: 12px"><span style="font-size: 14px; font-weight: 700">✓ ‘가상 온유동 반나절’을 저장했어요</span><span aria-hidden="true" style="color: #C9CBD0">✕</span></div>
+      </div>
+      <div><p class="lb">저장 전 안내 · 조건 카드 안</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 8px 8px 12px; background: #2E2E31; color: #FFFFFF; border-radius: 12px"><span style="font-size: 13px; font-weight: 600">변경한 설정은 아직 저장하지 않았어요.</span><span style="min-height: 40px; display: inline-flex; align-items: center; padding: 0 12px; border: 1.5px solid #FFFFFF; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap">내 설정에 저장</span></div>
+      </div>
+      <div><p class="lb">주의 · 한도에 가까움</p>
+        <p style="margin: 0; display: flex; gap: 6px; padding: 10px 12px; background: #FFF4E0; border-radius: 12px; font-size: 13px; color: #6B3A00">⚠ 가상 도보량이 한도에 거의 닿았어요. 경험을 하나 빼면 여유가 생겨요.</p>
+      </div>
+      <div><p class="lb">저장 실패</p>
+        <div role="alert" style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: #FFFFFF; border: 2px solid #B3261E; border-radius: 12px"><span style="font-size: 15px; font-weight: 800; color: #B3261E">코스를 저장하지 못했어요</span><span style="font-size: 13px; color: #3A3C40">이름과 순서, 여행 조건은 그대로 있어요.</span><span style="min-height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #3651E8; color: #FFFFFF; font-size: 14px; font-weight: 700">다시 저장</span></div>
+      </div>
+      <div><p class="lb">불러오기 오류</p>
+        <div role="alert" style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: #FFFFFF; border: 2px solid #202124; border-radius: 16px"><span style="font-size: 15px; font-weight: 800">혜택 안내를 불러오지 못했어요</span><span style="font-size: 13px; color: #3A3C40">입력한 조건과 필터는 그대로 있어요. 그동안 후보를 판단하지 않아요.</span><span style="min-height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #202124; color: #FFFFFF; font-size: 14px; font-weight: 700">다시 시도</span></div>
+      </div>
+      <div><p class="lb">빈 결과 · 필터 0개</p>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 16px; background: #FFFFFF; border: 2px dashed #8E9197; border-radius: 12px; text-align: center"><span style="font-size: 15px; font-weight: 800">등록된 안내 중 이 조건에 맞는 결과가 없어요</span><span style="font-size: 13px; color: #55575C">필터를 바꾸거나 조건을 확인해 주세요.</span><span style="min-height: 44px; display: flex; align-items: center; justify-content: center; padding: 0 18px; border-radius: 999px; background: #202124; color: #FFFFFF; font-size: 14px; font-weight: 700">필터 초기화</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="c-open" class="panel" style="border: 2px dashed #8E9197; background: transparent">
+    <h2 id="c-open" class="sh">남은 정리 거리 <span class="tP" style="vertical-align: middle">제안</span></h2>
+    <ul style="margin: 0; padding: 0 0 0 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; row-gap: 8px; font-size: 15px">
+      <li>반영함 · 입력·칩·선택지 테두리를 #8E9197(흰 바탕 약 3.2:1)로 올렸어요. 이전 비교안(A·B안, 색 조합 1·2)은 기록이라 그대로예요.</li>
+      <li>반영함 · 가상 지역·경험·코스 태그와 작은 이름표를 12px로 맞췄어요.</li>
+      <li>반영함 · 상태별 화면에 요약 카드 방식과 ‘학생 경로 있음’ 표시를 넣었어요.</li>
+      <li>오류 빨강 #B3261E와 주의 색은 D16에 없는 디자인 가정이에요.</li>
+      <li>글꼴(Gothic A1)과 크기·간격 단계는 제안이에요. 운영 앱 글꼴은 정하지 않았어요.</li>
+      <li>대비 수치는 계산값이에요. 실기기·화면 낭독기 검사는 하지 않았어요.</li>
+    </ul>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4300}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

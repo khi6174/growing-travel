@@ -1,0 +1,3 @@
+Browser tab: 8, Title: "Growing Travel, 혼자 떠나는 뚜벅이 여행", URL: "http://127.0.0.1:4177/#home".
+There has been no change in the accessibility tree.
+The focused UI element is 73 heading 서울에서 떠나는 나만의 하루, Value: 1, ID: home-heading

@@ -1,0 +1,23 @@
+Scenario: JavaScript module syntax validation
+Invocation: node --check wireframes/mcp-management/app.mjs
+Observable: exit code 0
+Invocation: node --check wireframes/mcp-management/model.mjs
+Observable: exit code 0
+Browser validation: delegated to root; not claimed by this artifact.
+Only app.mjs and model.mjs source files changed by runtime worker.
+No currentAttemptDir: omo-agent-toolkit ulw-loop status --json returned ULW_LOOP_SUBCOMMAND_UNKNOWN.
+
+Scenario: Product button CSS contract repair and metadata alignment
+Invocation: node --check wireframes/mcp-management/app.mjs
+Observable: exit code 0
+Invocation: node --check wireframes/mcp-management/model.mjs
+Observable: exit code 0
+Static observable: 4 button template tags; 0 missing button class
+Browser hit-target validation remains root-owned.
+
+Scenario: Configuration save/status separation and mock timestamps
+Invocation: node --check wireframes/mcp-management/app.mjs
+Observable: exit code 0
+Invocation: node --check wireframes/mcp-management/model.mjs
+Observable: exit code 0
+Browser interaction verification: root-owned, not claimed here.

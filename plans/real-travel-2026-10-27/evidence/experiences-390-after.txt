@@ -1,0 +1,3 @@
+Browser tab: 8, Title: "Growing Travel, 혼자 떠나는 뚜벅이 여행", URL: "http://127.0.0.1:4177/#experiences".
+There has been no change in the accessibility tree.
+The focused UI element is 146 heading 이런 경험은 어때요?, Value: 2, ID: results-title

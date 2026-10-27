@@ -1,0 +1,311 @@
+{
+  "method": "CUA browser capture bytes decoded to PNG without resizing or retouching. Final18 after-screen raws captured after token mapping, contrast repair and bottom-navigation white underlay. Focused save/error and320screen captures predate value-preserving tokens and footerunderlay; they prove the earlier interaction only.",
+  "captures": [
+    {
+      "file": "benefit-coupon-390-viewport.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        811
+      ],
+      "png": "benefit-coupon-390-viewport.png"
+    },
+    {
+      "file": "benefits-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        4207
+      ],
+      "png": "benefits-1440-after.png"
+    },
+    {
+      "file": "benefits-1440-before.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        3947
+      ],
+      "png": "benefits-1440-before.png"
+    },
+    {
+      "file": "benefits-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        4396
+      ],
+      "png": "benefits-390-after.png"
+    },
+    {
+      "file": "benefits-390-before.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        4072
+      ],
+      "png": "benefits-390-before.png"
+    },
+    {
+      "file": "benefits-390-viewport.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        390,
+        843
+      ],
+      "png": "benefits-390-viewport.png"
+    },
+    {
+      "file": "benefits-status-1440-viewport.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1425,
+        990
+      ],
+      "png": "benefits-status-1440-viewport.png"
+    },
+    {
+      "file": "benefits-status-390-viewport.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        811
+      ],
+      "png": "benefits-status-390-viewport.png"
+    },
+    {
+      "file": "benefits-top-390-viewport.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        390,
+        843
+      ],
+      "png": "benefits-top-390-viewport.png"
+    },
+    {
+      "file": "condition-error-390.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        811
+      ],
+      "png": "condition-error-390.png"
+    },
+    {
+      "file": "course-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        2014
+      ],
+      "png": "course-1440-after.png"
+    },
+    {
+      "file": "course-1440-before.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        1741
+      ],
+      "png": "course-1440-before.png"
+    },
+    {
+      "file": "course-320-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        304,
+        2193
+      ],
+      "png": "course-320-after.png"
+    },
+    {
+      "file": "course-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        2028
+      ],
+      "png": "course-390-after.png"
+    },
+    {
+      "file": "course-390-before.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        1823
+      ],
+      "png": "course-390-before.png"
+    },
+    {
+      "file": "course-390-viewport.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        390,
+        843
+      ],
+      "png": "course-390-viewport.png"
+    },
+    {
+      "file": "experiences-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        2161
+      ],
+      "png": "experiences-1440-after.png"
+    },
+    {
+      "file": "experiences-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        2233
+      ],
+      "png": "experiences-390-after.png"
+    },
+    {
+      "file": "home-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        1323
+      ],
+      "png": "home-1440-after.png"
+    },
+    {
+      "file": "home-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        1275
+      ],
+      "png": "home-390-after.png"
+    },
+    {
+      "file": "home-390-viewport.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        390,
+        843
+      ],
+      "png": "home-390-viewport.png"
+    },
+    {
+      "file": "profile-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        1524
+      ],
+      "png": "profile-1440-after.png"
+    },
+    {
+      "file": "profile-1440-before.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        1555
+      ],
+      "png": "profile-1440-before.png"
+    },
+    {
+      "file": "profile-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        1496
+      ],
+      "png": "profile-390-after.png"
+    },
+    {
+      "file": "profile-390-before.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        1538
+      ],
+      "png": "profile-390-before.png"
+    },
+    {
+      "file": "regions-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        1836
+      ],
+      "png": "regions-1440-after.png"
+    },
+    {
+      "file": "regions-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        1951
+      ],
+      "png": "regions-390-after.png"
+    },
+    {
+      "file": "save-error-390.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        811
+      ],
+      "png": "save-error-390.png"
+    },
+    {
+      "file": "saved-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        1475
+      ],
+      "png": "saved-1440-after.png"
+    },
+    {
+      "file": "saved-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        1448
+      ],
+      "png": "saved-390-after.png"
+    },
+    {
+      "file": "settings-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        1433
+      ],
+      "png": "settings-1440-after.png"
+    },
+    {
+      "file": "settings-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        1428
+      ],
+      "png": "settings-390-after.png"
+    },
+    {
+      "file": "trip-1440-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        1424,
+        1107
+      ],
+      "png": "trip-1440-after.png"
+    },
+    {
+      "file": "trip-390-after.raw",
+      "sourceFormat": "JPEG",
+      "pixels": [
+        375,
+        1059
+      ],
+      "png": "trip-390-after.png"
+    }
+  ]
+}

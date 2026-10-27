@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3651E8">
+  <title>Growing Travel, 혼자 떠나는 뚜벅이 여행</title>
+  <meta name="description" content="상황을 입력하고 경험의 근거를 살펴 나만의 짧은 코스를 저장하는 로컬 시연입니다. 모든 장소와 경험은 가상 자료입니다.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23245d4d'/%3E%3Cpath d='M16 25V13M16 18C6 18 5 7 5 7s12-1 11 11M16 14C16 4 27 5 27 5s1 10-11 9' fill='none' stroke='%23e9eecd' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+ <div class="app-frame">
+  <a id="skip-main" href="#main" class="skip">본문으로 이동</a>
+  <header class="site-header">
+    <button id="app-back" class="icon-button" type="button" aria-label="이전 화면" disabled>←</button>
+    <a class="brand" href="#profile" data-screen-target="profile" aria-label="Growing Travel 개인 설정">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12"/><path d="M20 31V15M20 23C8 23 8 9 8 9s13-1 12 14M20 18C20 6 33 7 33 7s1 12-13 11"/></svg>
+      <span>growing <b>travel</b><small>여행할수록, 함께 자라는</small></span>
+    </a>
+    <span id="screen-caption" class="screen-caption">개인 설정</span>
+  </header>
+
+  <main id="main" class="shell" tabindex="-1">
+    <div id="demo-note" class="demo-note"><span class="small-label">가상 데이터, 시연용</span> 지역·역·경험·동선·가격·지역 혜택은 가상 예시입니다. 실제 혜택의 공식 안내는 별도로 표시합니다.</div>
+    <section id="discover-view">
+      <div id="profile-intro" class="hero">
+        <div><p class="eyebrow">SOLO DAYS, GROWING WAYS</p><h1>가볍게 떠나서,<br>나답게 채우는 하루<span>.</span></h1><p class="hero-copy">혼자, 차 없이 떠나는 20대의 작은 여행.<br>걷는 양과 예산, 확인할 혜택까지 함께 살펴보세요.</p></div>
+        <div class="hero-art" aria-hidden="true"><div class="postcard"><span>YOUR NEXT LITTLE JOURNEY</span><svg viewBox="0 0 300 170"><circle cx="239" cy="40" r="25" fill="#e9a368"/><path d="M0 120Q65 20 150 110T300 90V170H0Z" fill="#9fba92"/><path d="M0 160Q90 90 170 140T300 120V170H0Z" fill="#49755d"/><path d="M170 170Q110 145 158 120T171 75" stroke="#f4e5b9" stroke-width="13" fill="none"/><path d="M55 113V50M38 60l17-30 17 30M34 79l21-34 21 34M37 97l18-29 18 29" stroke="#245d4d" stroke-width="7" fill="#245d4d"/></svg><div>어디로 갈지 몰라도 괜찮아요.</div></div><span class="art-sticker">작은 발견을<br>모으는 중</span></div>
+      </div>
+      <div id="journey-progress" role="progressbar" aria-label="여행 만들기" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" aria-valuetext="1/5 내 설정"><span></span></div>
+      <ol class="journey-steps" aria-label="코스 만들기 순서"><li><button type="button" class="step-link" data-screen-target="profile" aria-current="step"><b>01</b> 설정</button></li><li><button type="button" class="step-link" data-screen-target="trip"><b>02</b> 조건</button></li><li><button type="button" class="step-link" data-screen-target="regions" disabled><b>03</b> 지역</button></li><li><button type="button" class="step-link" data-screen-target="experiences" disabled><b>04</b> 경험</button></li><li><button type="button" class="step-link" data-screen-target="course" disabled><b>05</b> 저장</button></li></ol>
+      <p id="navigation-notice" class="field-help" role="status" aria-live="polite"></p>
+        <section id="profile-panel" class="setup-panel app-screen" aria-labelledby="profile-heading">
+          <p class="eyebrow">01 / A LITTLE ABOUT YOU</p><h2 id="profile-heading">나에게 맞는 여행의 시작</h2>
+          <p class="panel-intro">설정을 저장하지 않아도 여행을 만들 수 있어요. 시연에는 예시 정보를 사용해 주세요.</p>
+          <form id="profile-form" novalidate>
+            <div class="field-pair"><div><label for="profile-age" class="field-label">만 나이 <small>선택</small></label><input id="profile-age" type="number" min="1" max="120" step="1" placeholder="입력 안 함" name="profile-age" autocomplete="off"></div><div><label for="profile-residence" class="field-label">거주 시·도 <small>선택</small></label><select id="profile-residence" name="profile-residence" autocomplete="off"><option value="">입력 안 함</option></select></div></div>
+            <p class="field-help">혜택 조건 비교용입니다. 거주지는 이번 여행 출발지와 달라도 괜찮아요.</p>
+            <label for="profile-student" class="field-label">대학생 여부 <small>선택</small></label>
+            <select id="profile-student" aria-describedby="student-help" name="profile-student" autocomplete="off"><option value="unspecified">입력 안 함</option><option value="student">대학생</option><option value="not_student">대학생 아님</option></select>
+            <p id="student-help" class="field-help">본인이 입력한 정보이며 재학 인증이 아닙니다. 휴학생·대학원생 포함 여부는 혜택마다 달라 공식 조건을 확인해야 해요.</p>
+            <fieldset><legend>어떤 경험이 끌리나요? <small>1개 이상</small></legend><div id="interest-options" class="interest-options"></div><p id="interests-error" class="field-error"></p></fieldset>
+            <label for="profile-walking" class="field-label">평소 편하게 걷는 시간 <small>분</small></label><input id="profile-walking" type="number" min="0" max="720" step="1" value="60" name="profile-walking" autocomplete="off">
+            <p class="field-help">이번 여행의 걷기 한도는 다음 단계에서 바꿀 수 있어요.</p>
+            <div class="profile-actions"><button type="submit" class="button subtle">설정 저장</button><button id="clear-profile" type="button" class="text-button">저장 설정 지우기</button><button id="profile-next" type="button" class="button primary">여행 조건으로</button></div>
+            <p id="profile-message" class="save-message" role="status" aria-live="polite"></p>
+            <p class="storage-note">설정 저장을 누르면 이 브라우저에만 보관됩니다. 코스를 저장하면 당시 입력도 코스에 보관됩니다.</p>
+          </form>
+        </section>
+        <section id="trip-panel" class="setup-panel app-screen" aria-labelledby="trip-heading" hidden>
+          <p class="eyebrow">02 / THIS TIME, THIS JOURNEY</p><h2 id="trip-heading">이번에는 어떻게 떠날까요?</h2>
+          <p class="panel-intro">기차·대중교통과 도보로 이동하는 하루를 가정해요.</p>
+          <form id="context-form" novalidate>
+            <div class="field-pair"><div><label for="departure" class="field-label">출발역 <small>가상 역</small></label><select id="departure" name="departure" autocomplete="off"></select></div><div><label for="travel-date" class="field-label">여행일</label><input id="travel-date" type="date" required name="travel-date" autocomplete="off"></div></div>
+            <div class="field-pair"><div><label for="minutes" class="field-label">왕복 포함 가능 시간 <small>분</small></label><input id="minutes" type="number" min="1" max="1440" step="1" value="300" aria-describedby="minutes-error" required name="minutes" autocomplete="off"></div><div><label for="budget" class="field-label">1인 예산 <small>원</small></label><input id="budget" type="number" min="0" max="10000000" step="1000" value="50000" required name="budget" autocomplete="off"></div></div>
+            <p id="minutes-error" class="field-error"></p>
+            <div class="field-pair"><div><label for="party-size" class="field-label">여행 인원</label><input id="party-size" type="number" min="1" max="6" step="1" value="1" required name="party-size" autocomplete="off"></div><div><label for="walking-limit" class="field-label">이번 걷기 한도 <small>분</small></label><input id="walking-limit" type="number" min="0" max="720" step="1" value="60" required name="walking-limit" autocomplete="off"></div></div>
+            <label class="check-label"><input type="checkbox" role="switch" id="avoid-stairs" name="avoid-stairs" autocomplete="off"> 계단이 있는 경험 피하기</label>
+            <p id="form-error" class="field-error" role="alert"></p>
+            <button id="recommend-button" class="button primary full" type="submit">지역·혜택 비교하기 </button>
+          </form>
+        </section>
+      <section id="regions-panel" class="comparison-panel app-screen" aria-labelledby="regions-heading" hidden>
+        <div class="results-heading"><div><p class="eyebrow">03 / FIND YOUR NEXT STOP</p><h2 id="regions-heading">지역과 혜택, 나란히 비교해요</h2></div><div class="sort-control"><label for="region-sort">정렬</label><select id="region-sort" name="region-sort" autocomplete="off"><option value="fit">여행 조건 우선</option><option value="benefits">혜택 후보 우선</option></select></div></div>
+        <p class="panel-intro">아래 지역 혜택은 조건 비교를 체험하기 위한 가상 예시이며 실제로 신청할 수 없습니다. 혜택은 예상 비용에서 차감하지 않아요.</p>
+        <div id="comparison-status" role="status" aria-live="polite"></div><div id="region-grid" class="region-grid"></div>
+        <div id="replace-prompt" class="inline-confirm" hidden><p>이 지역으로 새 코스를 추천받을까요? 편집 중인 초안은 새로 시작하고 저장한 코스는 유지합니다.</p><button id="confirm-replace" type="button" class="button primary">새 코스 시작</button><button id="cancel-replace" type="button" class="button subtle">편집 계속하기</button></div>
+        <details class="official-panel"><summary>실제 혜택은 공식 안내에서 확인하세요 </summary><p class="panel-intro">가상 지역·경험에 적용한 혜택이 아닙니다. 현재 접수·좌석·개인 수혜 여부는 확인하지 않았어요.</p><div id="official-benefits" class="official-grid"></div><p class="field-help">숙박·지역 여행 지원은 현재 모집 중인 공식 자료를 추가 확인할 예정입니다.</p></details>
+      </section>
+      <section id="experience-screen" class="app-screen" aria-labelledby="results-title" hidden>
+          <div class="results-heading"><div><p class="eyebrow">04 / EXPERIENCES FOR YOU</p><h2 id="results-title">작은 발견이 기다리고 있어요</h2></div><span id="results-meta" class="muted"></span></div>
+          <div id="results-status" role="status" aria-live="polite"></div><p id="selection-notice" class="field-help" role="status" aria-live="polite"></p>
+          <div id="results-grid" class="experience-grid"><div class="empty-state"><span class="empty-symbol">✳</span><h3>지금의 나에게 맞는 여행</h3><p>왼쪽에서 상황을 입력하면<br>경험과 추천 이유를 함께 살펴볼 수 있어요.</p><span class="tag">목적지 미정도 괜찮아요</span></div></div>
+          <button id="course-shortcut" class="button primary full screen-action" type="button" disabled>코스 확인, 0개</button>
+      </section>
+          <section id="course-panel" class="course-panel app-screen" aria-labelledby="course-heading" hidden>
+            <div class="course-heading"><div><p class="eyebrow">여행 5 / 5</p><h2 id="course-heading">역에서 시작해,<br>다시 역으로</h2><p class="course-demo-label">가상 코스, 시연용</p></div><img class="course-station-art" src="/assets/station.png" alt="" width="170" height="150"></div>
+            <div id="estimate" class="course-overview" hidden></div>
+            <p id="course-order-notice" class="field-help" role="status" aria-live="polite"></p><div id="course-items"></div>
+            <div id="course-editor" hidden>
+              <aside class="course-benefit-ticket" aria-labelledby="course-benefit-heading"><div class="course-benefit-top"><p class="eyebrow">공식 혜택 안내</p><h3 id="course-benefit-heading">혜택은 따로 확인해요</h3><a class="text-button" href="#benefits" data-screen-target="benefits">내 조건에 맞는 후보 살펴보기</a></div><div class="course-benefit-bottom"><p>조건·공고 상태는 혜택 탭에서 확인</p><small>가상 코스 비용에는 반영하지 않아요.</small></div></aside>
+              <div id="journey-summary" class="journey-summary"></div>
+              <details class="course-context-details"><summary>이번 코스의 입력 조건</summary><span id="course-count" class="round-label">0개의 경험</span><p id="course-context" class="muted">추천에서 마음에 드는 경험을 담아보세요.</p><button id="course-back-experiences" class="text-button" type="button">경험 다시 고르기</button></details>
+              <details class="course-settings"><summary>코스 이름 수정</summary><label for="course-title" class="field-label">코스 이름</label><input id="course-title" maxlength="80" value="나의 작은 여행" autocomplete="off" name="course-title"></details>
+              <label class="check-label warning-check"><input type="checkbox" id="acknowledge" name="acknowledge" autocomplete="off"> 가상 코스이며 이동 시간·운영 정보가 미확인임을 확인했어요.</label>
+              <p id="save-message" class="save-message" role="status" aria-live="polite"></p>
+              <div class="save-actions"><button id="save-course" class="button primary">코스 저장하기</button><button id="view-saved" class="button subtle" hidden>저장한 코스 보기</button><button id="new-course" class="text-button">새 코스</button></div>
+              <p class="storage-note">입력한 나이·거주 지역·대학생 여부·여행 조건도 이 브라우저의 코스에 함께 저장됩니다. 설정을 따로 지워도 코스의 당시 입력은 유지됩니다.</p>
+            </div>
+          </section>
+    </section>
+    <section id="benefits-view" class="app-screen" aria-labelledby="benefits-heading" hidden>
+      <div class="benefits-heading"><p class="eyebrow">YOUR NEXT TRAVEL TICKET</p><h1 id="benefits-heading">내 조건부터,<br>혜택은 차근차근</h1><p class="panel-intro">맞는 이유와 남은 확인을 함께 봐요.</p></div>
+      <p id="benefits-date" class="field-help"></p>
+      <details class="benefits-guide"><summary>공식 자료, 실시간 접수, 수혜 보장 아님</summary><p class="field-help">예산·좌석·수량 소진이나 공고 변경은 공식 안내에서 확인해 주세요. 가상 지역에 적용하거나 코스 비용에서 차감하지 않아요. 후보도 가입·증빙 등 남은 조건을 확인해야 합니다.</p></details>
+      <div class="benefits-profile"><div class="profile-summary-head"><strong>비교에 쓰는 내 조건</strong><button id="benefits-edit-profile" class="button primary" type="button" aria-haspopup="dialog">수정</button></div><dl id="benefits-student" class="condition-summary"></dl><details class="condition-save-details"><summary>입력·저장 상태</summary><p id="benefits-input-note" class="field-help"></p><button id="benefits-save-profile" type="button" class="text-button">내 설정에 저장</button></details><p id="benefits-profile-message" class="field-help" role="status" aria-live="polite"></p></div>
+      <div class="filter-chips" role="group" aria-label="혜택 분야"><button class="filter-chip" type="button" data-benefit-category="all" aria-pressed="true">전체</button><button class="filter-chip" type="button" data-benefit-category="교통" aria-pressed="false">교통</button><button class="filter-chip" type="button" data-benefit-category="숙박" aria-pressed="false">숙박</button><button class="filter-chip" type="button" data-benefit-category="여행" aria-pressed="false">여행</button><button class="filter-chip" type="button" data-benefit-category="문화" aria-pressed="false">문화</button></div>
+      <input id="benefit-category" type="hidden" value="all" name="benefit-category" autocomplete="off">
+      <div class="filter-chips" role="group" aria-label="추가 혜택 필터"><button id="benefit-student-route" type="button" class="filter-chip" aria-pressed="false">학생 조건 있음</button><button id="benefit-in-period" type="button" class="filter-chip" aria-pressed="false">공고 기간 중</button></div>
+      <details class="filter-more"><summary>진행·비교 상태 상세 필터</summary><div class="benefits-filters"><label for="benefit-state" class="field-label">공고 진행 상태</label><select id="benefit-state" name="benefit-state" autocomplete="off"><option value="all">전체 상태</option><option value="in_period">공고 기간 중, 마감 확인 필요</option><option value="ongoing_info">상시 제도 안내</option><option value="needs_check">진행 확인 필요</option><option value="upcoming">시작 전</option><option value="ended">공고 기간 종료</option></select></div>
+      <label for="benefit-match" class="field-label">나와의 조건 비교</label><select id="benefit-match" name="benefit-match" autocomplete="off"><option value="all">전체, 맞는 후보 우선</option><option value="candidate">조건이 맞는 후보</option><option value="needs_info">추가 확인 필요</option><option value="not_matched">알려진 조건 불일치</option><option value="not_current">현재 기간 외</option></select>
+      <div id="benefit-shortcuts" class="benefit-shortcuts" role="group" aria-label="개인 조건 상태 바로 보기"></div></details><p class="field-help">후보는 입력 조건의 비교 결과이며 신청·수혜 확정이 아니에요.</p>
+      <p id="benefits-count" class="field-help" role="status" aria-live="polite"></p>
+      <p id="student-filter-note" class="field-help" hidden></p>
+      <div id="benefits-list" class="official-grid"></div>
+    </section>
+    <section id="saved-view" class="app-screen" hidden>
+      <div class="saved-hero"><p class="eyebrow">YOUR JOURNEY COLLECTION</p><h1>다시 꺼내 보는<br>나의 작은 여행<span>.</span></h1><p>이 브라우저에 보관한 가상 코스입니다. 선택한 순서와 근거를 다시 확인해 보세요.</p></div>
+      <p class="field-help">다시 열면 당시 조건을 보여 드려요. 지금 혜택을 비교하는 내 조건은 바뀌지 않아요.</p>
+      <div id="saved-notice" class="save-notice" role="status" hidden><p id="saved-notice-text"></p><button id="dismiss-saved-notice" type="button" class="text-button">알림 닫기</button></div>
+      <p id="storage-error" class="field-error" role="alert"></p><ul id="saved-list" class="saved-grid"></ul>
+    </section>
+    <footer class="page-footer"><span>growing travel</span><p>실제 후기·평점·게시판은 다음 단계에서 준비합니다.</p><small>가상 코스, 규칙 기반 추천, 로컬 저장</small></footer>
+  </main>
+  <nav class="bottom-nav" aria-label="주 메뉴">
+    <button id="discover-tab" class="nav-button" type="button"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7v11h-6v-7H9v7H3Z"/></svg></span><span>여행</span></button>
+    <button id="benefits-tab" class="nav-button" type="button"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18v5a2 2 0 0 0 0 4v5H3v-5a2 2 0 0 0 0-4Z"/><path d="M9 10h.01M15 16h.01M9 16l6-6"/></svg></span><span>혜택</span></button>
+    <button id="saved-tab" class="nav-button" type="button"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4Z"/></svg></span><span>저장한 코스 <span id="saved-count" class="count">0</span></span></button>
+    <button id="profile-tab" class="nav-button active" type="button" aria-current="page"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg></span><span>내 설정</span></button>
+  </nav>
+  <dialog id="benefit-condition-sheet" class="benefit-sheet" aria-modal="true" aria-labelledby="condition-heading" aria-describedby="condition-help">
+    <div class="sheet-header"><div><p class="eyebrow">YOUR CONDITIONS</p><h2 id="condition-heading" tabindex="-1">혜택 비교 조건</h2></div><button id="close-condition-sheet" type="button" class="icon-button" aria-label="조건 수정 닫기">×</button></div>
+    <p id="condition-help" class="panel-intro">모두 선택 입력이에요. 적용하기 전에는 비교 조건이 바뀌지 않아요. 닫아도 입력한 초안은 남아요.</p>
+    <form id="benefit-condition-form" novalidate>
+      <label for="condition-age" class="field-label">만 나이 <small>선택</small></label><div class="number-input"><input id="condition-age" type="number" min="1" max="120" step="1" placeholder="입력 안 함" aria-describedby="condition-age-error" name="condition-age" autocomplete="off"><span aria-hidden="true">세</span><button id="clear-condition-age" type="button" class="text-button">비우기</button></div><p id="condition-age-error" class="field-error"></p>
+      <label for="condition-residence" class="field-label">거주 시·도 <small>선택, 출발지와 달라요</small></label><select id="condition-residence" name="condition-residence" autocomplete="off"><option value="">입력 안 함</option></select>
+      <fieldset class="student-options"><legend>대학생 여부 <small>선택, 자기 보고</small></legend><label><input type="radio" name="condition-student" value="unspecified" checked autocomplete="off"> 미입력</label><label><input type="radio" name="condition-student" value="student" autocomplete="off"> 대학생</label><label><input type="radio" name="condition-student" value="not_student" autocomplete="off" aria-label="대학생 아님"> 아님</label></fieldset>
+      <p class="field-help">재학 인증이 아니에요. 학부생 여부와 기관별 증빙은 공식 안내에서 따로 확인해 주세요.</p>
+      <button id="clear-condition-draft" type="button" class="text-button">선택 입력 비우기</button><p id="condition-error" class="sheet-error field-error" role="alert"></p>
+      <div class="sheet-actions"><button id="save-condition" type="submit" class="button primary full">내 설정에 저장하고 비교</button><button id="apply-condition" type="button" class="button subtle full">이번 비교에만 적용</button></div>
+      <p class="storage-note">저장은 이 브라우저에만 보관돼요. 이번 비교에만 적용하면 새로고침 후에는 저장된 설정으로 돌아가요.</p>
+    </form>
+  </dialog>
+  <dialog id="evidence-dialog" aria-modal="true" aria-labelledby="evidence-heading"><button id="close-evidence" class="dialog-close" aria-label="상세 창 닫기">×</button><div id="evidence-content"></div></dialog>
+  <noscript>이 로컬 시연은 브라우저의 JavaScript를 켜야 실행할 수 있습니다.</noscript>
+ </div>
+</body>
+</html>
+

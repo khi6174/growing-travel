@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>혜택, 필터 결과 없음</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance}
+button,a,label,select,input{touch-action:manipulation;-webkit-tap-highlight-color:rgba(54,81,232,.15)}
+button,a{cursor:pointer}
+:focus-visible{outline:3px solid #3651E8;outline-offset:2px}
+button:hover,a:hover{filter:brightness(.94)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+a{color:#202124}a:hover{color:#3651E8}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #ECEEF1; color: #202124; font-family: 'Gothic A1', system-ui, sans-serif; font-size: 15px; line-height: 1.6; word-break: keep-all; overflow: hidden">
+  <main style="flex-grow: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 18px 16px 16px">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; padding: 4px 4px 0">
+      <h1 style="margin: 0; font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.03em">혜택</h1>
+      <p style="margin: 0 0 3px; font-size: 12px; font-weight: 600; color: #55575C">안내 7개, 2026-10-24 확인</p>
+    </div>
+
+    <section aria-labelledby="f-cond" style="background: #202124; color: #FFFFFF; border-radius: 20px; padding: 12px 12px 12px 18px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+      <div style="flex-grow: 1; min-width: 0">
+        <h2 id="f-cond" style="margin: 0; font-size: 13px; font-weight: 600; color: #C9CBD0">비교에 쓰는 내 조건 (가상 입력)</h2>
+        <dl style="margin: 4px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 12px"><div><dt style="font-size: 12px; color: #C9CBD0">나이</dt><dd style="margin: 0; font-size: 16px; font-weight: 700">만 23세</dd></div><div><dt style="font-size: 12px; color: #C9CBD0">거주</dt><dd style="margin: 0; font-size: 16px; font-weight: 700">서울</dd></div><div><dt style="font-size: 12px; color: #C9CBD0">학생</dt><dd style="margin: 0; font-size: 16px; font-weight: 700">대학생<span style="display: block; font-size: 12px; font-weight: 500; color: #C9CBD0">본인 입력</span></dd></div></dl>
+      </div>
+      <button type="button" style="flex-shrink: 0; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #3651E8; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">수정</button>
+    </section>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <button type="button" aria-pressed="false" style="min-height: 44px; padding: 0 16px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600">전체</button>
+        <button type="button" aria-pressed="false" style="min-height: 44px; padding: 0 16px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600">교통</button>
+        <button type="button" aria-pressed="true" style="min-height: 44px; display: inline-flex; align-items: center; gap: 4px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: #202124; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>숙박</button>
+        <button type="button" aria-pressed="false" style="min-height: 44px; padding: 0 16px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600">문화</button>
+        <button type="button" aria-pressed="true" style="min-height: 44px; display: inline-flex; align-items: center; gap: 5px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: #202124; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11v5c3 2 9 2 12 0v-5"></path></svg>학생 조건 있음</button>
+      </div>
+      <p aria-live="polite" style="margin: 0; padding: 0 4px; font-size: 13px; font-weight: 600; color: #55575C">숙박, 학생 조건 있음 적용, 결과 0개</p>
+    </div>
+
+    <section aria-labelledby="f-empty" style="background: #FFFFFF; border: 2px dashed #8E9197; border-radius: 12px; padding: 26px 20px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#55575C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"></path><path d="M14 8v1.5M14 11.25v1.5M14 14.5v1.5"></path></svg>
+      <h2 id="f-empty" style="margin: 0; font-size: 18px; line-height: 1.4; font-weight: 800">등록된 안내 중 이 조건에 맞는 결과가 없어요</h2>
+      <p style="margin: 0; font-size: 14px; color: #55575C">필터를 바꾸거나 조건을 확인해 주세요. 숙박 안내 1개는 학생 조건이 없는 혜택이에요.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 6px">
+        <button type="button" style="min-height: 48px; border: 0; border-radius: 999px; background: #202124; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700">필터 초기화</button>
+        <button type="button" style="min-height: 48px; border: 1.5px solid #202124; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 15px; font-weight: 700">학생 조건 필터만 끄기</button>
+      </div>
+    </section>
+  </main>
+
+  <nav aria-label="주요 메뉴" style="flex-shrink: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 0 12px calc(14px + env(safe-area-inset-bottom)); padding: 6px; background: #202124; border-radius: 24px">
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"></path></svg>여행</a>
+    <a href="#" aria-current="page" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: #3651E8; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 800; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"></path><path d="M14 8v1.5M14 11.25v1.5M14 14.5v1.5"></path></svg>혜택</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"></path></svg>저장한 코스</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>내 설정</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

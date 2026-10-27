@@ -1,0 +1,243 @@
+{
+  "package": "Growing Travel Codex design handoff (2nd)",
+  "createdAt": "2026-10-26",
+  "note": "Screens are headless Edge renders of the canvas source HTML, not device captures. Fictional inputs and synthetic travel data.",
+  "fileCount": 47,
+  "files": [
+    {
+      "path": "00_START_HERE.md",
+      "bytes": 7932,
+      "sha256": "07a690b3985b8c62ced6fae39adbc7fc86405dfcd842aa7153b438f65e17742e"
+    },
+    {
+      "path": "DESIGN_SPEC.md",
+      "bytes": 11253,
+      "sha256": "72e4aab55b4cc93982258eeb6ac17ec730cbdb937e1192861eea783d3f0e7f1d"
+    },
+    {
+      "path": "PASTE_THIS_REQUEST.txt",
+      "bytes": 2861,
+      "sha256": "ce12e16567be0fd98cfd7f3a535394b0d50840bdd102107b316ced5c22578ef1"
+    },
+    {
+      "path": "screens/01_IA_FLOW.png",
+      "bytes": 129278,
+      "sha256": "5b92f66524fc230ddd83e0d4e9fd1d740c894b1655a337c8b19cd6383f372205"
+    },
+    {
+      "path": "screens/02_BENEFIT_LIST.png",
+      "bytes": 348592,
+      "sha256": "e0a4e470e6ea7faefdab87f9e61565faaf54789dfe0ac1f933cf1820bcab9d6b"
+    },
+    {
+      "path": "screens/03_STATE_CANDIDATE.png",
+      "bytes": 123630,
+      "sha256": "1932c1c963272a0078df25da604e6b4dcfd7e932d5f09b8fb6f16abf8bb294c3"
+    },
+    {
+      "path": "screens/04_STATE_NEEDS_INFO.png",
+      "bytes": 111100,
+      "sha256": "1de5d69b09d1dbe3cecb75ce8fcf07a33002dad5402df7fe62665f55c19bf765"
+    },
+    {
+      "path": "screens/05_STATE_MISMATCH_UNSAVED.png",
+      "bytes": 115482,
+      "sha256": "76fe3d959419fca274e7067e91f3d5c1a5d9bb90ea3263bd0d08c4c4d2fffcde"
+    },
+    {
+      "path": "screens/06_STATE_NOT_CURRENT.png",
+      "bytes": 97077,
+      "sha256": "9256cbeba7feb80a099c342efe4a32b8c780035416d72b13fbf6cd1864cf53ea"
+    },
+    {
+      "path": "screens/07_STATE_FILTER_EMPTY.png",
+      "bytes": 98551,
+      "sha256": "8da87d9a121bd1e069fcb52b6e6623470f3cdf87fe4b56f18ad1762694ef715d"
+    },
+    {
+      "path": "screens/08_STATE_LOAD_ERROR.png",
+      "bytes": 74315,
+      "sha256": "1436d2feb291259f5784d863ef1ab91131f0c8c6a90f9572a36de3f89de232cb"
+    },
+    {
+      "path": "screens/09_CONDITION_SHEET.png",
+      "bytes": 89615,
+      "sha256": "04b6b9a1d9422d4392c72259a3651a1c607d6266c964c56495a12bb5a7d599ec"
+    },
+    {
+      "path": "screens/10_CONDITION_SHEET_ERROR.png",
+      "bytes": 93679,
+      "sha256": "b929a3a15d0c4f2371ff0db22bdeb4a3e7e52f1cb9dc965f51afb54a945607e8"
+    },
+    {
+      "path": "screens/11_REASON_DETAIL.png",
+      "bytes": 149790,
+      "sha256": "7b0eb89b66fcbf8e60d87b4661460da5e4967ed798c08c1db376d7b98d8f5040"
+    },
+    {
+      "path": "screens/12_STUDENT_ROUTE.png",
+      "bytes": 102763,
+      "sha256": "f98f05597133e87a482fbfc70f8a0e8609b217332034f72635d80b0e189a48f2"
+    },
+    {
+      "path": "screens/13_STUDENT_FILTER_ON.png",
+      "bytes": 120935,
+      "sha256": "84ccb43521afdf49db135f10a21311645e2d8d6f7c16b0b98e357856b72d810a"
+    },
+    {
+      "path": "screens/14_TRIP_CONDITIONS.png",
+      "bytes": 104639,
+      "sha256": "3b63695c41c6f33dc01793d838184ff5897c22c90cf5162f7fdca007c8f1eec9"
+    },
+    {
+      "path": "screens/15_TRIP_REGIONS.png",
+      "bytes": 124501,
+      "sha256": "6ca2519032712181128db0c708b6b8cfd86a3d62b9c42e8257a82ab506e2fa22"
+    },
+    {
+      "path": "screens/16_TRIP_EXPERIENCES.png",
+      "bytes": 119302,
+      "sha256": "520c572cd51bee8a0c18c17c4c4d9c6b76c39c4c47f713cfe6a580be18b3dbda"
+    },
+    {
+      "path": "screens/17_TRIP_COURSE.png",
+      "bytes": 123413,
+      "sha256": "20101e4d805b5e19df61d915cfb860749e55ebee100675e7c42dac4d1015d293"
+    },
+    {
+      "path": "screens/18_TRIP_COURSE_SAVE_ERROR.png",
+      "bytes": 91988,
+      "sha256": "1c6154171a75441e9344eeadd39beb4382cab4111a8355313f453a6077a305f5"
+    },
+    {
+      "path": "screens/19_SAVED_COURSES.png",
+      "bytes": 104109,
+      "sha256": "97cf35804f6cb93d108e4b085ab309747894722dc4394dc287869cffb7afac01"
+    },
+    {
+      "path": "screens/20_COMPONENTS.png",
+      "bytes": 474418,
+      "sha256": "533a4cbae816649c764b88105e628ef183e24181a112ad5f76c5a9773d2913e1"
+    },
+    {
+      "path": "screens/21_REFINEMENT.png",
+      "bytes": 358303,
+      "sha256": "65686e3d6366208e25611d1f3f4ad4b903036a8c419edb0be65802257b65e3f6"
+    },
+    {
+      "path": "source/BenefitList.dc.html",
+      "bytes": 23290,
+      "sha256": "29373d2d04ffcc26ad01746e506dfebc10fea1087631eddaf09d7cc435d53ecb"
+    },
+    {
+      "path": "source/BenefitListCompact.dc.html",
+      "bytes": 26013,
+      "sha256": "0dbd6e48cc833f8a580b3d56e6afbaf07e9914b65e50c24874ce882b5fa7d2cf"
+    },
+    {
+      "path": "source/Components.dc.html",
+      "bytes": 49663,
+      "sha256": "b9554ab5e6bb53453f6af7086ef13cb1f1e2447382bb17b99eb4a4dfc20129a7"
+    },
+    {
+      "path": "source/ConditionSheet.dc.html",
+      "bytes": 7682,
+      "sha256": "e502c8e81f18decef995aeebbde56e510bc6d65c5efbca359b6c7aa4cc2c5938"
+    },
+    {
+      "path": "source/ConditionSheetError.dc.html",
+      "bytes": 8168,
+      "sha256": "38edf4b9aa979270559a78b8fe31ca4c9685838546c65ec736b9dc03e23f20b6"
+    },
+    {
+      "path": "source/Handoff.dc.html",
+      "bytes": 19894,
+      "sha256": "93c27df4cf5ba90f068583c4b7854db8cec14d2ff6f95935249fb6cb2adddd3b"
+    },
+    {
+      "path": "source/IAFlow.dc.html",
+      "bytes": 19186,
+      "sha256": "cd2c7d7f3e3bc5b107c5670b556bfe8a2347709873d297af4a1bcba5d549245c"
+    },
+    {
+      "path": "source/ReasonDetail.dc.html",
+      "bytes": 11142,
+      "sha256": "8c781198425231eb9d083183ab1936aaa53696b6c65fbe84b9e1d1e30c457cf9"
+    },
+    {
+      "path": "source/Refinement.dc.html",
+      "bytes": 16783,
+      "sha256": "cb5afc6c324285e4c1d78edbeb48246a7689c44050bac8118e44f549be030ea3"
+    },
+    {
+      "path": "source/SavedCourses.dc.html",
+      "bytes": 9498,
+      "sha256": "4826eb5bb343b3cc8fadb43d0845fabc205405c36e7370cb139e63eccdc16671"
+    },
+    {
+      "path": "source/StateCandidate.dc.html",
+      "bytes": 11315,
+      "sha256": "702402aca41d8dccb0d1ac7c26332133333d5b6b965e6be794763b7867a7254c"
+    },
+    {
+      "path": "source/StateEmpty.dc.html",
+      "bytes": 11471,
+      "sha256": "4afac5f3b7d4891d0b744d599dba541b15659c4fc0b13bf9871f5eb7ae772260"
+    },
+    {
+      "path": "source/StateEnded.dc.html",
+      "bytes": 10532,
+      "sha256": "306c967530a6a62f345364918743f28d7225f0e1f4cca9a8e7619aa618716c22"
+    },
+    {
+      "path": "source/StateError.dc.html",
+      "bytes": 6663,
+      "sha256": "dc91ab62ea8075b83db016e9112cf716d4695c509c3d5e73e95b3309614b5398"
+    },
+    {
+      "path": "source/StateMismatch.dc.html",
+      "bytes": 12111,
+      "sha256": "580783602e8e6f8579ca27001717477ade988824ba2975b7af256e5aab594c8f"
+    },
+    {
+      "path": "source/StateNoResult.dc.html",
+      "bytes": 8840,
+      "sha256": "d747fbf80eaf0b617f0736214b6b4bc1947a1895a0fcd9f6ee0f164d97b845b5"
+    },
+    {
+      "path": "source/StudentChip.dc.html",
+      "bytes": 10751,
+      "sha256": "e1171b6ce2746fe65602138b7cdf040e7e9bb0ed4c83603cb7a45239600fd4e6"
+    },
+    {
+      "path": "source/StudentChipOn.dc.html",
+      "bytes": 10622,
+      "sha256": "7c761a7bf7c26847db7c4f70480e28adde1398eab2cf4152349225af286e3729"
+    },
+    {
+      "path": "source/TripConditions.dc.html",
+      "bytes": 12207,
+      "sha256": "f05f0820eb0c7ed15725a61d4db35e83a8984cfb970e5fdfe5eba2263a0d0749"
+    },
+    {
+      "path": "source/TripCourse.dc.html",
+      "bytes": 13744,
+      "sha256": "e1fcf2656357a8e294329748545cc22e6e42831f0110c0012a81aa3305746eda"
+    },
+    {
+      "path": "source/TripCourseError.dc.html",
+      "bytes": 9057,
+      "sha256": "5e7ac32fefa85e3cc539c01c8d3d8160d4405cf8c16b93012eaf9e7d15ad7559"
+    },
+    {
+      "path": "source/TripExperiences.dc.html",
+      "bytes": 12453,
+      "sha256": "3ce8b13ae61b07da748b853bbb1f59fd0c759eb36d07a61d8522ea4eceee0307"
+    },
+    {
+      "path": "source/TripRegions.dc.html",
+      "bytes": 12315,
+      "sha256": "a6c209aff4dd1f2dd323f5f638e7735f03f4b11e6e4ccaf123a13c26152eef96"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+✔ unprepared deep links return to the input step without inventing comparisons or courses (1.4049ms)
+✔ invalid settings cannot be bypassed by entering trip or recommendation screens (0.2785ms)
+✔ existing draft remains readable while newly edited settings or comparisons are stale (0.2696ms)
+✔ comparison, recommendation and saved-course re-entry use only available stages (1.7057ms)
+✔ parent navigation is bounded inside the flow and does not mutate readiness state (1.5383ms)
+✔ benefits can be opened on first use with missing or invalid settings without requiring a trip (0.2543ms)
+✔ home and current settings remain reachable with invalid or missing travel inputs (0.3535ms)
+✔ legacy profile route stays the travel preference step while settings has its own main tab (0.2913ms)
+✔ real null aggregates never become zero and selected places form round trip (18.3372ms)
+✔ user times apply only to matching directed legs; reorder discards obsolete overrides (2.5895ms)
+✔ regular closure is excluded; unknown stairs do not become accessible (0.7954ms)
+✔ map links encode names and use explicit search fallback when coordinates unknown (0.4991ms)
+✔ snapshot validator rejects tampered sums, order, references, URLs and coordinates (5.5931ms)
+✔ historical official description is validated from saved snapshot without catalog rebuild (4.1706ms)
+✔ input bounds, dates, duplicate selections and references fail before saving (2.3154ms)
+✔ mixed real and legacy store preserves old request history and idempotence (24.7805ms)
+✔ pre-student historical request bytes coexist unchanged with new real course (20.015ms)
+✔ metadata uses comma separators while keeping Korean administrative names intact (1.1262ms)
+✔ unspaced metadata enumerations use commas without splitting administrative names (0.2167ms)
+✔ formatting metadata retains actual route order and its arrows (0.143ms)
+✔ real publication metadata keeps currentness uncertainty and separates it from a personal match (4.333ms)
+✔ formatting leaves real official data, evidence, and matching output unchanged (1.1648ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 364.6706

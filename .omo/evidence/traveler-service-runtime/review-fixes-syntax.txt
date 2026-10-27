@@ -1,0 +1,9 @@
+Traveler wireframe review fixes
+UTC: 2026-10-27T11:06:54.1643208Z
+Scenario: updated app module parses after scroll/focus restoration, duplicate input synchronization, and note-listener removal.
+Invocation: node --check wireframes/traveler-service/app.mjs
+Binary observable: exit code 0
+Output: (none)
+SHA256: 3BE47ECAC1BC43C3D999E5364FEEB28F0785E84B58F240AC8E094871354150C0
+Nonblank noncomment lines: 174
+Browser behavior is not verified by this syntax-only artifact. Root owns browser QA; no concurrent browser use performed.

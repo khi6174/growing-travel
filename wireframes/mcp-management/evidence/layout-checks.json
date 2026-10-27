@@ -1,0 +1,330 @@
+[
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "연결 추가"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#overview",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "연결 확인"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#add",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "도구·접근 설정"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#detail",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "변경 저장"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#access",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#activity",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "인증 단계 시연"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#recovery",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "연결 추가"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#overview",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "연결 확인"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#add",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "도구·접근 설정"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#detail",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "변경 저장"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#access",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#activity",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 1440,
+    "primaryButtons": [
+      "인증 단계 시연"
+    ],
+    "scrollWidth": 1440,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#recovery",
+    "viewport": [
+      1440,
+      1000
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "연결 추가"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#overview",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "연결 확인"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#add",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "도구·접근 설정"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#detail",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "변경 저장"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#access",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#activity",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "인증 단계 시연"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "light",
+    "view": "#recovery",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "연결 추가"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#overview",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "연결 확인"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#add",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "도구·접근 설정"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#detail",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "변경 저장"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#access",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#activity",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "docWidth": 390,
+    "primaryButtons": [
+      "인증 단계 시연"
+    ],
+    "scrollWidth": 390,
+    "smallButtons": [],
+    "theme": "dark",
+    "view": "#recovery",
+    "viewport": [
+      390,
+      844
+    ]
+  }
+]

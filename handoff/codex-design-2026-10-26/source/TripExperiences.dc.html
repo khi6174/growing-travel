@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>경험 추천과 근거</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance}
+button,a,label,select,input{touch-action:manipulation;-webkit-tap-highlight-color:rgba(54,81,232,.15)}
+button,a{cursor:pointer}
+:focus-visible{outline:3px solid #3651E8;outline-offset:2px}
+button:hover,a:hover{filter:brightness(.94)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+a{color:#202124}a:hover{color:#3651E8}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #ECEEF1; color: #202124; font-family: 'Gothic A1', system-ui, sans-serif; font-size: 15px; line-height: 1.6; word-break: keep-all; overflow: hidden">
+  <header style="flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; padding: 8px 16px 10px 8px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <a href="TripRegions.dc.html" aria-label="이전 단계" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+      <p style="margin: 0; font-size: 15px; font-weight: 700">여행 만들기</p>
+      <p style="margin: 0; font-size: 13px; font-weight: 700; color: #55575C">4 / 5</p>
+    </div>
+    <div role="progressbar" aria-label="여행 만들기 진행" aria-valuemin="1" aria-valuemax="5" aria-valuenow="4" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding-left: 8px">
+      <div style="height: 4px; border-radius: 2px; background: #3651E8"></div>
+      <div style="height: 4px; border-radius: 2px; background: #3651E8"></div>
+      <div style="height: 4px; border-radius: 2px; background: #3651E8"></div>
+      <div style="height: 4px; border-radius: 2px; background: #3651E8"></div>
+      <div style="height: 4px; border-radius: 2px; background: #8E9197"></div>
+    </div>
+  </header>
+
+  <main style="flex-grow: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 16px 12px">
+    <div style="padding: 0 4px">
+      <h1 style="margin: 0; font-size: 26px; line-height: 1.25; font-weight: 800; letter-spacing: -0.02em">이런 경험은 어때요?</h1>
+      <p style="margin: 2px 0 0; font-size: 13px; color: #55575C">가상 온유동, 혼자, 계단 피하기, 모두 가상 경험이에요.</p>
+    </div>
+
+    <article style="background: #FFFFFF; border-radius: 20px; overflow: hidden">
+      <button type="button" aria-expanded="true" aria-controls="te-garden" style="display: block; width: 100%; padding: 14px 16px 10px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left">
+        <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 경험</span>
+          <span style="font-size: 12px; font-weight: 600; color: #55575C">45분, 도보 30분, 무료</span>
+        </span>
+        <span style="display: block; margin-top: 6px; font-size: 17px; font-weight: 800; letter-spacing: -0.02em">안개정원에서 천천히 걷기</span>
+        <span style="display: block; font-size: 14px; color: #3A3C40">산책 관심, 계단 없는 가상 설정이라 골랐어요.</span>
+      </button>
+      <div id="te-garden" style="display: flex; flex-direction: column; gap: 8px; padding: 10px 16px 12px; background: #F6F7F9; border-top: 1px solid #E3E5E9">
+        <p style="margin: 0; font-size: 13px; font-weight: 800">추천 근거</p>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+          <li>작은 정원 길을 걷다 벤치에서 쉬는 활동 <span style="display: block; font-size: 12px; color: #55575C">가상 시연 카드, 실제 방문 자료 아님</span></li>
+          <li>가상 설정에는 계단이 없어요 <span style="display: block; font-size: 12px; color: #55575C">가상 설정값, 실제 접근성 미확인</span></li>
+        </ul>
+        <p style="margin: 0; font-size: 13px"><strong style="display: block; font-weight: 700">아쉬운 점</strong>비를 피할 실내가 없고, 현재 날씨·길 상태는 알 수 없어요.</p>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 12px 10px 16px">
+        <span style="font-size: 13px; font-weight: 700; color: #3651E8">근거 접기</span>
+        <button type="button" aria-pressed="true" style="min-height: 40px; display: inline-flex; align-items: center; gap: 4px; padding: 0 14px; border: 0; border-radius: 999px; background: #202124; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>코스에 담김</button>
+      </div>
+    </article>
+
+    <article style="background: #FFFFFF; border-radius: 20px">
+      <button type="button" aria-expanded="false" style="display: block; width: 100%; padding: 14px 16px 6px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left">
+        <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 경험</span>
+          <span style="font-size: 12px; font-weight: 600; color: #55575C">50분, 실내, 무료</span>
+        </span>
+        <span style="display: block; margin-top: 6px; font-size: 17px; font-weight: 800; letter-spacing: -0.02em">느린 서가에서 한 장 읽기</span>
+        <span style="display: block; font-size: 14px; color: #3A3C40">혼자 조용히 쉬는 시간에 맞춘 가상 설정이에요.</span>
+      </button>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 12px 10px 16px">
+        <span style="font-size: 13px; font-weight: 700; color: #3651E8">근거 보기</span>
+        <button type="button" aria-pressed="true" style="min-height: 40px; display: inline-flex; align-items: center; gap: 4px; padding: 0 14px; border: 0; border-radius: 999px; background: #202124; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>코스에 담김</button>
+      </div>
+    </article>
+
+    <article style="background: #FFFFFF; border-radius: 20px">
+      <button type="button" aria-expanded="false" style="display: block; width: 100%; padding: 14px 16px 6px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left">
+        <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <span style="padding: 2px 7px; border: 1.5px dashed #8E9197; border-radius: 6px; font-size: 12px; font-weight: 700; color: #55575C">가상 경험</span>
+          <span style="font-size: 12px; font-weight: 600; color: #55575C">60분, 실내, 12,000원</span>
+        </span>
+        <span style="display: block; margin-top: 6px; font-size: 17px; font-weight: 800; letter-spacing: -0.02em">햇살 식탁에서 한 끼 쉬어가기</span>
+        <span style="display: block; font-size: 14px; color: #3A3C40">혼자 앉는 자리가 있다는 가상 설정이에요.</span>
+      </button>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 12px 10px 16px">
+        <span style="font-size: 13px; font-weight: 700; color: #3651E8">근거 보기</span>
+        <button type="button" aria-pressed="true" style="min-height: 40px; display: inline-flex; align-items: center; gap: 4px; padding: 0 14px; border: 0; border-radius: 999px; background: #202124; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>코스에 담김</button>
+      </div>
+    </article>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; border: 2px dashed #8E9197; border-radius: 12px">
+      <p style="margin: 0; font-size: 13px"><strong style="font-weight: 700">조건 때문에 뺀 경험 1</strong><span style="color: #55575C">, 다락 전시실(계단 있음)</span></p>
+      <button type="button" style="min-height: 40px; padding: 0 8px; border: 0; background: transparent; color: #3651E8; font: inherit; font-size: 13px; font-weight: 700">보기</button>
+    </div>
+  </main>
+
+  <div style="flex-shrink: 0; padding: 10px 16px 12px; border-top: 1px solid #D3D6DB">
+    <a href="TripCourse.dc.html" style="min-height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #3651E8; color: #FFFFFF; font-size: 16px; font-weight: 700; text-decoration: none">코스 확인하기, 3개 담김</a>
+  </div>
+
+  <nav aria-label="주요 메뉴" style="flex-shrink: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 0 12px calc(14px + env(safe-area-inset-bottom)); padding: 6px; background: #202124; border-radius: 24px">
+    <a href="#" aria-current="page" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: #3651E8; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 800; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"></path></svg>여행</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"></path><path d="M14 8v1.5M14 11.25v1.5M14 14.5v1.5"></path></svg>혜택</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"></path></svg>저장한 코스</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>내 설정</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

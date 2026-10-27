@@ -1,0 +1,1 @@
+node --check dist/real-travel-view.mjs exit=0

@@ -1,0 +1,3 @@
+Browser tab: 8, Title: "Growing Travel, 혼자 떠나는 뚜벅이 여행", URL: "http://127.0.0.1:4177/#course".
+There has been no change in the accessibility tree.
+The focused UI element is 9 heading 역에서 시작해, 다시 역으로, Value: 2, ID: course-heading

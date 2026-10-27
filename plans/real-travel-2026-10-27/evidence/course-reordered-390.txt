@@ -1,0 +1,3 @@
+Browser tab: 8, Title: "Growing Travel, 혼자 떠나는 뚜벅이 여행", URL: "http://127.0.0.1:4177/#course".
+There has been no change in the accessibility tree.
+The focused UI element is 142 button 소양아트서클 저장 근거 보기

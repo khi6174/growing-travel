@@ -1,0 +1,2 @@
+dist/travel-domain.mjs syntax PASS; pure lines 148
+tests/real-travel.test.mjs syntax PASS; pure lines 151

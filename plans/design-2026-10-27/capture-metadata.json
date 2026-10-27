@@ -1,0 +1,90 @@
+{
+  "source_pixels": [
+    853,
+    1844
+  ],
+  "implementation_pixels": [
+    375,
+    811
+  ],
+  "css_viewport": [
+    390,
+    844
+  ],
+  "reported_device_pixel_ratio": 1.0000000149011612,
+  "normalization": "Whole-view source and raw implementation images resampled to 390x844 solely to align capture density. Actual raw screenshot 375x811 with CSS viewport390x844; no content redrawn.",
+  "screenshots": {
+    "benefit-ticket.png": [
+      375,
+      811
+    ],
+    "benefits-top.png": [
+      375,
+      811
+    ],
+    "course-1440.png": [
+      1425,
+      990
+    ],
+    "course-320.png": [
+      305,
+      705
+    ],
+    "course-coupon.png": [
+      375,
+      811
+    ],
+    "course-full-final.png": [
+      375,
+      1823
+    ],
+    "course-full.png": [
+      375,
+      2048
+    ],
+    "course-initial.png": [
+      375,
+      1985
+    ],
+    "course-normalized.png": [
+      390,
+      844
+    ],
+    "course-top-final.png": [
+      375,
+      811
+    ],
+    "course-top.png": [
+      375,
+      811
+    ],
+    "preview.png": [
+      780,
+      844
+    ],
+    "qa-comparison.png": [
+      1170,
+      880
+    ],
+    "qa-coupon-comparison.png": [
+      780,
+      300
+    ],
+    "source-combined.png": [
+      853,
+      1844
+    ],
+    "source-coupon.png": [
+      853,
+      1844
+    ],
+    "source-normalized.png": [
+      390,
+      844
+    ],
+    "source-route.png": [
+      853,
+      1844
+    ]
+  }
+}

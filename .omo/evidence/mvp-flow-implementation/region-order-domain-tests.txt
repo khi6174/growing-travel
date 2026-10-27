@@ -1,0 +1,30 @@
+✔ AC01: destination undecided is valid, input is copied and duplicates normalized (3.6712ms)
+✔ AC01: missing, negative, fractional and out-of-range time and unknown interests fail by field (1.5736ms)
+✔ AC02: rules-based recommendations connect context to known synthetic evidence (8.6398ms)
+✔ AC03: empty or constraint-incompatible candidates produce no-match, never fallback fiction (6.3701ms)
+✔ AC03: unknown experience and evidence references are rejected (1.1584ms)
+✔ AC04/AC08: all fixture records are explicitly synthetic and private/non-demo candidates are excluded (1.1829ms)
+✔ AC03: a structurally valid but constraint-violating response is rejected at the boundary (1.5443ms)
+✔ AC05: order, evidence and labels survive draft construction; transitions remain unknown (3.172ms)
+✔ AC05: empty/unknown/duplicate selections fail; over-budget draft is marked rather than fabricated feasible (1.4259ms)
+✔ AC04: removing a saved draft synthetic marker or editing evidence fails validation (1.5641ms)
+✔ AC08: recommendation does not mutate inputs or perform storage writes (0.8948ms)
+✔ trip requires a valid calendar day, departure and integer limits; optional identity is not required (46.3046ms)
+✔ region comparison uses solo and stair constraints and never invents compatible experiences (4.8401ms)
+✔ walking, total time and per-person budget change suitability without silently relaxing inputs (0.9851ms)
+✔ fictional itinerary includes both station connections, preserves order, totals party costs without a benefit deduction (2.2955ms)
+✔ missing route data remains unknown and is never counted as a zero-minute complete journey (0.8282ms)
+✔ known lower bounds expose exceeded limits even when another route segment is missing (1.0345ms)
+✔ selection rejects other-region, unknown, duplicate, solo-incompatible and stair-incompatible items (1.4024ms)
+✔ synthetic benefits differentiate missing personal inputs, age boundaries, residence mismatch and travel-date periods (0.7391ms)
+✔ benefits-first sorting uses candidate count without labelling unavailable travel suitable (0.817ms)
+✔ official references stay separate from synthetic matches and expose source age and verification limits (1.0053ms)
+✔ normalization and comparisons leave caller inputs unchanged (0.6276ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 333.0969

@@ -1,0 +1,1 @@
+node --check dist/app.mjs exit=0

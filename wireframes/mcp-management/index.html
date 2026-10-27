@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Growing Travel · MCP 관리 와이어프레임</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#screen-root">본문으로 이동</a>
+  <header class="review-header"><div><p class="eyebrow">GROWING TRAVEL / DESIGN REVIEW</p><strong>MCP 연결·관리 와이어프레임</strong></div><div class="actions"><button class="button quiet" id="toggle-theme" type="button">어둡게 보기</button><button class="button secondary" id="open-ia" type="button">정보 구조·버튼 배치</button></div></header>
+  <div class="prototype-note"><span>구조 검토용</span><p>모든 서버·상태·기록은 예시입니다. 버튼은 로컬 시연만 하며 실제 연결·인증·설정을 바꾸지 않습니다.</p></div>
+  <nav class="review-tabs" aria-label="와이어프레임 화면"><button data-view="overview" type="button">01 연결 개요</button><button data-view="add" type="button">02 연결 추가</button><button data-view="detail" type="button">03 연결 상세</button><button data-view="access" type="button">04 도구·접근</button><button data-view="activity" type="button">05 활동 기록</button><button data-view="recovery" type="button">06 문제 해결</button></nav>
+  <div class="workbench">
+    <div class="console-frame"><aside class="operator-nav" aria-label="관리 탐색"><a href="#overview" class="console-brand">growing <b>travel</b><small>MCP 관리</small></a><nav><button type="button" data-view="overview">연결</button><button type="button" data-view="activity">활동</button></nav><p>운영자 화면 제안<br><small>여행자 MVP와 별도</small></p></aside><main id="screen-root" tabindex="-1"></main></div>
+    <aside id="review-notes" class="review-notes" aria-label="화면 설계 설명"></aside>
+  </div>
+  <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+  <footer class="review-footer"><span>Growing Travel · 2026-10-27</span><p>검토 범위: 정보 순서, 주 행동 위치, 상태 구분, 화면 간 이동</p></footer>
+  <dialog id="ia-dialog" aria-labelledby="ia-heading"><header class="dialog-head"><div><p class="eyebrow">INFORMATION ARCHITECTURE</p><h2 id="ia-heading">연결부터 복구까지</h2></div><button class="button secondary" id="close-ia" type="button">닫기</button></header><p class="lead">전역 메뉴는 연결·활동. 설정과 문제 해결은 대상 연결 안에서 이어집니다.</p><ol class="flow-map"><li><button data-view="overview">01 연결 개요</button><small>대상과 현재 상태를 고름</small></li><li><button data-view="add">02 연결 추가</button><small>입력, 확인 후 구성 저장</small></li><li><button data-view="detail">03 연결 상세</button><small>연결·인증·도구를 따로 확인</small></li><li><button data-view="access">04 도구·접근</button><small>앱의 도구 허용 목록 조정</small></li><li><button data-view="activity">05 활동 기록</button><small>어떤 단계에서 실패했는지 확인</small></li><li><button data-view="recovery">06 문제 해결</button><small>원인에 맞는 조치 후 재확인</small></li></ol><div class="notice"><strong>서로 다른 성공 상태</strong><p>구성 저장 / 서버 응답 / 인증 / 도구 발견 / 개별 실행 결과</p></div><div class="placement-list"><h3>주 버튼의 자리</h3><p><b>연결 목록</b> 필터 행 오른쪽에 새 연결 행동을 둡니다.</p><p><b>연결 상세</b> 세 가지 상태 요약 다음에 설정 행동을 둡니다.</p><p><b>입력·설정</b> 내용을 검토한 다음 저장할 수 있도록 입력 아래에 둡니다.</p><p><b>오류·복구</b> 실패 이유와 영향 바로 다음에 해결 행동을 둡니다.</p></div></dialog>
+  <script type="module" src="/review.mjs"></script>
+</body>
+</html>

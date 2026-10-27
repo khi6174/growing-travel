@@ -1,0 +1,32 @@
+[
+  {
+    "file": "benefit-coupon-mobile.raw",
+    "format": "JPEG",
+    "width": 390,
+    "height": 843
+  },
+  {
+    "file": "board-desktop.raw",
+    "format": "JPEG",
+    "width": 1424,
+    "height": 3152
+  },
+  {
+    "file": "conditions-error-mobile.raw",
+    "format": "JPEG",
+    "width": 390,
+    "height": 843
+  },
+  {
+    "file": "home-mobile.raw",
+    "format": "JPEG",
+    "width": 390,
+    "height": 843
+  },
+  {
+    "file": "saved-mobile.raw",
+    "format": "JPEG",
+    "width": 390,
+    "height": 843
+  }
+]

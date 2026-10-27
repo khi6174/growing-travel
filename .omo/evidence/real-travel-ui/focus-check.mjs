@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const outer = {tagName:'DETAILS',open:false,parentElement:null};
+const inner = {tagName:'DETAILS',open:false,parentElement:outer};
+let focused = false;
+const fields = ['profile-age','profile-residence','profile-student','profile-walking','interest-options'];
+const nodes = Object.fromEntries(fields.flatMap((id) => [[id,{id,parentElement:inner,setAttribute(){},getAttribute(){return ''},focus(){ assert.equal(inner.open,true); assert.equal(outer.open,true); focused=true; }}],[`${id}-validation`,{textContent:''}]]));
+const source = fs.readFileSync('dist/app.mjs','utf8');
+const start = source.indexOf('function showFieldErrors(');
+const end = source.indexOf('\nfunction benefitCard(',start);
+const context = vm.createContext({$:id=>nodes[id],Set});
+vm.runInContext(source.slice(start,end),context);
+context.showFieldErrors({fields:{age:'만 나이를 확인해 주세요.'}},true);
+assert.equal(focused,true);
+assert.equal(nodes['profile-age-validation'].textContent,'만 나이를 확인해 주세요.');
+console.log('PASS: collapsed nested details open before invalid age receives focus; adjacent validation retained.');

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "catalogCoordinatePoints": 14,
+  "deltaCoordinatesDocumented": true,
+  "governmentLocalSourceMatched": true,
+  "finalRawTests": {
+    "pass": 95,
+    "fail": 0,
+    "skip": 0
+  },
+  "browserDocumentation": "pending root evidence"
+}

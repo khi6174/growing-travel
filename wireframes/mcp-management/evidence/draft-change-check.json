@@ -1,0 +1,6 @@
+{
+  "confirmationButtonClass": "button primary",
+  "feedback": "입력이 변경되었습니다. 연결 확인을 다시 진행하세요.",
+  "oldResultVisible": false,
+  "saveButtonPresent": false
+}

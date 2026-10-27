@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Growing Travel · 여행자용 와이어프레임</title><link rel="stylesheet" href="/styles.css"><script type="module" src="/app.mjs"></script><script type="module" src="/review.mjs"></script></head>
+<body>
+<header class="studio-header"><div><p class="studio-brand">growing <b>travel</b></p><h1>혼자, 차 없이 떠나는 여행</h1><p class="studio-caption">여행자가 사용하는 주요 화면 와이어프레임</p></div><button id="open-notes" class="button secondary" type="button">정보 구조 보기</button></header>
+<div class="studio-toolbar"><div class="mode-switch" role="group" aria-label="보기 방식"><button id="board-mode" type="button" aria-pressed="true">전체 화면</button><button id="app-mode" type="button" aria-pressed="false">앱처럼 보기</button></div><label class="screen-jump">화면 바로 보기<select id="screen-select" aria-label="화면 바로 보기"></select></label></div>
+<p class="studio-note">화면 구조 확인용 · 장소·경험·동선·금액·혜택은 가상 예시입니다.</p>
+<main><div id="board-root" class="wireframe-grid"></div><div id="app-root" class="app-stage" hidden></div></main>
+<footer class="studio-footer">Growing Travel · 여행 만들기 / 혜택 / 저장한 코스 / 내 설정</footer>
+<dialog id="design-notes" aria-labelledby="notes-heading"><header class="dialog-head"><div><p class="eyebrow">여행자 관점의 정보 구조</p><h2 id="notes-heading">여행을 고르고, 내 코스로 보관하기</h2></div><button id="close-notes" class="button secondary" type="button">닫기</button></header><ol class="flow-list"><li><strong>여행 시작·취향</strong><p>관심사와 편하게 걷는 양을 정해요. 나이·거주·대학생 여부는 선택 입력이에요.</p></li><li><strong>이번 여행 조건</strong><p>출발역·날짜·왕복 가능 시간·예산을 정해요. 거주지는 출발역과 별개예요.</p></li><li><strong>지역 비교·경험 선택</strong><p>어디로 갈지 비교한 다음, 하고 싶은 경험과 추천 이유를 살펴요.</p></li><li><strong>코스 편집·저장</strong><p>역에서 시작해 돌아오는 동선을 읽고, 순서를 바꾸거나 경험을 뺀 뒤 저장해요.</p></li></ol><section class="notes-section"><h3>언제든 열 수 있는 메뉴</h3><p><b>혜택</b>은 여행 입력 없이 살펴볼 수 있어요. <b>저장한 코스</b>에서는 당시 조건을 다시 보고, <b>내 설정</b>에서는 지금의 취향을 관리해요.</p></section><section class="notes-section"><h3>주요 버튼의 자리</h3><p>입력 화면은 입력 아래, 비교 화면은 해당 후보 설명 다음, 경험·코스 화면은 하단 메뉴 위에 주 행동을 둡니다. 자세한 조건과 근거는 별도로 펼쳐 읽습니다.</p></section></dialog>
+</body></html>

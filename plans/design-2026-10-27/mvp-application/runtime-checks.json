@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-27",
+  "decision": "D23 / P27",
+  "surface": "http://127.0.0.1:4177/",
+  "method": "Real in-app browser UI, observed through CUA locators, accessibility trees, screenshots and read-only DOM geometry. No application state injection.",
+  "viewportChecks": [
+    {"cssViewport": "390x844", "screens": ["home", "profile", "trip", "regions", "experiences", "course", "benefits", "saved", "settings"], "horizontalOverflow": false},
+    {"cssViewport": "1440x1000", "screens": ["home", "profile", "trip", "regions", "experiences", "course", "benefits", "saved", "settings"], "horizontalOverflow": false},
+    {"cssViewport": "320x740", "screen": "course", "horizontalOverflow": false, "observedDocumentWidth": 305, "editButtonSizes": [[44,44],[44,44],[54,44],[44,44],[44,44],[44,44],[54,44],[44,44]]}
+  ],
+  "actionGeometry": {"mainButtonHeight": 52, "profileSecondaryHeight": 44, "profile390MainY": 642, "profile390SecondaryY": 700, "ordinary390MainY": 692},
+  "scenarios": [
+    {"name": "Travel flow", "result": "PASS", "observed": "Home -> preferences -> trip -> comparison -> experience selection -> course. Inputs survive screen navigation. Separate home and settings contexts work."},
+    {"name": "Profile validation", "result": "PASS", "observed": "Age121 followed by next shows1-120 error and focuses age field; corrected22 permits proceeding."},
+    {"name": "Explicit save and reload", "result": "PASS", "observed": "Created course '와이어프레임 적용 확인' with22/Seoul/student input. Save opens collection; reload and reopen retain2 experiences,154min total,49min walk,6000won. Original '동선과 쿠폰 디자인 시연' remains and also reopens."},
+    {"name": "Save error recovery", "result": "PASS", "observed": "Save before acknowledgment focuses checkbox with visible explanation. Empty title opens title disclosure and focuses title with1-80 character error. Correct title resets acknowledgment; acknowledge and explicit save succeed."},
+    {"name": "Current profile versus snapshot", "result": "PASS", "observed": "Saved current age27, reload shows27. Opening course created with22 leaves current benefit summary at27. Course storage and current profile use distinct existing stores."},
+    {"name": "Condition sheet", "result": "PASS", "observed": "Age121 leaves apply enabled; submitting focuses condition-age with aria-invalid=true. Correcting22/Seoul/student and apply-only updates current comparison; reload restores saved27. Original blank profile restored by clearing only QA-created27 profile through UI."},
+    {"name": "Independent benefits", "result": "PASS", "observed": "Benefits opens directly after reload with blank optional profile and no completed travel flow. Official conditions/publication date and candidate limitations remain separate from fictional course costs."},
+    {"name": "Course editing and zero selection", "result": "PASS", "observed": "Move experience down/up works. Removing both draft items focuses course-back-experiences and hides save. Return and re-add garden gives101min/46min/6000won; reopening saved course restores original2items/154min/49min/6000won."}
+  ],
+  "browserWarningsAndErrorsAtFinalInteractionCheck": [],
+  "finalVisualRecheck": {"all18ScreensRecapturedAfter": ["benefit summary foreground repair", "value-preserving shared-token substitution", "fixed white bottom-navigation underlay"], "benefitHeadingAndValueColor": "rgb(32,33,36)", "benefitSelfReportAndStatusColor": "rgb(98,101,109)", "benefitSaveActionColor": "rgb(54,81,232)", "expandedBenefitStatusCapturedAt": ["390x844", "1440x1000"], "tokenDeclarationsCompared": 775, "tokenValueDifferences": 0},
+  "qaData": {"originalSavedCourseCount": 1, "finalSavedCourseCount": 2, "addedCourse": "와이어프레임 적용 확인", "originalPersistedOptionalProfile": "blank", "persistedOptionalProfileRestored": true},
+  "limitations": ["No real handset or software keyboard test", "No screen reader session", "No complete browser-process restart", "No dark theme or OS motion matrix", "No network/API/booking/payment integration", "Official sources not reverified in this design task", "CSS viewport and returned raster sizes differ; no pixel-perfect claim"]
+}

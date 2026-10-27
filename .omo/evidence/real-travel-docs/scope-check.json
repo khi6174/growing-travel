@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "decisionIds": [
+    "D24",
+    "P28",
+    "S22",
+    "S23"
+  ],
+  "catalog": {
+    "places": 8,
+    "regions": 3,
+    "departures": 3
+  },
+  "sourceRowsComplete": true,
+  "browserStatus": "pending",
+  "pastRawLogs": {
+    "engine": 94,
+    "ui": 22
+  },
+  "gitDirectoryAbsent": true
+}

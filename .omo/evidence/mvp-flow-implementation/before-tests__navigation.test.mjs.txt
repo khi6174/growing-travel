@@ -1,0 +1,34 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { resolveScreen, parentScreen } from '../dist/navigation.mjs';
+
+test('unprepared deep links return to the input step without inventing comparisons or courses', () => {
+  for (const target of ['regions','experiences','course']) assert.equal(resolveScreen(target), 'trip');
+  assert.equal(resolveScreen('unrecognized'), 'profile');
+});
+test('invalid settings cannot be bypassed by entering trip or recommendation screens', () => {
+  for (const target of ['trip','regions','experiences']) assert.equal(resolveScreen(target, {profileValid:false,comparisonReady:true,recommendationsReady:true}), 'profile');
+  assert.equal(resolveScreen('saved', {profileValid:false}), 'saved');
+});
+test('existing draft remains readable while newly edited settings or comparisons are stale', () => {
+  assert.equal(resolveScreen('course',{profileValid:false,hasCourse:true}), 'course');
+  assert.equal(resolveScreen('experiences',{comparisonReady:false,recommendationsReady:false,hasCourse:true}), 'trip');
+});
+test('comparison, recommendation and saved-course re-entry use only available stages', () => {
+  assert.equal(resolveScreen('experiences',{comparisonReady:true}), 'regions');
+  assert.equal(resolveScreen('course',{comparisonReady:true,recommendationsReady:true}), 'experiences');
+  assert.equal(resolveScreen('experiences',{recommendationsReady:true}), 'experiences');
+  assert.equal(resolveScreen('course',{hasCourse:true}), 'course');
+});
+test('parent navigation is bounded inside the flow and does not mutate readiness state', () => {
+  assert.deepEqual(['trip','regions','experiences','course'].map(parentScreen),['profile','trip','regions','experiences']);
+  const ready = Object.freeze({profileValid:true,comparisonReady:true,recommendationsReady:true,hasCourse:true});
+  assert.equal(resolveScreen('course',ready),'course');
+  assert.equal(parentScreen('profile'),'profile');
+});
+
+test('benefits can be opened on first use with missing or invalid settings without requiring a trip', () => {
+  assert.equal(resolveScreen('benefits'),'benefits');
+  assert.equal(resolveScreen('benefits',{profileValid:false,comparisonReady:false,recommendationsReady:false,hasCourse:false}),'benefits');
+  assert.equal(parentScreen('benefits'),'profile');
+});

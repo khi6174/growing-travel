@@ -1,0 +1,208 @@
+/* D23: traveler wireframe applied to the existing functional MVP. */
+:root{--ink:#202124;--muted:#62656d;--green:#3651e8;--green-dark:#293fc0;--cream:#eceef1;--line:#dfe2e9;--mint:#eef1fd;--white:#fff;--danger:#a62b25;--radius:20px;--travel-subtle:#f5f6f8;--travel-input:#8e9197;--travel-nav-space:88px;--travel-content:520px;--travel-action-shadow:0 -8px 20px #20212405;font-family:'Malgun Gothic','Segoe UI',sans-serif;color:var(--ink);background:var(--cream)}
+body{background:var(--cream);color:var(--ink)}
+button,input,select{font-family:inherit}
+button,a,input,select,summary{-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--green);outline-offset:3px}
+.app-frame{max-width:var(--travel-content);width:100%;margin-inline:auto;min-height:100dvh;background:var(--white);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.app-frame .site-header{height:64px;min-height:64px;padding:10px 20px;gap:12px;background:var(--white);border-bottom:1px solid var(--line);max-width:var(--travel-content);position:sticky;top:0;z-index:25}
+.app-frame .brand{gap:8px;font-size:17px;color:var(--ink);letter-spacing:-.7px}
+.app-frame .brand b{color:var(--green)}
+.app-frame .brand small{display:none}
+.app-frame .brand-mark{width:28px;height:28px;fill:var(--ink);border-radius:8px}
+.app-frame .screen-caption{font-size:12px;color:var(--muted);margin-left:auto;font-weight:600;white-space:nowrap}
+.app-frame .icon-button{min-height:44px;min-width:44px;border:1px solid var(--line);background:var(--white);color:var(--ink);border-radius:12px;box-shadow:none;font-size:13px}
+.app-frame #app-back{border:0;background:var(--travel-subtle);font-size:18px}
+.app-frame #app-back:disabled{opacity:.3}
+.app-frame .shell{max-width:none;width:auto;padding:20px 20px calc(112px + env(safe-area-inset-bottom,0px));margin:0;min-height:calc(100dvh - 64px);overflow:visible}
+.app-frame:is([data-screen=home],[data-screen=profile],[data-screen=settings],[data-screen=trip],[data-screen=experiences],[data-screen=course]) .shell{padding-bottom:calc(240px + env(safe-area-inset-bottom,0px))}
+.app-frame .demo-note{padding:0;margin:0 0 24px;background:transparent;border:0;border-radius:0;display:block;color:var(--muted);font-size:11px;line-height:1.8}
+.app-frame .demo-note .small-label{margin:0 4px 4px 0}
+.app-frame .demo-note>summary{min-height:32px;padding:4px 0;font-size:11px;line-height:1.7;color:var(--muted);cursor:pointer}
+.app-frame .demo-note>p{padding:12px;margin-top:4px;background:var(--travel-subtle);border-radius:12px;font-size:11px}
+.app-frame .demo-note{margin-bottom:16px}
+.app-frame[data-screen=home] .demo-note,.app-frame[data-screen=settings] #journey-progress,.app-frame[data-screen=settings] .journey-steps{display:none}
+.app-frame .small-label,.app-frame .tag{font-size:11px;line-height:1.5;border:0;border-radius:6px;background:var(--travel-subtle);color:var(--muted);padding:4px 7px;white-space:normal}
+.app-frame .eyebrow{font-size:11px;line-height:1.6;letter-spacing:.8px;color:var(--green);margin-bottom:12px}
+.app-frame h1{font-size:32px;line-height:1.4;letter-spacing:-1.4px;font-weight:750;word-break:keep-all;overflow-wrap:break-word}
+.app-frame h1 span{color:var(--green)}
+.app-frame h2{font-size:26px;line-height:1.45;letter-spacing:-1.1px;word-break:keep-all}
+.app-frame h3{font-size:19px;line-height:1.5;letter-spacing:-.6px;word-break:keep-all}
+.app-frame h1:focus,.app-frame h2:focus{outline:none}
+.app-frame .panel-intro,.app-frame .hero-copy,.app-frame .saved-hero>p:last-child{font-size:14px;color:var(--muted);line-height:1.8;word-break:keep-all;margin-top:12px}
+.app-frame .field-help,.app-frame .muted,.app-frame .storage-note{font-size:12px;line-height:1.8;color:var(--muted);word-break:keep-all;overflow-wrap:anywhere}
+.app-frame .field-error{font-size:13px;line-height:1.75;color:var(--danger);word-break:keep-all}
+.app-frame #navigation-notice:empty{display:none}
+.app-frame #journey-progress{height:3px;border:0;border-radius:999px;margin:0 0 12px;background:var(--line)}
+.app-frame #journey-progress>span{background:var(--green);border-radius:999px}
+.app-frame .journey-steps{margin:0 0 28px;padding:0;gap:4px;border:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));list-style:none}
+.app-frame .journey-steps li+li:before{display:none}
+.app-frame .step-link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-height:48px;padding:5px 2px;background:transparent;border:0;border-radius:12px;font-size:11px;color:var(--muted)}
+.app-frame .step-link b{font-size:10px;margin:0;color:inherit}
+.app-frame .step-link[aria-current=step]{background:var(--mint);color:var(--green)}
+.app-frame .step-link:disabled{opacity:.45}
+.app-frame .setup-panel,.app-frame .comparison-panel,.app-frame .course-panel{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.app-frame .field-label,.app-frame legend{font-size:13px;font-weight:700;line-height:1.6;margin:20px 0 8px;color:var(--ink)}
+.app-frame .field-label small,.app-frame legend small{font-size:11px;color:var(--muted);font-weight:400}
+.app-frame input:not([type=checkbox]):not([type=radio]),.app-frame select{min-height:50px;border:1px solid var(--travel-input);border-radius:12px;background:var(--white);color:var(--ink);font-size:16px;font-weight:400;padding:11px 12px;box-shadow:none}
+.app-frame input[aria-invalid=true],.app-frame select[aria-invalid=true]{border-color:var(--danger)!important;background:#fdf4f2!important}
+.app-frame .field-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.app-frame #profile-form>.field-pair{grid-template-columns:1fr}
+.app-frame .interest-options{gap:8px}
+.app-frame .interest-option span{min-height:44px;padding:10px 13px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--muted);display:flex;align-items:center}
+.app-frame .interest-option input:checked+span{color:var(--green);background:var(--mint);border-color:#cbd3fa}
+.app-frame .interest-option input:focus-visible+span{outline:3px solid var(--green);outline-offset:3px}
+.app-frame .check-label{min-height:44px;font-size:13px;line-height:1.8;align-items:flex-start;gap:10px}
+.app-frame input[type=checkbox]{width:19px;height:19px;min-height:19px;min-width:19px;accent-color:var(--green);margin-top:3px}
+.app-frame .button{min-height:48px;justify-content:center;gap:8px;padding:12px 18px;border-radius:999px;font-size:14px;line-height:1.6;font-weight:700;word-break:keep-all;text-align:center;box-shadow:none}
+.app-frame .button.primary{background:var(--green);border:1px solid transparent;color:var(--white)}
+.app-frame .button.primary:hover:not(:disabled){background:var(--green-dark)}
+.app-frame .button.subtle{border:1px solid var(--line);background:var(--white);color:var(--muted)}
+.app-frame .button.subtle:hover:not(:disabled){background:var(--travel-subtle);color:var(--ink)}
+.app-frame .button.full{justify-content:center}
+.app-frame .text-button{min-height:44px;padding:10px 4px;font-size:13px;line-height:1.7;color:var(--green);background:transparent;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;word-break:keep-all}
+.app-frame .primary-action-bar{position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:var(--travel-content);bottom:calc(var(--travel-nav-space) + env(safe-area-inset-bottom,0px));z-index:18;display:flex;flex-direction:column;gap:6px;padding:12px 20px;margin:0;background:var(--white);border-top:1px solid var(--line);border-radius:0;box-shadow:var(--travel-action-shadow)}
+.app-frame .primary-action-bar>.button{width:100%;margin:0;min-height:52px}
+.app-frame .primary-action-bar>.button.subtle{min-height:44px;padding:8px 12px;font-size:12px;border-color:transparent;background:transparent}
+.app-frame .primary-action-bar .screen-action{position:static;inset:auto;box-shadow:none;margin:0;transform:none}
+.app-frame .primary-action-bar .button.primary{order:0}
+.app-frame .primary-action-bar .button.subtle{order:1}
+.app-frame .save-secondary-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.app-frame .save-secondary-actions .button{flex:1}
+.app-frame .profile-actions{display:flex;align-items:stretch}
+.app-frame .home-hero{padding:8px 0 20px;display:block;min-height:0}
+.app-frame .home-hero p:not(.eyebrow){font-size:14px;line-height:1.8;color:var(--muted);margin-top:16px}
+.app-frame .home-hero .hero-copy{display:block}
+.app-frame[data-screen=home] #app-back{display:none}
+.app-frame .home-route-preview{margin:4px 0 24px;border:1px solid var(--line);border-radius:20px;padding:20px;background:var(--white);overflow:hidden}
+.app-frame .home-route-preview h2,.app-frame .home-benefits-entry h2{font-size:19px;letter-spacing:-.6px;margin:8px 0 12px}
+.app-frame .home-route-preview img{display:block;width:100%;height:160px;object-fit:cover;border-radius:12px;margin:12px 0}
+.app-frame .home-route-images{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:6px;margin:12px 0}
+.app-frame .home-route-images img{min-width:0;height:132px;object-position:center bottom;margin:0;border-radius:10px}
+.app-frame .home-route-label{padding:10px 12px;border-radius:12px;background:var(--travel-subtle);font-size:12px!important;line-height:1.6}
+.app-frame .home-benefits-entry>.button{margin-top:16px}
+.app-frame .home-route-preview>p{font-size:13px;color:var(--muted);line-height:1.8}
+.app-frame .home-route-preview .home-route-stops{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;padding:12px;background:var(--travel-subtle);border-radius:12px}
+.app-frame .home-benefits-entry{border-top:1px solid var(--line);padding:20px 0 0;margin-top:24px}
+.app-frame .home-benefits-entry p{font-size:13px;color:var(--muted);line-height:1.8}
+.app-frame #home-resume{width:100%;margin-top:16px}
+.app-frame .results-heading{display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;margin-bottom:16px}
+.app-frame .sort-control{display:flex;align-items:center;gap:8px;flex:none;margin-left:auto}
+.app-frame .sort-control label{font-size:12px;color:var(--muted)}
+.app-frame .sort-control select{width:auto;min-height:44px;font-size:13px}
+.app-frame .region-grid,.app-frame .experience-grid,.app-frame .saved-grid,.app-frame .official-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.app-frame .region-card{padding:20px;border:1px solid var(--line);background:var(--white);border-radius:20px;box-shadow:none;outline:0}
+.app-frame .region-card.chosen{border-color:var(--line);background:#fafbff;box-shadow:none}
+.app-frame .region-card>h3{font-size:22px;margin-top:8px}
+.app-frame .region-card>.button{margin-top:16px}
+.app-frame .region-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:14px 0;margin:16px 0;gap:0;border:0;border-radius:12px;background:var(--travel-subtle)}
+.app-frame .region-stats>div{padding:0 6px;text-align:center;min-width:0}
+.app-frame .region-stats>div+div{border-left:1px solid var(--line)}
+.app-frame .region-stats small{font-size:10px;white-space:normal}
+.app-frame .region-stats b{display:block;font-size:14px;line-height:1.6;margin-top:5px;overflow-wrap:anywhere}
+.app-frame .region-reasons{padding-left:18px;font-size:12px;color:var(--muted);line-height:1.8;margin:8px 0}
+.app-frame .region-benefit-details{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.app-frame .region-benefit-details>summary{font-size:12px;min-height:44px;line-height:1.6;padding:10px 0;color:var(--muted)}
+.app-frame .region-benefits{border:0;padding:0;margin-top:12px}
+.app-frame .benefit-card{border:0;border-radius:12px;background:var(--travel-subtle);padding:16px;box-shadow:none}
+.app-frame .benefit-card+.benefit-card{margin-top:12px}
+.app-frame .experience-card{background:var(--white);border:1px solid var(--line);border-radius:20px;box-shadow:none;outline:0;padding:20px;overflow:hidden}
+.app-frame .experience-card.selected{background:#fafbff;border-color:var(--line);box-shadow:none}
+.app-frame .experience-card h3{font-size:20px;margin-top:12px}
+.app-frame .experience-card .card-body{padding:0}
+.app-frame .experience-card .card-summary{font-size:14px;line-height:1.8;color:var(--muted)}
+.app-frame .experience-card .add-button{min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:var(--white);color:var(--green);font-size:13px}
+.app-frame .experience-card .add-button[aria-pressed=true]{background:var(--mint);border-color:#cbd3fa;color:var(--green)}
+.app-frame .reason-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.app-frame .reason-copy,.app-frame .card-meta{font-size:12px;line-height:1.8;color:var(--muted)}
+.app-frame .card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.app-frame .card-actions .button{flex:1;min-height:44px;font-size:13px}
+.app-frame .course-heading{padding:0;gap:12px;align-items:flex-start;margin-bottom:20px}
+.app-frame .course-heading h2{font-size:28px;line-height:1.4}
+.app-frame .course-heading .course-station-art{width:124px;height:120px;object-fit:cover;object-position:right bottom}
+.app-frame .course-demo-label{font-size:11px;color:var(--muted);margin-top:8px}
+.app-frame .course-overview{background:var(--travel-subtle);border:0;border-radius:12px;box-shadow:none;margin:0 0 24px;padding:16px 0}
+.app-frame .overview-values{gap:0}
+.app-frame .overview-cell{padding:0 8px;text-align:center}
+.app-frame .overview-cell+.overview-cell{border-left:1px solid var(--line)}
+.app-frame .overview-cell dt{font-size:11px;color:var(--muted)}
+.app-frame .overview-cell dd{font-size:20px;line-height:1.5;letter-spacing:-.8px;color:var(--ink)}
+.app-frame .course-timeline{margin:0;padding:0;list-style:none}
+.app-frame .course-timeline .course-item,.app-frame .course-timeline .route-stop,.app-frame .course-timeline .route-connection{background:transparent;border-radius:0;box-shadow:none}
+.app-frame .course-timeline .course-item{padding:16px 0 20px 36px;margin:0;display:block;position:relative}
+.app-frame .course-item-info>b{font-size:18px;line-height:1.55;letter-spacing:-.6px;display:block}
+.app-frame .course-experience-meta{margin-top:8px;gap:12px}
+.app-frame .course-experience-meta small{font-size:12px;color:var(--muted)}
+.app-frame .course-thumb{width:72px;height:54px;border-radius:12px;object-fit:cover}
+.app-frame .course-edit-actions,.app-frame .course-edit-actions:not([open]){position:static;inset:auto;width:auto;display:block;margin-top:12px;padding:0;background:transparent;border:0;border-radius:0}
+.app-frame .course-edit-actions>summary{font-size:12px;min-height:44px;line-height:1.7;padding:10px 0;color:var(--muted)}
+.app-frame .item-controls{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px;margin-top:0}
+.app-frame .item-controls .icon-button{min-width:44px;min-height:44px;border-radius:999px;border-color:var(--line);padding:8px 12px;font-size:12px}
+.app-frame .route-stop-title{font-size:17px}
+.app-frame .route-stop-note,.app-frame .route-mode,.app-frame .route-leg-caption{font-size:11px;line-height:1.7;overflow-wrap:anywhere}
+.app-frame .course-benefit-ticket{margin:24px 0;border:1px solid var(--line);border-radius:20px;box-shadow:none;background:var(--white)}
+.app-frame .course-benefit-top{padding:20px}
+.app-frame .course-benefit-bottom{padding:16px 20px;background:#fafbff;border-color:#cbd3fa}
+.app-frame .course-benefit-top h3{font-size:19px}
+.app-frame .course-context-details{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--white);margin-top:16px}
+.app-frame .course-settings{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--white);margin-top:16px}
+.app-frame .course-settings>summary{font-size:13px;min-height:32px;line-height:1.8}
+.app-frame .course-context-details>summary{font-size:13px;min-height:32px;line-height:1.8}
+.app-frame .save-section{margin-top:24px;padding:0;border:0;background:transparent}
+.app-frame .save-section .check-label{padding:16px 0;margin:0}
+.app-frame .save-message{font-size:13px;line-height:1.8;word-break:keep-all}
+.app-frame .benefits-hero,.app-frame .saved-hero{padding:0 0 20px;margin:0;background:transparent;border-radius:0}
+.app-frame .benefits-hero h1,.app-frame .saved-hero h1{font-size:28px;line-height:1.4;letter-spacing:-1.2px}
+.app-frame .benefits-profile{padding:16px 0 20px;border:0;background:transparent;color:var(--ink);box-shadow:none}
+.app-frame .profile-summary-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.app-frame .profile-summary-head>strong{font-size:16px;color:var(--ink)}
+.app-frame .profile-summary-head>.button{font-size:12px;min-height:44px;padding:8px 14px;background:var(--white);border:1px solid var(--line);color:var(--green)}
+.app-frame .benefits-profile .condition-summary{background:var(--travel-subtle);border-radius:12px;gap:0;padding:14px 0;margin-top:16px}
+.app-frame .condition-summary>div{padding:0 8px;text-align:center}
+.app-frame .condition-summary>div+div{border-left:1px solid var(--line)}
+.app-frame .condition-summary dt{font-size:11px;color:var(--muted)}
+.app-frame .benefits-profile .condition-value{font-size:15px;color:var(--ink);line-height:1.6}
+.app-frame .benefits-profile .condition-label,.app-frame .benefits-profile .self-report,.app-frame .benefits-profile #benefits-input-note,.app-frame .benefits-profile #benefits-profile-message,.app-frame .condition-save-details summary{color:var(--muted)}
+.app-frame .benefits-profile #benefits-profile-message[role=alert]{color:var(--danger)}
+.app-frame .benefits-profile #benefits-save-profile{color:var(--green);border-color:var(--line);background:var(--white)}
+.app-frame .filter-chips{gap:8px;margin-top:16px}
+.app-frame .filter-chip{min-height:44px;padding:9px 13px;border:1px solid var(--line);border-radius:999px;font-size:12px;background:var(--white);color:var(--muted)}
+.app-frame .filter-chip[aria-pressed=true]{background:var(--mint);color:var(--green);border-color:#cbd3fa}
+.app-frame .filter-more,.app-frame .condition-save-details{padding:12px 0;border:0;background:transparent}
+.app-frame .filter-more>summary,.app-frame .condition-save-details>summary{min-height:44px;font-size:12px;line-height:1.7;padding:10px 0;color:var(--muted)}
+.app-frame .ticket-card{border:1px solid var(--line);border-radius:20px;box-shadow:none;background:var(--white);overflow:hidden}
+.app-frame .ticket-summary{padding:20px}
+.app-frame .ticket-summary .ticket-title{font-size:21px;line-height:1.5;letter-spacing:-.7px}
+.app-frame .ticket-public,.app-frame .ticket-detail{padding:16px 20px;background:#fafbff}
+.app-frame .ticket-public{border-top:2px dashed #cbd3fa}
+.app-frame .ticket-public:before,.app-frame .ticket-public:after{background:var(--white);border:1px solid var(--line)}
+.app-frame .ticket-match{font-size:12px;line-height:1.7}
+.app-frame .ticket-reason,.app-frame .ticket-period,.app-frame .ticket-public p{font-size:12px;line-height:1.8}
+.app-frame .ticket-status{font-size:12px;line-height:1.6}
+.app-frame .ticket-detail>summary{min-height:44px;line-height:1.7;font-size:13px}
+.app-frame .saved-card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:none}
+.app-frame .saved-card h2,.app-frame .saved-card h3{font-size:20px;line-height:1.5}
+.app-frame .saved-card p,.app-frame .saved-meta{font-size:12px;color:var(--muted);line-height:1.8}
+.app-frame .saved-card .button{width:100%;margin-top:16px}
+.app-frame .empty-state{padding:32px 20px;background:var(--travel-subtle);border:0;border-radius:20px;min-height:0}
+.app-frame .empty-state h3{font-size:20px}
+.app-frame .empty-state p{font-size:13px;line-height:1.8;color:var(--muted)}
+.app-frame .status-banner,.app-frame .save-notice{padding:14px 16px;border:0;border-radius:12px;background:var(--mint);font-size:13px;line-height:1.8;color:#293b99}
+.app-frame .status-banner.error{background:#fdf4f2;color:var(--danger)}
+.app-frame .page-footer{margin-top:32px;padding:20px 0 0;border-top:1px solid var(--line);font-size:11px;color:var(--muted);background:transparent}
+.app-frame .page-footer>small{display:none}
+.app-frame .bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));width:calc(100% - 24px);max-width:496px;min-height:64px;padding:6px;gap:4px;border:1px solid #e8eaf0;border-radius:24px;background:var(--travel-subtle);box-shadow:0 4px 20px #20212408;backdrop-filter:none;z-index:30}
+.app-frame .bottom-nav .nav-button{min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px 2px;border:0;border-radius:18px;background:transparent;color:var(--muted);font-size:11px;font-weight:500}
+.app-frame .bottom-nav .nav-button.active,.app-frame .bottom-nav .nav-button[aria-current=page]{background:var(--mint);color:var(--green);font-weight:700}
+.app-frame .bottom-nav .nav-icon,.app-frame .bottom-nav .nav-icon svg{width:18px;height:18px;stroke-width:1.6}
+.app-frame .bottom-nav .count{background:var(--white);color:var(--muted);font-size:10px;min-width:16px;height:16px;line-height:16px;padding:0 4px}
+.app-frame dialog{border:1px solid var(--line);border-radius:20px;background:var(--white);color:var(--ink);max-height:88dvh;overflow:auto}
+.app-frame dialog::backdrop{background:#20212466}
+.app-frame .benefit-sheet{padding:24px 20px calc(24px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;max-width:var(--travel-content)}
+.app-frame .sheet-header h2{font-size:23px}
+.app-frame .sheet-actions{position:sticky;bottom:-24px;background:var(--white);padding:12px 0 0;margin-top:20px}
+.app-frame .sheet-actions .button{min-height:52px;margin-top:8px}
+.app-frame .student-options label{min-height:48px;font-size:12px}
+@media(min-width:600px){.app-frame{margin-block:24px;min-height:calc(100dvh - 48px);border-radius:24px;overflow:clip}.app-frame .site-header{border-radius:24px 24px 0 0}.app-frame .bottom-nav{bottom:calc(20px + env(safe-area-inset-bottom,0px))}.app-frame .primary-action-bar{bottom:calc(96px + env(safe-area-inset-bottom,0px))}}
+@media(max-width:359px){.app-frame .site-header{padding-inline:16px;gap:8px}.app-frame .brand{font-size:15px}.app-frame .screen-caption{font-size:11px}.app-frame .shell{padding-inline:16px}.app-frame .primary-action-bar{padding-inline:16px}.app-frame h1{font-size:28px}.app-frame h2{font-size:24px}.app-frame .course-heading .course-station-art{width:92px;height:110px}.app-frame .field-pair{gap:8px}.app-frame .region-card,.app-frame .experience-card{padding:16px}.app-frame .region-stats b{font-size:12px}.app-frame .ticket-summary,.app-frame .ticket-public,.app-frame .ticket-detail{padding-inline:16px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

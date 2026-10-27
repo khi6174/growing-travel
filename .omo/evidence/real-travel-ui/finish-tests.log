@@ -1,0 +1,28 @@
+✔ unprepared deep links return to the input step without inventing comparisons or courses (6.3921ms)
+✔ invalid settings cannot be bypassed by entering trip or recommendation screens (1.019ms)
+✔ existing draft remains readable while newly edited settings or comparisons are stale (0.9364ms)
+✔ comparison, recommendation and saved-course re-entry use only available stages (4.3346ms)
+✔ parent navigation is bounded inside the flow and does not mutate readiness state (4.8655ms)
+✔ benefits can be opened on first use with missing or invalid settings without requiring a trip (1.0706ms)
+✔ home and current settings remain reachable with invalid or missing travel inputs (1.255ms)
+✔ legacy profile route stays the travel preference step while settings has its own main tab (1.0159ms)
+✔ personal settings are optional except interests; age and residence are separate from a trip departure (7.9429ms)
+✔ student status is optional self-report, never inferred from age or residence and rejects unsupported values (8.7077ms)
+✔ pre-student v1 settings load without rewriting storage and gain unspecified status only on explicit save (1.9096ms)
+✔ profile validation catches unsupported ages, residences, interests and walking limits by field (2.8031ms)
+✔ profile store saves only on explicit save, round-trips and deletes its own key without touching courses (2.1909ms)
+✔ profile parse errors and invalid envelopes are preserved on load and save (2.2524ms)
+✔ profile storage read, quota, read-back and delete errors never claim success (1.5312ms)
+✔ metadata uses comma separators while keeping Korean administrative names intact (6.5612ms)
+✔ unspaced metadata enumerations use commas without splitting administrative names (0.8521ms)
+✔ formatting metadata retains actual route order and its arrows (0.8111ms)
+✔ real publication metadata keeps currentness uncertainty and separates it from a personal match (20.9313ms)
+✔ formatting leaves real official data, evidence, and matching output unchanged (5.77ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 735.8587

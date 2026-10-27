@@ -1,0 +1,78 @@
+{
+  "checkedAt": "2026-10-27T10:03:34.693Z",
+  "scope": "Local documentation structure only; not product tests or real-world verification.",
+  "requiredFileCount": 16,
+  "markdownFileCount": 42,
+  "localLinkCount": 434,
+  "identifierDefinitionCount": 88,
+  "identifierReferenceCount": 574,
+  "sourceSnapshotSha256": "36bd1f6844233e3519b9f0ea00814630685ff7bcd04b77180a6e227325f2d9ea",
+  "sourceSnapshotMatches": true,
+  "pdfSnapshotSha256": "7215d95321d48559e7a148e682deb9ee4c8f166cb86d02bc5ea964db240a2af5",
+  "pdfSnapshotMatches": true,
+  "plannedAcceptanceCount": 13,
+  "acceptanceStatuses": [
+    {
+      "id": "AC01",
+      "status": "부분 검증: 입력 로직 통과. 기존 미입력 비교·나이0에 더해 2026-10-26 새 화면에서 나이121/0·가능 시간-1 오류, 연결 설명·첫 오류 초점 확인. 필수 누락 전체 화면 분기는 미실행"
+    },
+    {
+      "id": "AC02",
+      "status": "통과: 가상 시연 근거 연결 자동 검사와 실제 근거 상세 화면 확인. 실제 장소 검증 아님"
+    },
+    {
+      "id": "AC03",
+      "status": "부분 검증: 후보·오류·참조 차단 자동 검사 통과, 화면에서 잘못된 입력 후 이전 추천 숨김 확인. 엔진 실패·지연 응답 화면 주입 미실행"
+    },
+    {
+      "id": "AC04",
+      "status": "통과: 가상 데이터·저장 표지 자동 검사 및 추천·상세·저장·재열람 화면 확인. 실제 후기 미구현"
+    },
+    {
+      "id": "AC05",
+      "status": "부분 검증: 구성·경고·미확인/초과 자동 검사 통과. 화면에서 자동 초안·지역 변경·순서 교환·동선 확인. 삭제·빈 코스·한도 초과의 전체 화면 분기 미실행"
+    },
+    {
+      "id": "AC06",
+      "status": "부분 검증: 기존/신규 저장본 자동 검사 통과. 화면에서 제목 저장·새로고침 목록 유지·재열람·순서 교환 후 버전2 저장 확인. 브라우저 완전 종료 후 재시작 미실행"
+    },
+    {
+      "id": "AC07",
+      "status": "부분 검증: 실패·중복·충돌 자동 검사 통과, 단일 화면 정상 저장 확인. 실패 주입·다중 탭 충돌의 실제 UI 미실행"
+    },
+    {
+      "id": "AC08",
+      "status": "부분 검증: 후보 경계 통과, 계정형 검사는 해당 없음"
+    },
+    {
+      "id": "AC09",
+      "status": "미실행"
+    },
+    {
+      "id": "AC10",
+      "status": "미실행"
+    },
+    {
+      "id": "AC11",
+      "status": "미실행"
+    },
+    {
+      "id": "AC12",
+      "status": "미실행"
+    },
+    {
+      "id": "AC13",
+      "status": "미실행"
+    }
+  ],
+  "detectedDataFiles": [
+    "dist/data.mjs",
+    "handoff/claude-delivery-2026-10-24/MANIFEST.json",
+    "handoff/codex-design-2026-10-26/MANIFEST.json",
+    "tests/fixtures/course-journey-before-student.json",
+    "tests/fixtures/course-v1.json"
+  ],
+  "dataScanLimit": "Filename inventory only; prose and synthetic/real-world claims require manual review.",
+  "failures": [],
+  "passed": true
+}

@@ -1,0 +1,22 @@
+{
+  "viewport": [
+    390,
+    844
+  ],
+  "editTargets": [
+    [
+      44,
+      44
+    ],
+    [
+      44,
+      44
+    ]
+  ],
+  "testedWidths": [
+    320,
+    390,
+    1440
+  ],
+  "warningsAndErrors": []
+}

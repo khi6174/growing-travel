@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>혜택 목록, 방식 B 반영</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance}
+button,a,label,select,input{touch-action:manipulation;-webkit-tap-highlight-color:rgba(54,81,232,.15)}
+button,a{cursor:pointer}
+:focus-visible{outline:3px solid #3651E8;outline-offset:2px}
+button:hover,a:hover{filter:brightness(.94)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+a{color:#202124}a:hover{color:#3651E8}
+</style>
+</helmet>
+<div style="width: 390px; height: 2400px; box-sizing: border-box; display: flex; flex-direction: column; background: #ECEEF1; color: #202124; font-family: 'Gothic A1', system-ui, sans-serif; font-size: 15px; line-height: 1.6; word-break: keep-all">
+
+  <main style="flex-grow: 1; display: flex; flex-direction: column; gap: 18px; padding: 20px 16px 32px">
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; padding: 8px 4px 0">
+      <h1 style="margin: 0; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.03em">혜택</h1>
+      <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: #55575C">안내 7개, 2026-10-24 확인</p>
+    </div>
+
+    <section aria-labelledby="bl-cond" style="background: #202124; color: #FFFFFF; border-radius: 20px; padding: 16px 16px 16px 18px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+        <h2 id="bl-cond" style="margin: 0; font-size: 14px; font-weight: 600; color: #C9CBD0">비교에 쓰는 내 조건</h2>
+        <button type="button" style="min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #3651E8; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">조건 수정</button>
+      </div>
+      <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px">
+        <li style="padding: 6px 12px; border: 1px solid #55575C; border-radius: 999px; font-size: 15px; font-weight: 700">만 23세</li>
+        <li style="padding: 6px 12px; border: 1px solid #55575C; border-radius: 999px; font-size: 15px; font-weight: 700">서울 거주</li>
+        <li style="padding: 6px 12px; border: 1px solid #55575C; border-radius: 999px; font-size: 15px; font-weight: 700">대학생 <span style="font-weight: 500; color: #C9CBD0">· 본인 입력</span></li>
+      </ul>
+      <p style="margin: 0; font-size: 13px; color: #C9CBD0">시연용 가상 입력이에요. 후보는 지원 확정이 아니에요.</p>
+    </section>
+
+    <nav aria-label="상태별 바로가기" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+      <a href="#bl-cand" style="min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FFFFFF; border-radius: 12px; text-decoration: none"><span style="font-size: 20px; font-weight: 800; line-height: 1.1">2</span><span style="font-size: 12px; font-weight: 600">후보</span></a>
+      <a href="#bl-need" style="min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FFFFFF; border-radius: 12px; text-decoration: none"><span style="font-size: 20px; font-weight: 800; line-height: 1.1">5</span><span style="font-size: 12px; font-weight: 600">확인 필요</span></a>
+      <a href="#bl-other" style="min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #8E9197; border-radius: 12px; text-decoration: none; color: #55575C"><span style="font-size: 20px; font-weight: 800; line-height: 1.1">0</span><span style="font-size: 12px; font-weight: 600">불일치</span></a>
+      <a href="#bl-other" style="min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #8E9197; border-radius: 12px; text-decoration: none; color: #55575C"><span style="font-size: 20px; font-weight: 800; line-height: 1.1">0</span><span style="font-size: 12px; font-weight: 600">기간 외</span></a>
+    </nav>
+
+    <div style="display: flex; gap: 8px; margin-right: -16px; overflow: hidden">
+      <button type="button" aria-pressed="true" style="flex-shrink: 0; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #202124; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">전체</button>
+      <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 16px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600">교통</button>
+      <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 16px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600">숙박</button>
+      <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 16px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600">문화</button>
+      <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; display: inline-flex; align-items: center; gap: 5px; padding: 0 16px 0 12px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11v5c3 2 9 2 12 0v-5"></path></svg>학생 조건 있음</button>
+      <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 16px; border: 1px solid #8E9197; border-radius: 999px; background: #FFFFFF; color: #202124; font: inherit; font-size: 14px; font-weight: 600">진행 중</button>
+    </div>
+
+    <section aria-labelledby="bl-cand" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="padding: 4px 4px 0">
+        <h2 id="bl-cand" style="margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em">조건이 맞는 후보 2</h2>
+        <p style="margin: 2px 0 0; font-size: 13px; color: #55575C">입력한 조건이 확인된 기준과 맞아요. 나머지 조건은 공식 안내에서 확인해 주세요.</p>
+      </div>
+
+      <article style="background: #FFFFFF; border-radius: 20px">
+        <div style="padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 5px 9px; background: #3651E8; color: #FFFFFF; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>조건이 맞는 후보</span>
+            <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; background: #ECEEF1; color: #3A3C40; border-radius: 8px; font-size: 12px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11v5c3 2 9 2 12 0v-5"></path></svg>학생 경로 있음</span>
+            <span style="margin-left: auto; font-size: 12px; font-weight: 600; color: #55575C">문화, 관람</span>
+          </div>
+          <h3 style="margin: 0; font-size: 21px; line-height: 1.3; font-weight: 800; letter-spacing: -0.02em">국립현대미술관 서울 무료관람</h3>
+          <p style="margin: 0; font-size: 15px"><strong style="display: block; font-weight: 700">맞는 이유</strong>입력한 만 23세가 ‘만 24세 이하’ 조건에 맞아요. 대학생 여부와 관계없이 나이로 후보가 됐어요.</p>
+          <p style="margin: 0; font-size: 14px; color: #55575C"><strong style="display: block; font-weight: 700; color: #202124">학생 경로</strong>학부생 기준이라 입력만으로는 확인할 수 없어요. 나이 경로가 맞아서 지금은 확인하지 않아도 돼요.</p>
+          <p style="margin: 0; font-size: 14px; color: #55575C"><strong style="display: block; font-weight: 700; color: #202124">남은 확인</strong>전시별 관람 조건, 현장 신분 확인 방식. 서울은 관람 장소이며 거주 조건이 아니에요.</p>
+        </div>
+        <div aria-hidden="true" style="position: relative; height: 18px">
+          <div style="position: absolute; left: -9px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #ECEEF1"></div>
+          <div style="position: absolute; left: 18px; right: 18px; top: 8px; border-top: 2px dashed #D3D6DB"></div>
+          <div style="position: absolute; right: -9px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #ECEEF1"></div>
+        </div>
+        <div style="padding: 8px 18px 18px; display: flex; align-items: center; justify-content: space-between; gap: 10px">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <p style="margin: 0; font-size: 12px; font-weight: 600; color: #55575C">공고 상태</p>
+            <p style="margin: 0; font-size: 14px; font-weight: 700">상시 제도 안내</p>
+            <p style="margin: 0; font-size: 12px; color: #55575C">국립현대미술관, 10-24 확인</p>
+          </div>
+          <a href="https://www.mmca.go.kr/visitingInfo/seoulInfo.do" style="min-height: 44px; display: inline-flex; align-items: center; gap: 4px; padding: 0 14px; border: 1.5px solid #202124; border-radius: 999px; font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap">공식 안내<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg></a>
+        </div>
+      </article>
+
+      <article style="background: #FFFFFF; border-radius: 20px">
+        <div style="padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 5px 9px; background: #3651E8; color: #FFFFFF; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>조건이 맞는 후보</span>
+            <span style="font-size: 12px; font-weight: 600; color: #55575C">교통, 요금 환급</span>
+          </div>
+          <h3 style="margin: 0; font-size: 21px; line-height: 1.3; font-weight: 800; letter-spacing: -0.02em">K-패스</h3>
+          <p style="margin: 0; font-size: 15px"><strong style="display: block; font-weight: 700">맞는 이유</strong>만 23세는 청년 구간(만 19~34세)이고, 2026년 전국 지방정부 참여 안내에 서울이 포함돼요.</p>
+          <p style="margin: 0; font-size: 14px; color: #55575C"><strong style="display: block; font-weight: 700; color: #202124">남은 확인</strong>주민등록 기준 거주, 카드 발급·등록, 월 이용 횟수, 지역별 추가 환급</p>
+        </div>
+        <div aria-hidden="true" style="position: relative; height: 18px">
+          <div style="position: absolute; left: -9px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #ECEEF1"></div>
+          <div style="position: absolute; left: 18px; right: 18px; top: 8px; border-top: 2px dashed #D3D6DB"></div>
+          <div style="position: absolute; right: -9px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #ECEEF1"></div>
+        </div>
+        <div style="padding: 8px 18px 18px; display: flex; align-items: center; justify-content: space-between; gap: 10px">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <p style="margin: 0; font-size: 12px; font-weight: 600; color: #55575C">공고 상태</p>
+            <p style="margin: 0; font-size: 14px; font-weight: 700">상시 제도 안내</p>
+            <p style="margin: 0; font-size: 12px; color: #55575C">한국교통안전공단, 10-24 확인</p>
+          </div>
+          <a href="https://main.kotsa.or.kr/portal/contents.do?menuCode=01080300" style="min-height: 44px; display: inline-flex; align-items: center; gap: 4px; padding: 0 14px; border: 1.5px solid #202124; border-radius: 999px; font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap">공식 안내<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg></a>
+        </div>
+      </article>
+    </section>
+
+    <section aria-labelledby="bl-need" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px">
+      <div style="padding: 4px 4px 0">
+        <h2 id="bl-need" style="margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em">추가 확인 필요 5</h2>
+        <p style="margin: 2px 0 0; font-size: 13px; color: #55575C">입력한 값만으로는 판단할 수 없어요. 대상이 아니라는 뜻은 아니에요.</p>
+      </div>
+
+      <article style="background: #FFFFFF; border-radius: 20px; padding: 16px 18px 8px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 9px; background: #FFE9C7; color: #8A4500; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.8h.01"></path></svg>추가 확인 필요</span>
+          <span style="font-size: 12px; font-weight: 600; color: #55575C">숙박</span>
+        </div>
+        <h3 style="margin: 0; font-size: 18px; line-height: 1.35; font-weight: 800; letter-spacing: -0.02em">2026 대한민국 숙박세일 페스타</h3>
+        <p style="margin: 0; font-size: 14px">출생연도 기준(2006년 출생자까지)이에요. 만 나이만으로는 확정할 수 없어요.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 2px dashed #E3E5E9; padding-top: 4px">
+          <p style="margin: 0; font-size: 13px"><strong style="font-weight: 700">공고 기간 중</strong><span style="color: #55575C">, 11-08까지, 마감 여부 확인</span></p>
+          <a href="https://ktostay.visitkorea.or.kr/" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap">공식 안내</a>
+        </div>
+      </article>
+
+      <article style="background: #FFFFFF; border-radius: 20px; padding: 16px 18px 8px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 9px; background: #FFE9C7; color: #8A4500; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.8h.01"></path></svg>추가 확인 필요</span>
+          <span style="font-size: 12px; font-weight: 600; color: #55575C">문화</span>
+        </div>
+        <h3 style="margin: 0; font-size: 18px; line-height: 1.35; font-weight: 800; letter-spacing: -0.02em">2026 청년문화예술패스 추가 발급</h3>
+        <p style="margin: 0; font-size: 14px">2006·2007년생 대상이에요. 출생연도와 이전 발급 여부를 확인해 주세요.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 2px dashed #E3E5E9; padding-top: 4px">
+          <p style="margin: 0; font-size: 13px"><strong style="font-weight: 700">공고 기간 중</strong><span style="color: #55575C">, 11-30까지 신청, 마감 여부 확인</span></p>
+          <a href="https://www.korea.kr/news/policyNewsView.do?newsId=148969837" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap">공식 안내</a>
+        </div>
+      </article>
+
+      <article style="background: #FFFFFF; border-radius: 20px; padding: 16px 18px 8px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 9px; background: #FFE9C7; color: #8A4500; border-radius: 999px; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.8h.01"></path></svg>추가 확인 필요</span>
+          <span style="font-size: 12px; font-weight: 600; color: #55575C">교통</span>
+        </div>
+        <h3 style="margin: 0; font-size: 18px; line-height: 1.35; font-weight: 800; letter-spacing: -0.02em">코레일 청소년드림</h3>
+        <p style="margin: 0; font-size: 14px">공식 안내 본문을 다시 열지 못했어요. 예전 안내의 ‘24세까지’는 참고용이에요.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 2px dashed #E3E5E9; padding-top: 4px">
+          <p style="margin: 0; font-size: 13px"><strong style="font-weight: 700">진행 확인 필요</strong><span style="color: #55575C">, 본문 미확인</span></p>
+          <a href="https://korail.go.kr/ticket/discountSystem/youth" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap">공식 안내</a>
+        </div>
+      </article>
+
+      <button type="button" style="min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 6px; background: #FFFFFF; border: 0; border-radius: 20px; color: #202124; font: inherit; font-size: 14px; font-weight: 700">힘내라청춘, 내일로 YOUTH 2개 더 보기<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+    </section>
+
+    <section aria-labelledby="bl-other" style="display: flex; flex-direction: column; gap: 2px; padding: 16px 18px; border: 2px dashed #8E9197; border-radius: 12px; margin-top: 4px">
+      <h2 id="bl-other" style="margin: 0; font-size: 15px; font-weight: 800">불일치, 현재 기간 아님</h2>
+      <p style="margin: 0; font-size: 14px; color: #55575C">이 조건에서는 해당하는 안내가 없어요.</p>
+    </section>
+
+    <p style="margin: 0; padding: 0 4px; font-size: 12px; color: #55575C">2026-10-24에 확인한 공개 안내예요. 잔여 예산·마감 여부는 공식 안내에서 확인해 주세요.</p>
+  </main>
+
+  <nav aria-label="주요 메뉴" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 0 12px calc(14px + env(safe-area-inset-bottom)); padding: 6px; background: #202124; border-radius: 24px">
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"></path></svg>여행</a>
+    <a href="#" aria-current="page" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: #3651E8; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 800; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"></path><path d="M14 8v1.5M14 11.25v1.5M14 14.5v1.5"></path></svg>혜택</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"></path></svg>저장한 코스</a>
+    <a href="#" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: #C9CBD0; text-decoration: none; font-size: 12px; font-weight: 600; border-radius: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>내 설정</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2400}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

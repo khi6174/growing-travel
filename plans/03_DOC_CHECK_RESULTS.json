@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-24T07:20:43.306Z",
+  "scope": "Local documentation structure only; not product tests or real-world verification.",
+  "requiredFileCount": 16,
+  "markdownFileCount": 15,
+  "localLinkCount": 105,
+  "identifierDefinitionCount": 66,
+  "identifierReferenceCount": 327,
+  "sourceSnapshotSha256": "36bd1f6844233e3519b9f0ea00814630685ff7bcd04b77180a6e227325f2d9ea",
+  "sourceSnapshotMatches": true,
+  "pdfSnapshotSha256": "7215d95321d48559e7a148e682deb9ee4c8f166cb86d02bc5ea964db240a2af5",
+  "pdfSnapshotMatches": true,
+  "plannedAcceptanceCount": 13,
+  "acceptanceStatuses": [
+    {
+      "id": "AC01",
+      "status": "부분 검증: 입력 로직 통과, 화면 미실행"
+    },
+    {
+      "id": "AC02",
+      "status": "부분 검증: 근거 연결 통과, 상세 화면 미실행"
+    },
+    {
+      "id": "AC03",
+      "status": "부분 검증: 후보·오류·참조 차단 통과, 화면·지연 전환 미실행"
+    },
+    {
+      "id": "AC04",
+      "status": "부분 검증: 데이터·저장 표지 보존 통과, 화면 미실행"
+    },
+    {
+      "id": "AC05",
+      "status": "부분 검증: 구성·경고 계약 통과, 화면 조작 미실행"
+    },
+    {
+      "id": "AC06",
+      "status": "부분 검증: 저장 어댑터 재생성·재조회 통과, 브라우저 재시작 미실행"
+    },
+    {
+      "id": "AC07",
+      "status": "부분 검증: 실패·중복·충돌 통과, 실제 탭·화면 미실행"
+    },
+    {
+      "id": "AC08",
+      "status": "부분 검증: 후보 경계 통과, 계정형 검사는 해당 없음"
+    },
+    {
+      "id": "AC09",
+      "status": "미실행"
+    },
+    {
+      "id": "AC10",
+      "status": "미실행"
+    },
+    {
+      "id": "AC11",
+      "status": "미실행"
+    },
+    {
+      "id": "AC12",
+      "status": "미실행"
+    },
+    {
+      "id": "AC13",
+      "status": "미실행"
+    }
+  ],
+  "detectedDataFiles": [
+    "dist/data.mjs"
+  ],
+  "dataScanLimit": "Filename inventory only; prose and synthetic/real-world claims require manual review.",
+  "failures": [],
+  "passed": true
+}

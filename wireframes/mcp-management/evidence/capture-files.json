@@ -1,0 +1,285 @@
+{
+  "converted_from_browser_JPEG": [
+    "01-overview-1440-dark.png",
+    "01-overview-390-dark.png",
+    "01-overview-390-light.png",
+    "01-overview.png",
+    "02-add-1440-dark.png",
+    "02-add-390-dark.png",
+    "02-add-390-light.png",
+    "02-add.png",
+    "03-detail-1440-dark.png",
+    "03-detail-390-dark.png",
+    "03-detail-390-light.png",
+    "03-detail.png",
+    "04-access-1440-dark.png",
+    "04-access-390-dark.png",
+    "04-access-390-light.png",
+    "04-access.png",
+    "05-activity-1440-dark.png",
+    "05-activity-390-dark.png",
+    "05-activity-390-light.png",
+    "05-activity.png",
+    "06-recovery-1440-dark.png",
+    "06-recovery-390-dark.png",
+    "06-recovery-390-light.png",
+    "06-recovery.png",
+    "add-confirmed.png",
+    "ia-mobile.png",
+    "save-status-separated.png"
+  ],
+  "files": [
+    {
+      "file": "01-overview-1440-dark.png",
+      "pixels": [
+        1424,
+        1144
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "01-overview-390-dark.png",
+      "pixels": [
+        375,
+        1982
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "01-overview-390-light.png",
+      "pixels": [
+        375,
+        1982
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "01-overview.png",
+      "pixels": [
+        1424,
+        1144
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "02-add-1440-dark.png",
+      "pixels": [
+        1424,
+        1042
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "02-add-390-dark.png",
+      "pixels": [
+        375,
+        1900
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "02-add-390-light.png",
+      "pixels": [
+        375,
+        1900
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "02-add.png",
+      "pixels": [
+        1424,
+        1042
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "03-detail-1440-dark.png",
+      "pixels": [
+        1424,
+        1488
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "03-detail-390-dark.png",
+      "pixels": [
+        375,
+        2431
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "03-detail-390-light.png",
+      "pixels": [
+        375,
+        2431
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "03-detail.png",
+      "pixels": [
+        1424,
+        1488
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "04-access-1440-dark.png",
+      "pixels": [
+        1424,
+        1042
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "04-access-390-dark.png",
+      "pixels": [
+        375,
+        1902
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "04-access-390-light.png",
+      "pixels": [
+        375,
+        1902
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "04-access.png",
+      "pixels": [
+        1424,
+        1042
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "05-activity-1440-dark.png",
+      "pixels": [
+        1424,
+        1193
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "05-activity-390-dark.png",
+      "pixels": [
+        375,
+        2133
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "05-activity-390-light.png",
+      "pixels": [
+        375,
+        2133
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "05-activity.png",
+      "pixels": [
+        1424,
+        1193
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "06-recovery-1440-dark.png",
+      "pixels": [
+        1424,
+        1042
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "06-recovery-390-dark.png",
+      "pixels": [
+        375,
+        1897
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "06-recovery-390-light.png",
+      "pixels": [
+        375,
+        1897
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "06-recovery.png",
+      "pixels": [
+        1424,
+        1042
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "add-confirmed.png",
+      "pixels": [
+        1424,
+        1211
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "ia-mobile.png",
+      "pixels": [
+        375,
+        811
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "overview-board.png",
+      "pixels": [
+        1984,
+        1264
+      ],
+      "raw_format": "PNG",
+      "evidence_format": "PNG"
+    },
+    {
+      "file": "save-status-separated.png",
+      "pixels": [
+        375,
+        1771
+      ],
+      "raw_format": "JPEG",
+      "evidence_format": "PNG"
+    }
+  ]
+}
