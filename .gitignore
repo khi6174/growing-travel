@@ -1,0 +1,22 @@
+# Local tools and dependencies
+node_modules/
+/.claude/
+/.codex/
+/.agents/
+/.omo/*
+!/.omo/evidence/
+
+# Credentials and machine-specific files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Duplicate browser captures; reviewed PNG evidence is retained
+*.raw
+*.tmp
+npm-debug.log*

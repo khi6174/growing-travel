@@ -1,0 +1,114 @@
+{
+  "contractVersion": "local-demo-v1",
+  "title": "기존 가상 코스",
+  "ownerRef": "local-browser",
+  "visibility": "private",
+  "synthetic": true,
+  "sourceRequestId": "legacy-fixture",
+  "contextSnapshot": {
+    "availableMinutes": 180,
+    "interests": [
+      "nature"
+    ],
+    "regionText": "가상 온유동",
+    "destinationStatus": "selected",
+    "companion": "solo",
+    "mobility": "walk",
+    "avoidStairs": false
+  },
+  "orderedItems": [
+    {
+      "experienceId": "demo-garden",
+      "order": 0,
+      "displaySnapshot": {
+        "title": "안개정원에서 천천히 걷기",
+        "summary": "작은 정원 길을 따라 걷다가 벤치에서 잠깐 쉬는 가상 경험이에요.",
+        "region": "가상 온유동",
+        "visitContext": "가상 조건 · 가을 평일 오후 / 혼자 또는 함께 / 도보",
+        "positives": [
+          "걸음 사이에 쉬는 시간을 넣는 설정",
+          "풍경을 바라보는 가벼운 활동"
+        ],
+        "drawbacks": [
+          "비를 피할 실내 공간은 설정되지 않음",
+          "현재 날씨·길 상태는 미확인"
+        ],
+        "art": "garden"
+      },
+      "evidenceRefs": [
+        "demo-garden-activity",
+        "demo-garden-context",
+        "demo-garden-duration",
+        "demo-garden-access"
+      ],
+      "evidence": [
+        {
+          "id": "demo-garden-activity",
+          "claim": "작은 정원 길을 따라 걷다가 벤치에서 잠깐 쉬는 가상 경험이에요.",
+          "sourceLabel": "가상 시연 카드 · 실제 방문 자료 아님"
+        },
+        {
+          "id": "demo-garden-context",
+          "claim": "가상 조건 · 가을 평일 오후 / 혼자 또는 함께 / 도보",
+          "sourceLabel": "가상으로 설정한 조건 · 실제 후기 아님"
+        },
+        {
+          "id": "demo-garden-duration",
+          "claim": "시연용 활동 시간 45분. 실제 소요 시간은 확인되지 않았습니다.",
+          "sourceLabel": "가상 시연 설정값"
+        },
+        {
+          "id": "demo-garden-access",
+          "claim": "가상 설정에는 계단이 없습니다. 실제 접근성은 미확인입니다.",
+          "sourceLabel": "가상 시연 설정값 · 접근성 검증 아님"
+        }
+      ],
+      "synthetic": true,
+      "reasons": [
+        {
+          "summary": "선택한 산책과 자연 관심과 연결되는 가상 경험이에요.",
+          "contextFields": [
+            "interests"
+          ],
+          "evidenceRefs": [
+            "demo-garden-activity"
+          ]
+        },
+        {
+          "summary": "시연용 활동 시간 45분은 입력한 180분 이내예요. 이동 시간은 포함하지 않았어요.",
+          "contextFields": [
+            "availableMinutes"
+          ],
+          "evidenceRefs": [
+            "demo-garden-duration"
+          ]
+        },
+        {
+          "summary": "혼자 하는 조건이 가상 카드의 방문 조건에 포함돼요.",
+          "contextFields": [
+            "companion"
+          ],
+          "evidenceRefs": [
+            "demo-garden-context"
+          ]
+        }
+      ],
+      "durationEstimate": 45,
+      "transitionEstimate": null
+    }
+  ],
+  "estimate": {
+    "activityMinutes": 45,
+    "transitionMinutes": null,
+    "totalMinutes": null,
+    "overBudget": false,
+    "warnings": [
+      "활동 시간은 가상 설정값이며 실제 이동 시간은 포함되지 않았어요.",
+      "현재 운영정보·가격·방문 안전을 확인하지 않은 시연용 초안이에요."
+    ]
+  },
+  "feasibility": "unknown",
+  "id": "legacy-course",
+  "version": 1,
+  "savedAt": "2026-10-24T00:00:00.000Z"
+}

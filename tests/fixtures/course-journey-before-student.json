@@ -1,0 +1,333 @@
+{
+  "contractVersion": "local-demo-v1",
+  "title": "대학생 구분 추가 전 가상 여행",
+  "ownerRef": "local-browser",
+  "visibility": "private",
+  "synthetic": true,
+  "sourceRequestId": "before-student-status",
+  "contextSnapshot": {
+    "availableMinutes": 300,
+    "interests": [
+      "nature",
+      "quiet"
+    ],
+    "regionText": "가상 온유동",
+    "destinationStatus": "selected",
+    "companion": "solo",
+    "mobility": "walk_transit",
+    "avoidStairs": false
+  },
+  "orderedItems": [
+    {
+      "experienceId": "demo-garden",
+      "order": 0,
+      "displaySnapshot": {
+        "title": "안개정원에서 천천히 걷기",
+        "summary": "작은 정원 길을 따라 걷다가 벤치에서 잠깐 쉬는 가상 경험이에요.",
+        "region": "가상 온유동",
+        "visitContext": "가상 조건 · 가을 평일 오후 / 혼자 또는 함께 / 도보",
+        "positives": [
+          "걸음 사이에 쉬는 시간을 넣는 설정",
+          "풍경을 바라보는 가벼운 활동"
+        ],
+        "drawbacks": [
+          "비를 피할 실내 공간은 설정되지 않음",
+          "현재 날씨·길 상태는 미확인"
+        ],
+        "art": "garden"
+      },
+      "evidenceRefs": [
+        "demo-garden-activity",
+        "demo-garden-context",
+        "demo-garden-duration",
+        "demo-garden-access"
+      ],
+      "evidence": [
+        {
+          "id": "demo-garden-activity",
+          "claim": "작은 정원 길을 따라 걷다가 벤치에서 잠깐 쉬는 가상 경험이에요.",
+          "sourceLabel": "가상 시연 카드 · 실제 방문 자료 아님"
+        },
+        {
+          "id": "demo-garden-context",
+          "claim": "가상 조건 · 가을 평일 오후 / 혼자 또는 함께 / 도보",
+          "sourceLabel": "가상으로 설정한 조건 · 실제 후기 아님"
+        },
+        {
+          "id": "demo-garden-duration",
+          "claim": "시연용 활동 시간 45분. 실제 소요 시간은 확인되지 않았습니다.",
+          "sourceLabel": "가상 시연 설정값"
+        },
+        {
+          "id": "demo-garden-access",
+          "claim": "가상 설정에는 계단이 없습니다. 실제 접근성은 미확인입니다.",
+          "sourceLabel": "가상 시연 설정값 · 접근성 검증 아님"
+        }
+      ],
+      "synthetic": true,
+      "reasons": [
+        {
+          "summary": "선택한 산책과 자연 · 조용한 쉼 관심과 연결되는 가상 경험이에요.",
+          "contextFields": [
+            "interests"
+          ],
+          "evidenceRefs": [
+            "demo-garden-activity"
+          ]
+        },
+        {
+          "summary": "시연용 활동 시간 45분은 입력한 300분 이내예요. 이동 시간은 포함하지 않았어요.",
+          "contextFields": [
+            "availableMinutes"
+          ],
+          "evidenceRefs": [
+            "demo-garden-duration"
+          ]
+        },
+        {
+          "summary": "혼자 하는 조건이 가상 카드의 방문 조건에 포함돼요.",
+          "contextFields": [
+            "companion"
+          ],
+          "evidenceRefs": [
+            "demo-garden-context"
+          ]
+        }
+      ],
+      "durationEstimate": 45,
+      "transitionEstimate": null
+    },
+    {
+      "experienceId": "demo-library",
+      "order": 1,
+      "displaySnapshot": {
+        "title": "느린 서가에서 한 장 읽기",
+        "summary": "읽고 싶은 책을 골라 창가에 앉아보는 가상 쉼의 경험이에요.",
+        "region": "가상 온유동",
+        "visitContext": "가상 조건 · 비 오는 오후 / 혼자 / 실내",
+        "positives": [
+          "혼자 집중하는 시간에 맞춘 설정",
+          "실내에서 조용히 머무는 활동"
+        ],
+        "drawbacks": [
+          "좌석이 적다는 가상 설정",
+          "실제 좌석·영업 여부는 미확인"
+        ],
+        "art": "library"
+      },
+      "evidenceRefs": [
+        "demo-library-activity",
+        "demo-library-context",
+        "demo-library-duration",
+        "demo-library-access"
+      ],
+      "evidence": [
+        {
+          "id": "demo-library-activity",
+          "claim": "읽고 싶은 책을 골라 창가에 앉아보는 가상 쉼의 경험이에요.",
+          "sourceLabel": "가상 시연 카드 · 실제 방문 자료 아님"
+        },
+        {
+          "id": "demo-library-context",
+          "claim": "가상 조건 · 비 오는 오후 / 혼자 / 실내",
+          "sourceLabel": "가상으로 설정한 조건 · 실제 후기 아님"
+        },
+        {
+          "id": "demo-library-duration",
+          "claim": "시연용 활동 시간 50분. 실제 소요 시간은 확인되지 않았습니다.",
+          "sourceLabel": "가상 시연 설정값"
+        },
+        {
+          "id": "demo-library-access",
+          "claim": "가상 설정에는 계단이 없습니다. 실제 접근성은 미확인입니다.",
+          "sourceLabel": "가상 시연 설정값 · 접근성 검증 아님"
+        }
+      ],
+      "synthetic": true,
+      "reasons": [
+        {
+          "summary": "선택한 조용한 쉼 관심과 연결되는 가상 경험이에요.",
+          "contextFields": [
+            "interests"
+          ],
+          "evidenceRefs": [
+            "demo-library-activity"
+          ]
+        },
+        {
+          "summary": "시연용 활동 시간 50분은 입력한 300분 이내예요. 이동 시간은 포함하지 않았어요.",
+          "contextFields": [
+            "availableMinutes"
+          ],
+          "evidenceRefs": [
+            "demo-library-duration"
+          ]
+        },
+        {
+          "summary": "혼자 하는 조건이 가상 카드의 방문 조건에 포함돼요.",
+          "contextFields": [
+            "companion"
+          ],
+          "evidenceRefs": [
+            "demo-library-context"
+          ]
+        }
+      ],
+      "durationEstimate": 50,
+      "transitionEstimate": null
+    }
+  ],
+  "estimate": {
+    "activityMinutes": 95,
+    "transitionMinutes": null,
+    "totalMinutes": null,
+    "overBudget": false,
+    "warnings": [
+      "활동 시간은 가상 설정값이며 실제 이동 시간은 포함되지 않았어요.",
+      "현재 운영정보·가격·방문 안전을 확인하지 않은 시연용 초안이에요."
+    ]
+  },
+  "feasibility": "unknown",
+  "journeySnapshot": {
+    "contractVersion": "local-journey-v1",
+    "synthetic": true,
+    "sourceLabel": "가상 동선·시간·가격 설정 · 실제 지도·운행·비용 자료 아님",
+    "profileSnapshot": {
+      "age": 24,
+      "residenceRegion": "서울",
+      "interests": [
+        "nature",
+        "quiet"
+      ],
+      "walkingLimitMinutes": 60
+    },
+    "tripSnapshot": {
+      "departureId": "central",
+      "date": "2026-10-24",
+      "availableMinutes": 300,
+      "budget": 50000,
+      "partySize": 1,
+      "walkingLimitMinutes": 60,
+      "avoidStairs": false
+    },
+    "regionId": "onyu",
+    "regionName": "가상 온유동",
+    "station": "가상 온유역",
+    "experienceIds": [
+      "demo-garden",
+      "demo-library"
+    ],
+    "legs": [
+      {
+        "from": "가상 중앙역",
+        "to": "가상 온유역",
+        "mode": "transit",
+        "minutes": 20,
+        "synthetic": true,
+        "sourceLabel": "가상 동선·시간·가격 설정 · 실제 지도·운행·비용 자료 아님"
+      },
+      {
+        "from": "가상 온유역",
+        "to": "안개정원에서 천천히 걷기",
+        "mode": "walk",
+        "minutes": 8,
+        "synthetic": true,
+        "sourceLabel": "가상 동선·시간·가격 설정 · 실제 지도·운행·비용 자료 아님"
+      },
+      {
+        "from": "안개정원에서 천천히 걷기",
+        "to": "느린 서가에서 한 장 읽기",
+        "mode": "walk",
+        "minutes": 5,
+        "synthetic": true,
+        "sourceLabel": "가상 동선·시간·가격 설정 · 실제 지도·운행·비용 자료 아님"
+      },
+      {
+        "from": "느린 서가에서 한 장 읽기",
+        "to": "가상 온유역",
+        "mode": "walk",
+        "minutes": 6,
+        "synthetic": true,
+        "sourceLabel": "가상 동선·시간·가격 설정 · 실제 지도·운행·비용 자료 아님"
+      },
+      {
+        "from": "가상 온유역",
+        "to": "가상 중앙역",
+        "mode": "transit",
+        "minutes": 20,
+        "synthetic": true,
+        "sourceLabel": "가상 동선·시간·가격 설정 · 실제 지도·운행·비용 자료 아님"
+      }
+    ],
+    "estimate": {
+      "activityMinutes": 95,
+      "walkingMinutes": 49,
+      "travelMinutes": 59,
+      "totalMinutes": 154,
+      "costPerPerson": 6000,
+      "totalCost": 6000,
+      "knownWalkingMinutes": 49,
+      "knownTravelMinutes": 59,
+      "discountApplied": 0
+    },
+    "checks": {
+      "time": "met",
+      "walking": "met",
+      "budget": "met"
+    },
+    "warnings": [
+      "지역·경험·동선·시간·가격·지역 혜택은 모두 창작한 시연 자료입니다.",
+      "실제 영업·운행·혼자 이용 조건·복귀 가능 여부는 확인되지 않았어요.",
+      "가상 예산은 선택한 활동과 왕복 교통의 설정값만 포함해요. 식사·숙박 등 추가 지출은 별도예요.",
+      "혜택 후보를 실제 수혜로 확정하거나 예상 비용에서 차감하지 않았어요."
+    ],
+    "benefits": [
+      {
+        "id": "demo-transport",
+        "regionId": "onyu",
+        "title": "가상 청년 역 연결 지원",
+        "category": "교통",
+        "minAge": 19,
+        "maxAge": 29,
+        "residenceRegion": null,
+        "startsOn": "2026-01-01",
+        "endsOn": "2026-12-31",
+        "conditions": "입력 만 나이 19~29세 · 2026년 여행일 · 가입·예산 조건은 확인 필요",
+        "synthetic": true,
+        "sourceType": "synthetic",
+        "sourceLabel": "창작한 혜택 · 신청하거나 사용할 수 없는 시연 예시",
+        "status": "candidate",
+        "statusLabel": "입력 조건상 후보",
+        "reasons": [
+          "입력 나이가 가상 조건 19~29세 범위에 들어요.",
+          "창작한 시연 예시입니다. 실제 지원·수혜 확정이 아니며 코스 비용에서 차감하지 않아요."
+        ]
+      },
+      {
+        "id": "demo-culture",
+        "regionId": "onyu",
+        "title": "가상 전시 산책 혜택",
+        "category": "문화",
+        "minAge": 19,
+        "maxAge": 24,
+        "residenceRegion": "서울",
+        "startsOn": "2026-10-01",
+        "endsOn": "2026-11-30",
+        "conditions": "입력 만 나이 19~24세 · 거주 시·도 서울 · 여행일 2026-10-01~11-30",
+        "synthetic": true,
+        "sourceType": "synthetic",
+        "sourceLabel": "창작한 혜택 · 신청하거나 사용할 수 없는 시연 예시",
+        "status": "candidate",
+        "statusLabel": "입력 조건상 후보",
+        "reasons": [
+          "입력 나이가 가상 조건 19~24세 범위에 들어요.",
+          "입력 거주 지역이 가상 조건 서울와 같아요.",
+          "창작한 시연 예시입니다. 실제 지원·수혜 확정이 아니며 코스 비용에서 차감하지 않아요."
+        ]
+      }
+    ]
+  },
+  "id": "fixture-before-student-status",
+  "version": 1,
+  "savedAt": "2026-10-24T00:00:00.000Z"
+}
