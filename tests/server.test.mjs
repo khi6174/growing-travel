@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { createServer } from '../scripts/serve.mjs';
 
-test('loopback demo serves only public assets and no write APIs', async () => {
+test('loopback demo serves only public assets and unknown API routes are not found', async () => {
   const server = createServer();
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;

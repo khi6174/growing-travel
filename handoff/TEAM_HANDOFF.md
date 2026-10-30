@@ -28,6 +28,14 @@ node scripts/serve.mjs
 
 서버 시작 메시지 후 브라우저에서 <http://127.0.0.1:4173>을 연다. 종료는 `Ctrl+C`다. Web Locks를 지원하는 Chrome 또는 Edge를 사용한다. HTML 파일을 직접 열지 않는다. 기본 포트가 사용 중이면 `node scripts/serve.mjs --port 4174`로 실행하고 <http://127.0.0.1:4174>를 연다. `PORT` 환경변수는 이 서버의 설정 방법이 아니다. 서버는 해당 컴퓨터의 루프백 주소에만 열리므로 팀원은 각자 실행한다.
 
+## AI 추천 설정 (2026-10-30 추가)
+
+AI 추천은 서버(`scripts/serve.mjs`)에서만 호출한다. [.env.example](../.env.example)을 `.env`로 복사해 제공자와 키를 넣는다. `.env`는 Git에 올라가지 않으며 브라우저로 전달되지 않는다. 서버 시작 메시지의 `AI:` 줄에서 적용 여부를 확인한다.
+
+- `AI_PROVIDER=anthropic`(기본, `ANTHROPIC_API_KEY`) · `openai`(`OPENAI_API_KEY`, `OPENAI_MODEL`) · `school`(`SCHOOL_AI_BASE_URL`, `SCHOOL_AI_API_KEY`, `SCHOOL_AI_MODEL`, OpenAI 호환 형식 가정) · `none`
+- 키가 없거나, 응답이 늦거나(`AI_TIMEOUT_MS`, 기본 20초), 형식이 틀리면 관심사·걷기 정도·거리 기반 규칙 정렬로 3곳을 채운다.
+- 후보지는 [data/places.json](../data/places.json), 현장 제보는 `data/runtime/reports.json`(Git 제외)에 저장된다.
+
 ## 확인할 기능
 
 1. 홈 → 취향·개인 설정 → 여행 조건 → 지역 비교 → 경험 추천 → 코스 순으로 진행한다. 청량리·서울·용산 출발역, 춘천·가평·강릉 3개 지역, 실제 장소 8개를 제공한다.

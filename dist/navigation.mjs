@@ -1,8 +1,9 @@
 // Screen availability never changes the user's inputs, draft, or saved courses.
-export const SCREENS = Object.freeze(['home', 'profile', 'trip', 'regions', 'experiences', 'course', 'saved', 'benefits', 'settings']);
-export function resolveScreen(requested, { profileValid = true, comparisonReady = false, recommendationsReady = false, hasCourse = false } = {}) {
+export const SCREENS = Object.freeze(['home', 'profile', 'trip', 'regions', 'experiences', 'course', 'saved', 'benefits', 'settings', 'ai', 'ai-results']);
+export function resolveScreen(requested, { profileValid = true, comparisonReady = false, recommendationsReady = false, hasCourse = false, aiResultsReady = false } = {}) {
   if (!SCREENS.includes(requested)) return 'home';
-  if (['home', 'profile', 'settings', 'saved', 'benefits'].includes(requested)) return requested;
+  if (requested === 'ai-results') return aiResultsReady ? 'ai-results' : 'ai';
+  if (['home', 'profile', 'settings', 'saved', 'benefits', 'ai'].includes(requested)) return requested;
   // An existing draft remains readable even when the newly edited inputs are invalid.
   if (requested === 'course' && hasCourse) return 'course';
   if (!profileValid) return 'profile';
@@ -13,7 +14,7 @@ export function resolveScreen(requested, { profileValid = true, comparisonReady 
   return 'experiences';
 }
 export function parentScreen(screen) {
-  return { home: 'home', profile: 'home', settings: 'home', trip: 'profile', regions: 'trip', experiences: 'regions', course: 'experiences', saved: 'home', benefits:'home' }[screen] ?? 'home';
+  return { home: 'home', profile: 'home', settings: 'home', trip: 'profile', regions: 'trip', experiences: 'regions', course: 'experiences', saved: 'home', benefits:'home', ai: 'home', 'ai-results': 'ai' }[screen] ?? 'home';
 }
 
 export function navigationTab(screen) {

@@ -12,6 +12,8 @@ import { benefitStatus, selectBenefits, seoulToday } from './benefit-catalog.mjs
 import { rankBenefits } from './benefit-matching.mjs';
 import { hasStudentRoute, shortReason } from './benefit-presentation.mjs';
 import { metaText } from './ui-copy.mjs';
+import { fieldReportsSection } from './field-reports.mjs';
+import { setupAiFlow } from './ai-flow.mjs';
 
 const $ = (id) => document.getElementById(id);
 const EXPERIENCES = [...REAL_PLACES, ...LEGACY_EXPERIENCES];
@@ -53,7 +55,7 @@ const state = { run: null, context: null, ids: [], courseId: null, version: null
 function availability() {
   let profileValid = true;
   try { normalizeProfile(rawProfile()); } catch { profileValid = false; }
-  return { profileValid, comparisonReady: Boolean(state.comparison && !state.comparisonDirty), recommendationsReady: Boolean(state.run && !state.inputDirty), hasCourse: Boolean(state.context && state.ids.length) };
+  return { profileValid, comparisonReady: Boolean(state.comparison && !state.comparisonDirty), recommendationsReady: Boolean(state.run && !state.inputDirty), hasCourse: Boolean(state.context && state.ids.length), aiResultsReady: Boolean(state.aiResults) };
 }
 const { goScreen, updateNavigation } = createScreenNavigation({
   state, availability, refreshSaved, renderBenefits,
@@ -410,7 +412,7 @@ function renderResults() {
 
 function openEvidence(experience, reasons = []) {
   const content = $('evidence-content'); content.replaceChildren();
-  if (experience.synthetic === false) { content.append(realPlaceDetails(experience, reasons)); $('evidence-dialog').showModal(); $('evidence-heading').focus(); return; }
+  if (experience.synthetic === false) { content.append(realPlaceDetails(experience, reasons), fieldReportsSection(experience)); $('evidence-dialog').showModal(); $('evidence-heading').focus(); return; }
   content.append(element('span', 'small-label', '가상 데이터, 시연용'), element('h2', '', experience.title));
   content.lastElementChild.id = 'evidence-heading';
   content.append(element('p', 'intro', `${experience.region}, 실제 장소·방문 후기가 아닙니다.`));
@@ -729,4 +731,6 @@ $('close-evidence').addEventListener('click', () => $('evidence-dialog').close()
 $('evidence-dialog').addEventListener('click', (event) => { if (event.target === $('evidence-dialog')) { const rect = event.target.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) event.target.close(); } });
 window.addEventListener('storage', (event) => { if (event.key === STORAGE_KEY) { refreshSaved(); if (state.courseId) saveMessage('다른 탭에서 저장 내용이 바뀌었을 수 있어요. 현재 초안은 유지됩니다. 최신본은 저장한 코스에서 확인하세요.'); } });
 renderRegions(); renderOfficialBenefits(); renderResults(); refreshSaved();
+// D26: AI recommendation flow; results live in memory for this visit only.
+setupAiFlow({ today: seoulToday, studentStatus: () => personalBenefitInput.studentStatus, showResults: (result) => { state.aiResults = result; goScreen('ai-results'); } });
 goScreen(location.hash.slice(1) || 'home', { replace:true, focus:false });

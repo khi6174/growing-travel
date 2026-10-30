@@ -20,3 +20,6 @@ Desktop.ini
 *.raw
 *.tmp
 npm-debug.log*
+
+# Field reports written while running the local demo
+/data/runtime/
