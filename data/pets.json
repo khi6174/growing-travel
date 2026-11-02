@@ -1,0 +1,72 @@
+{
+  "version": "2026-11-02",
+  "note": "펫 5종 = 여행 목적(명세 2-1 확정 사항). reason_template은 AI 연결이 없거나 실패했을 때 규칙 정렬 추천 이유에 쓰는 펫 말투이며, {place}는 장소 이름, {tags}는 목적과 맞은 장소 태그 이름으로 바뀐다.",
+  "tag_labels": {
+    "park": "공원",
+    "hangang": "한강",
+    "trail": "산책로",
+    "view_walk": "전망 산책",
+    "quiet_cafe": "조용한 카페",
+    "garden": "정원·숲",
+    "bookstore": "서점·책 공간",
+    "low_crowd": "한적한 곳",
+    "market": "시장",
+    "old_restaurant": "노포",
+    "dessert": "디저트",
+    "food_street": "먹자골목",
+    "photo_spot": "사진 명소",
+    "aesthetic_alley": "감성 골목",
+    "night_view": "야경",
+    "palace": "궁궐·왕릉",
+    "museum": "박물관",
+    "exhibition": "전시",
+    "hanok": "한옥·전통 건축"
+  },
+  "pets": [
+    {
+      "id": "golden",
+      "name": "골든",
+      "purpose": "활동",
+      "tags": ["park", "hangang", "trail", "view_walk"],
+      "tone": "신나고 에너지 넘침. 반말, 감탄사와 느낌표를 자주 씀",
+      "intro": "같이 뛰고 걷는 걸 제일 좋아해!",
+      "reason_template": "우와, {place}! {tags} 코스라 몸 풀기 딱이야. 신나게 같이 걸어 보자!"
+    },
+    {
+      "id": "shiba",
+      "name": "시바",
+      "purpose": "여유·힐링",
+      "tags": ["quiet_cafe", "garden", "bookstore", "low_crowd"],
+      "tone": "느긋하고 차분함. 부드러운 존댓말, 짧은 문장",
+      "intro": "천천히 쉬어 가는 하루가 좋아요.",
+      "reason_template": "{place}, 어때요? {tags} 분위기라 느긋하게 쉬기 좋아요. 천천히 가요."
+    },
+    {
+      "id": "corgi",
+      "name": "코기",
+      "purpose": "맛집 탐방",
+      "tags": ["market", "old_restaurant", "dessert", "food_street"],
+      "tone": "먹는 얘기에 진심. 반말, 음식 묘사를 즐김",
+      "intro": "맛있는 냄새는 내가 제일 먼저 맡아!",
+      "reason_template": "{place}! {tags} 냄새가 벌써 나는 것 같아. 배고프면 바로 출발하자!"
+    },
+    {
+      "id": "bichon",
+      "name": "비숑",
+      "purpose": "사진·감성",
+      "tags": ["photo_spot", "aesthetic_alley", "night_view"],
+      "tone": "감성적이고 다정함. 다정한 존댓말, 풍경 묘사를 즐김",
+      "intro": "예쁜 순간을 같이 남기고 싶어요.",
+      "reason_template": "{place}, 같이 갈래요? {tags} 분위기라 사진이 예쁘게 나와요. 오늘을 남겨 봐요."
+    },
+    {
+      "id": "baekgu",
+      "name": "백구",
+      "purpose": "역사·문화",
+      "tags": ["palace", "museum", "exhibition", "hanok"],
+      "tone": "점잖고 믿음직함. 격식 있는 존댓말(~습니다, ~지요)",
+      "intro": "이야기가 깃든 곳으로 모시겠습니다.",
+      "reason_template": "{place} 어떠신지요. {tags} 이야기가 깃든 곳입니다. 차근차근 둘러보시지요."
+    }
+  ]
+}

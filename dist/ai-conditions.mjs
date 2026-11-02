@@ -1,96 +1,109 @@
-// D26: conditions for the AI recommendation flow. Shared by the browser form and the local server,
-// so this module stays free of DOM access.
-export const PLACE_TAGS = Object.freeze(['카페', '시장', '자연', '역사', '문화', '산책', '야경', '사진', '쇼핑']);
+// D27: conditions for the pet recommendation flow (펫 → 출발 위치 → 시간 → 인원 → 걷기). Shared by the
+// browser form and the local server, so this module stays free of DOM access.
 
-// Representative station points for distance ordering only; not exits or boarding points (확인 필요).
+// Representative station points for the straight-line time estimate only; not exits or platforms (확인 필요).
 export const SEOUL_STATIONS = Object.freeze([
   { id: 'seoul', label: '서울역', lat: 37.5547, lng: 126.9707 },
-  { id: 'yongsan', label: '용산역', lat: 37.5299, lng: 126.9648 },
-  { id: 'cheongnyangni', label: '청량리역', lat: 37.5806, lng: 127.0483 },
+  { id: 'gyeongbokgung', label: '경복궁역', lat: 37.5759, lng: 126.9735 },
+  { id: 'dongnimmun', label: '독립문역', lat: 37.5745, lng: 126.9578 },
   { id: 'hongik', label: '홍대입구역', lat: 37.5572, lng: 126.9245 },
   { id: 'sinchon', label: '신촌역', lat: 37.5552, lng: 126.9369 },
+  { id: 'yeouido', label: '여의도역', lat: 37.5216, lng: 126.9243 },
+  { id: 'yongsan', label: '용산역', lat: 37.5299, lng: 126.9648 },
   { id: 'wangsimni', label: '왕십리역', lat: 37.5612, lng: 127.0371 },
+  { id: 'seongsu', label: '성수역', lat: 37.5446, lng: 127.0559 },
   { id: 'konkuk', label: '건대입구역', lat: 37.5404, lng: 127.0692 },
-  { id: 'jamsil', label: '잠실역', lat: 37.5133, lng: 127.1000 },
+  { id: 'cheongnyangni', label: '청량리역', lat: 37.5806, lng: 127.0483 },
+  { id: 'nowon', label: '노원역', lat: 37.6551, lng: 127.0613 },
+  { id: 'jamsil', label: '잠실역', lat: 37.5133, lng: 127.1 },
   { id: 'gangnam', label: '강남역', lat: 37.4979, lng: 127.0276 },
   { id: 'express-terminal', label: '고속터미널역', lat: 37.5049, lng: 127.0049 },
   { id: 'sadang', label: '사당역', lat: 37.4766, lng: 126.9816 },
-  { id: 'nowon', label: '노원역', lat: 37.6551, lng: 127.0613 },
 ]);
-export const TIME_SLOTS = Object.freeze([
-  { id: 'full_day', label: '하루 종일', hint: '당일치기' },
-  { id: 'morning', label: '오전', hint: '9~12시' },
-  { id: 'afternoon', label: '오후', hint: '12~18시' },
-  { id: 'evening', label: '저녁', hint: '18시 이후' },
+export const CURRENT_LOCATION = 'current';
+// A device location outside this box is not used as a departure point (the app covers Seoul only).
+export const SEOUL_BOUNDS = Object.freeze({ lat: [37.41, 37.72], lng: [126.76, 127.19] });
+export const HOUR_CHOICES = Object.freeze([
+  { hours: 2, label: '2시간' },
+  { hours: 3, label: '3시간' },
+  { hours: 4, label: '4시간' },
+  { hours: 6, label: '6시간' },
+  { hours: 8, label: '하루', hint: '8시간쯤' },
 ]);
 export const WALK_CHOICES = Object.freeze([
-  { level: 1, label: '가볍게', hint: '평지 위주' },
+  { level: 1, label: '조금만', hint: '평지·역 근처' },
   { level: 2, label: '적당히', hint: '30~90분' },
   { level: 3, label: '많이', hint: '오르막도 OK' },
 ]);
-export const AGE_GROUPS = Object.freeze([
-  { id: '', label: '입력 안 함' },
-  { id: 'teen', label: '10대' },
-  { id: '20s_early', label: '20대 초반' },
-  { id: '20s_late', label: '20대 후반' },
-  { id: '30s_plus', label: '30대 이상' },
+export const TIME_OF_DAY = Object.freeze([
+  { id: 'day', label: '낮' },
+  { id: 'evening', label: '저녁' },
 ]);
-export const STUDENT_STATUSES = Object.freeze([
-  { id: 'unspecified', label: '입력 안 함' },
-  { id: 'student', label: '대학생' },
-  { id: 'not_student', label: '대학생 아님' },
-]);
-export const MAX_INTERESTS = 4;
-export const MAX_DAYS_AHEAD = 90;
+export const MAX_PARTY = 6;
+const MAX_MET = 25;
 
 export class ConditionError extends Error {
   constructor(fields) { super(Object.values(fields)[0]); this.name = 'ConditionError'; this.fields = fields; }
 }
 
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
-function addDays(date, days) {
-  const value = new Date(`${date}T00:00:00Z`); value.setUTCDate(value.getUTCDate() + days);
-  return value.toISOString().slice(0, 10);
-}
+// Seoul hour (0-23) → the default 출발 시간대; evening from 17:00 so a 여의도 저녁 trip reads as night.
+export function defaultTimeOfDay(hour) { return hour >= 17 || hour < 5 ? 'evening' : 'day'; }
 
-// `today` is the Seoul calendar date (YYYY-MM-DD); the caller supplies it so tests and the server agree.
-export function normalizeConditions(raw, { today }) {
+export function insideSeoul(point) {
+  return point?.lat >= SEOUL_BOUNDS.lat[0] && point.lat <= SEOUL_BOUNDS.lat[1] && point?.lng >= SEOUL_BOUNDS.lng[0] && point.lng <= SEOUL_BOUNDS.lng[1];
+}
+// About 100 m; the exact device position is never needed for a 60-minute estimate.
+const round3 = (value) => Math.round(value * 1000) / 1000;
+
+// `petIds` comes from data/pets.json on the server and from /api/catalog in the browser.
+export function normalizeConditions(raw, { petIds }) {
   const fields = {};
-  const departure = SEOUL_STATIONS.find((station) => station.id === raw?.departure);
-  if (!departure) fields.departure = '출발역을 골라 주세요.';
-  const date = String(raw?.date ?? '');
-  if (!DATE.test(date) || Number.isNaN(Date.parse(`${date}T00:00:00Z`)) || addDays(date, 0) !== date) fields.date = '여행 날짜를 골라 주세요.';
-  else if (date < today) fields.date = '오늘 이후 날짜를 골라 주세요.';
-  else if (date > addDays(today, MAX_DAYS_AHEAD)) fields.date = `${MAX_DAYS_AHEAD}일 안의 날짜를 골라 주세요.`;
-  if (!TIME_SLOTS.some((slot) => slot.id === raw?.timeSlot)) fields.timeSlot = '시간대를 골라 주세요.';
+  const pet = String(raw?.pet ?? '');
+  if (!petIds.includes(pet)) fields.pet = '함께 갈 펫을 골라 주세요.';
+  let departure = String(raw?.departure ?? '');
+  let location = null;
+  if (departure === CURRENT_LOCATION) {
+    const lat = Number(raw?.location?.lat); const lng = Number(raw?.location?.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) fields.departure = '현재 위치를 다시 받아 오거나 출발역을 골라 주세요.';
+    else if (!insideSeoul({ lat, lng })) fields.departure = '서울 밖 위치예요. 출발역을 골라 주세요.';
+    else location = { lat: round3(lat), lng: round3(lng) };
+  } else if (!SEOUL_STATIONS.some((station) => station.id === departure)) fields.departure = '출발 위치를 골라 주세요.';
+  const hours = Number(raw?.hours);
+  if (!HOUR_CHOICES.some((choice) => choice.hours === hours)) fields.hours = '쓸 수 있는 시간을 골라 주세요.';
   const partySize = Number(raw?.partySize);
-  if (!Number.isInteger(partySize) || partySize < 1 || partySize > 6) fields.partySize = '인원은 1~6명으로 입력해 주세요.';
+  if (!Number.isInteger(partySize) || partySize < 1 || partySize > MAX_PARTY) fields.partySize = `인원은 1~${MAX_PARTY}명으로 입력해 주세요.`;
   const walkLevel = Number(raw?.walkLevel);
   if (!WALK_CHOICES.some((choice) => choice.level === walkLevel)) fields.walkLevel = '걷기 정도를 골라 주세요.';
-  const interests = [...new Set(Array.isArray(raw?.interests) ? raw.interests : [])];
-  if (!interests.length || interests.some((tag) => !PLACE_TAGS.includes(tag))) fields.interests = '관심사를 1개 이상 골라 주세요.';
-  else if (interests.length > MAX_INTERESTS) fields.interests = `관심사는 ${MAX_INTERESTS}개까지 골라 주세요.`;
-  const ageGroup = raw?.ageGroup ?? '';
-  if (!AGE_GROUPS.some((group) => group.id === ageGroup)) fields.ageGroup = '나이대를 다시 골라 주세요.';
-  const studentStatus = raw?.studentStatus ?? 'unspecified';
-  if (!STUDENT_STATUSES.some((status) => status.id === studentStatus)) fields.studentStatus = '학생 여부를 다시 골라 주세요.';
+  const timeOfDay = String(raw?.timeOfDay ?? '');
+  if (!TIME_OF_DAY.some((slot) => slot.id === timeOfDay)) fields.timeOfDay = '출발 시간대를 골라 주세요.';
+  // District ids of friends already met (도감). Unknown ids are dropped by the server, which knows the districts.
+  const met = Array.isArray(raw?.metFriends) ? raw.metFriends : [];
+  if (met.length > MAX_MET || met.some((id) => typeof id !== 'string' || !/^[a-z]{2,20}$/.test(id))) fields.metFriends = '만난 동네 친구 정보를 다시 불러와 주세요.';
   if (Object.keys(fields).length) throw new ConditionError(fields);
-  return { departure: departure.id, date, timeSlot: raw.timeSlot, partySize, walkLevel, interests, ageGroup, studentStatus };
+  return { pet, departure, location, hours, partySize, walkLevel, timeOfDay, metFriends: [...new Set(met)] };
 }
 
-const weekday = (date) => '일월화수목금토'[new Date(`${date}T00:00:00Z`).getUTCDay()];
+export function departurePoint(conditions) {
+  if (conditions.departure === CURRENT_LOCATION) return { label: '현재 위치', ...conditions.location };
+  const { label, lat, lng } = SEOUL_STATIONS.find((station) => station.id === conditions.departure);
+  return { label, lat, lng };
+}
+
+// Word plus its particle: 받침 decides 과/와, 은/는, 이/가. Non-Hangul endings take the no-받침 form.
+export function josa(word, withFinal, withoutFinal) {
+  const code = word.charCodeAt(word.length - 1) - 0xac00;
+  return word + (code >= 0 && code <= 11171 && code % 28 !== 0 ? withFinal : withoutFinal);
+}
+
 // One-line Korean summary used on screen and in the recommendation prompt.
-export function describeConditions(conditions) {
-  const label = (list, id, key = 'id') => list.find((item) => item[key] === id)?.label;
-  const [, month, day] = conditions.date.split('-').map(Number);
-  const parts = [
-    `${label(SEOUL_STATIONS, conditions.departure)} 출발`,
-    `${month}/${day}(${weekday(conditions.date)}) ${label(TIME_SLOTS, conditions.timeSlot)}`,
+export function describeConditions(conditions, { petName }) {
+  const label = (list, value, key) => list.find((item) => item[key] === value).label;
+  return [
+    `${josa(petName, '과', '와')} 함께`,
+    `${departurePoint(conditions).label} 출발`,
+    label(HOUR_CHOICES, conditions.hours, 'hours'),
     conditions.partySize === 1 ? '혼자' : `${conditions.partySize}명`,
     `${label(WALK_CHOICES, conditions.walkLevel, 'level')} 걷기`,
-    conditions.interests.join('·'),
-  ];
-  const person = [conditions.ageGroup && label(AGE_GROUPS, conditions.ageGroup), conditions.studentStatus !== 'unspecified' && label(STUDENT_STATUSES, conditions.studentStatus)].filter(Boolean).join(' ');
-  if (person) parts.push(person);
-  return parts.join(' · ');
+    label(TIME_OF_DAY, conditions.timeOfDay, 'id'),
+  ].join(' · ');
 }

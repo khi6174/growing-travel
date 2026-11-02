@@ -3,9 +3,15 @@ import path from 'node:path';
 
 // D26: minimal field reports kept in one local JSON file. Reports describe what a traveler saw at the time,
 // not the place's current state; confirmations ("아직 그래요"/"이제 아니에요") are kept per contributor.
-export const REPORT_CATEGORIES = Object.freeze({ crowd: '붐빔·대기', closed: '휴무·운영 변경', facility: '시설·공사', transit: '교통·길', tip: '현장 팁' });
+// "한산함" (calm) lets a traveler say a place is easy right now, so live news is not only bad news (stage 5).
+export const REPORT_CATEGORIES = Object.freeze({ crowd: '붐빔·대기', calm: '한산함', closed: '휴무·운영 변경', facility: '시설·공사', transit: '교통·길', tip: '현장 팁' });
 export const VOTES = Object.freeze(['still', 'gone']);
 export const SCORE = Object.freeze({ report: 10, vote: 2, confirmedByOthers: 1 });
+// D27: how long a report describes "now" (P36). A wait is news for hours, construction for weeks; the
+// latest "아직 그래요" restarts the window. Later stages fade expired reports on the map.
+export const REPORT_VALID_HOURS = Object.freeze({ crowd: 3, calm: 3, transit: 24, closed: 72, facility: 336, tip: 720 });
+// Categories that push a place back in the recommendation while active (명세 2-4 순위 원칙 3).
+export const CAUTION_CATEGORIES = Object.freeze(['crowd', 'closed', 'facility']);
 const CONTRIBUTOR = /^[A-Za-z0-9-]{8,64}$/;
 const DEFAULT_NICKNAME = '익명 여행자';
 
@@ -26,12 +32,14 @@ function reportStatus(votes) {
   return { still: still.length, gone: gone.length, lastConfirmedAt, status };
 }
 
-function publicReport(report, viewer) {
+function publicReport(report, viewer, now = new Date()) {
   const { still, gone, lastConfirmedAt, status } = reportStatus(report.votes);
+  const from = Date.parse(lastConfirmedAt ?? report.createdAt);
+  const expiresAt = new Date(from + REPORT_VALID_HOURS[report.category] * 3600_000).toISOString();
   return {
     id: report.id, placeId: report.placeId, category: report.category, categoryLabel: REPORT_CATEGORIES[report.category],
     text: report.text, nickname: report.nickname, createdAt: report.createdAt,
-    votes: { still, gone }, lastConfirmedAt, status,
+    votes: { still, gone }, lastConfirmedAt, status, expiresAt, active: status !== 'outdated' && now < new Date(expiresAt),
     mine: viewer ? report.contributorId === viewer : false, myVote: viewer ? report.votes[viewer]?.vote ?? null : null,
   };
 }
@@ -60,7 +68,7 @@ export function createReportStore({ file, isKnownPlace, now = () => new Date(), 
   return {
     async list(placeId, viewer = null) {
       const { reports } = await read();
-      return reports.filter((report) => report.placeId === placeId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((report) => publicReport(report, viewer));
+      return reports.filter((report) => report.placeId === placeId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((report) => publicReport(report, viewer, now()));
     },
     // Short per-place summaries for the recommendation prompt; outdated reports are left out.
     async recentSummaries(placeIds, { perPlace = 3 } = {}) {
@@ -68,8 +76,8 @@ export function createReportStore({ file, isKnownPlace, now = () => new Date(), 
       const result = {};
       for (const placeId of placeIds) {
         const items = reports.filter((report) => report.placeId === placeId).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-          .map((report) => publicReport(report)).filter((report) => report.status !== 'outdated').slice(0, perPlace);
-        if (items.length) result[placeId] = items.map(({ categoryLabel, text, createdAt, votes, lastConfirmedAt }) => ({ categoryLabel, text, createdAt, votes, lastConfirmedAt }));
+          .map((report) => publicReport(report, null, now())).filter((report) => report.status !== 'outdated').slice(0, perPlace);
+        if (items.length) result[placeId] = items.map(({ category, categoryLabel, text, createdAt, votes, lastConfirmedAt, expiresAt, active }) => ({ category, categoryLabel, text, createdAt, votes, lastConfirmedAt, expiresAt, active }));
       }
       return result;
     },
@@ -89,7 +97,7 @@ export function createReportStore({ file, isKnownPlace, now = () => new Date(), 
         const report = { id: randomId(), placeId, category, text, nickname, contributorId, createdAt: now().toISOString(), votes: {} };
         state.reports.push(report);
         await write(state);
-        return publicReport(report, contributorId);
+        return publicReport(report, contributorId, now());
       });
     },
     async vote(reportId, contributorId, vote) {
@@ -102,7 +110,7 @@ export function createReportStore({ file, isKnownPlace, now = () => new Date(), 
         if (report.contributorId === contributorId) throw new ReportError('OWN_REPORT', '내가 남긴 소식은 다른 여행자가 확인해요.', 409);
         report.votes[contributorId] = { vote, at: now().toISOString() };
         await write(state);
-        return publicReport(report, contributorId);
+        return publicReport(report, contributorId, now());
       });
     },
     async contribution(contributorId) {

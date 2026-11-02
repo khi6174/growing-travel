@@ -14,6 +14,8 @@ import { hasStudentRoute, shortReason } from './benefit-presentation.mjs';
 import { metaText } from './ui-copy.mjs';
 import { fieldReportsSection } from './field-reports.mjs';
 import { setupAiFlow } from './ai-flow.mjs';
+import { setupArrivalFlow } from './arrival-flow.mjs';
+import { setupLivingMap } from './living-map.mjs';
 
 const $ = (id) => document.getElementById(id);
 const EXPERIENCES = [...REAL_PLACES, ...LEGACY_EXPERIENCES];
@@ -52,10 +54,12 @@ function editBenefitInput() {
   $('benefit-condition-sheet').showModal(); $('condition-heading').focus();
 }
 const state = { run: null, context: null, ids: [], courseId: null, version: null, savedSnapshot: null, inputDirty: false, revision: 0, saveKey: null, saving: false, requesting: false, hasSavedCurrent: false, comparison: null, comparisonDirty: false, journey: null, pendingRegionId: null, screen:'home', lastTravelScreen:'profile', travelStarted:false, walkingCustomized:false };
+let petFlow = null;
+let arrivalFlow = null;
 function availability() {
   let profileValid = true;
   try { normalizeProfile(rawProfile()); } catch { profileValid = false; }
-  return { profileValid, comparisonReady: Boolean(state.comparison && !state.comparisonDirty), recommendationsReady: Boolean(state.run && !state.inputDirty), hasCourse: Boolean(state.context && state.ids.length), aiResultsReady: Boolean(state.aiResults) };
+  return { profileValid, comparisonReady: Boolean(state.comparison && !state.comparisonDirty), recommendationsReady: Boolean(state.run && !state.inputDirty), hasCourse: Boolean(state.context && state.ids.length), petChosen: Boolean(petFlow?.hasPet()), aiResultsReady: Boolean(state.aiResults), arrivalReady: Boolean(arrivalFlow?.hasArrival()) };
 }
 const { goScreen, updateNavigation } = createScreenNavigation({
   state, availability, refreshSaved, renderBenefits,
@@ -731,6 +735,10 @@ $('close-evidence').addEventListener('click', () => $('evidence-dialog').close()
 $('evidence-dialog').addEventListener('click', (event) => { if (event.target === $('evidence-dialog')) { const rect = event.target.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) event.target.close(); } });
 window.addEventListener('storage', (event) => { if (event.key === STORAGE_KEY) { refreshSaved(); if (state.courseId) saveMessage('다른 탭에서 저장 내용이 바뀌었을 수 있어요. 현재 초안은 유지됩니다. 최신본은 저장한 코스에서 확인하세요.'); } });
 renderRegions(); renderOfficialBenefits(); renderResults(); refreshSaved();
-// D26: AI recommendation flow; results live in memory for this visit only.
-setupAiFlow({ today: seoulToday, studentStatus: () => personalBenefitInput.studentStatus, showResults: (result) => { state.aiResults = result; goScreen('ai-results'); } });
+// D27: pet recommendation flow (펫 → 조건 → 추천); choices and results live in memory for this visit only.
+petFlow = setupAiFlow({ goScreen, showResults: (result) => { state.aiResults = result; goScreen('ai-results'); } });
+// Stage 5: district arrival → 동네 친구 → 현장 질문 → 도감 (the 도감 stays in this browser).
+arrivalFlow = setupArrivalFlow({ goScreen, pets: petFlow });
+// Stage 6: the living map (Kakao map when KAKAO_JS_KEY is set, lists otherwise).
+setupLivingMap({ goScreen, pets: petFlow, arrival: arrivalFlow });
 goScreen(location.hash.slice(1) || 'home', { replace:true, focus:false });

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#3651E8">
-  <title>Growing Travel, 혼자 떠나는 뚜벅이 여행</title>
-  <meta name="description" content="서울에서 춘천·가평·강릉으로. 기차와 도보로 떠나는 나만의 여행 코스를 만들고 저장하세요.">
+  <title>Growing Travel, 펫이랑 걷는 서울</title>
+  <meta name="description" content="차 없는 대학생을 위한 서울 여행. 여행 목적에 맞는 펫을 고르면 지금 갈 만한 곳 3곳을 골라 드려요.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23245d4d'/%3E%3Cpath d='M16 25V13M16 18C6 18 5 7 5 7s12-1 11 11M16 14C16 4 27 5 27 5s1 10-11 9' fill='none' stroke='%23e9eecd' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/traveler.css">
@@ -26,38 +26,76 @@
   <main id="main" class="shell" tabindex="-1">
     <details id="demo-note" class="demo-note" hidden><summary>이전 예시 코스 안내</summary><p>이전에 저장한 예시 장소는 실제 여행지가 아니에요.</p></details>
     <section id="home-panel" class="app-screen" aria-labelledby="home-heading">
-      <div class="home-hero"><p class="eyebrow">혼자, 차 없이</p><h1 id="home-heading">서울에서 떠나는<br>나만의 하루</h1><p class="hero-copy">기차로 닿는 동네, 걸으며 만나는 장소.</p></div>
-      <article class="home-benefits-entry home-ai-entry"><div><h2>AI 맞춤 추천</h2><p>조건만 고르면 갈 만한 곳 3곳을 골라 드려요.</p></div><button id="home-ai" type="button" class="button primary" data-screen-target="ai">추천 받기</button></article>
-      <section class="nearby-destinations" aria-labelledby="nearby-heading"><div class="section-heading"><h2 id="nearby-heading">이번에는 어디로?</h2><span class="muted">서울 출발</span></div><div class="destination-row"><span class="destination-number" aria-hidden="true">01</span><div><h3>춘천</h3><p>소양강을 따라 걷는 하루</p><span>ITX-청춘 · 경춘선</span></div><svg class="destination-art" viewBox="0 0 100 80" aria-hidden="true"><path d="M4 48c18-20 26 18 44-4s27 15 48-3M4 63c18-20 26 18 44-4s27 15 48-3"/><circle cx="70" cy="17" r="9"/></svg></div><div class="destination-row"><span class="destination-number" aria-hidden="true">02</span><div><h3>가평</h3><p>자라섬 산책과 음악 공간</p><span>ITX-청춘 · 경춘선</span></div><svg class="destination-art" viewBox="0 0 100 80" aria-hidden="true"><path d="M50 66V14m0 32L29 29m21 8 20-20M17 68h66"/><path d="M37 14 23 46h54L63 14Z"/></svg></div><div class="destination-row"><span class="destination-number" aria-hidden="true">03</span><div><h3>강릉</h3><p>옛 철길에서 원도심 시장까지</p><span>강릉선 KTX</span></div><svg class="destination-art" viewBox="0 0 100 80" aria-hidden="true"><path d="M18 60h64M24 60V32h52v28M17 32l33-20 33 20M39 60V40h22v20"/></svg></div></section>
+      <div class="home-hero"><p class="eyebrow">차 없이, 서울 뚜벅이</p><h1 id="home-heading">펫이랑 걸어서<br>만나는 서울</h1><p class="hero-copy">여행 목적에 맞는 펫을 고르면, 지금 갈 만한 곳 3곳을 골라 드려요.</p></div>
+      <section class="home-pets" aria-labelledby="home-pets-heading"><div class="section-heading"><h2 id="home-pets-heading">오늘은 누구랑 갈까요?</h2><span class="muted">서울 25개 구</span></div><ul id="home-pet-list" class="home-pet-list"></ul><p id="home-catalog-status" class="field-help" role="status" aria-live="polite"></p></section>
+      <section class="friend-entry" aria-labelledby="friend-entry-heading"><div class="section-heading"><h2 id="friend-entry-heading">동네 친구 만나기</h2><button type="button" class="text-button" data-screen-target="dex">도감&nbsp;<span class="dex-count">0</span>/25</button></div><p class="field-help">위치를 켜 두면 새 구에 들어설 때 그 구의 동네 친구가 나타나요. 위치는 구 확인과 거리 계산에만 쓰고 저장하지 않아요.</p><p class="arrival-status field-help" role="status" aria-live="polite"></p><button type="button" class="button subtle arrival-toggle">구 도착 알림 켜기</button></section>
+      <section class="friend-entry" aria-labelledby="map-entry-heading"><div class="section-heading"><h2 id="map-entry-heading">살아 있는 지도</h2></div><p class="field-help">여행자가 남긴 현장 소식을 지도 위 말풍선으로 봐요. 48시간 넘게 소식이 없는 곳은 깨워 줄 곳으로 표시돼요.</p><button id="home-map" type="button" class="button subtle">지도 열기</button></section>
+      <!-- D27: the Chuncheon·Gapyeong·Gangneung entry is hidden from the Seoul pet home; its flow and saved courses stay. -->
+      <section class="nearby-destinations" aria-labelledby="nearby-heading" hidden><div class="section-heading"><h2 id="nearby-heading">이번에는 어디로?</h2><span class="muted">서울 출발</span></div><div class="destination-row"><span class="destination-number" aria-hidden="true">01</span><div><h3>춘천</h3><p>소양강을 따라 걷는 하루</p><span>ITX-청춘 · 경춘선</span></div><svg class="destination-art" viewBox="0 0 100 80" aria-hidden="true"><path d="M4 48c18-20 26 18 44-4s27 15 48-3M4 63c18-20 26 18 44-4s27 15 48-3"/><circle cx="70" cy="17" r="9"/></svg></div><div class="destination-row"><span class="destination-number" aria-hidden="true">02</span><div><h3>가평</h3><p>자라섬 산책과 음악 공간</p><span>ITX-청춘 · 경춘선</span></div><svg class="destination-art" viewBox="0 0 100 80" aria-hidden="true"><path d="M50 66V14m0 32L29 29m21 8 20-20M17 68h66"/><path d="M37 14 23 46h54L63 14Z"/></svg></div><div class="destination-row"><span class="destination-number" aria-hidden="true">03</span><div><h3>강릉</h3><p>옛 철길에서 원도심 시장까지</p><span>강릉선 KTX</span></div><svg class="destination-art" viewBox="0 0 100 80" aria-hidden="true"><path d="M18 60h64M24 60V32h52v28M17 32l33-20 33 20M39 60V40h22v20"/></svg></div></section>
       <article class="home-benefits-entry"><div><h2>여행 혜택</h2><p>교통·숙박·문화 혜택을 확인해 보세요.</p></div><button type="button" class="button subtle" data-screen-target="benefits">혜택 보기</button></article>
       <button id="home-resume" class="text-button" type="button" hidden>입력 중인 여행 이어가기</button>
-      <div class="primary-action-bar"><button id="home-start" class="button primary full" type="button" data-screen-target="profile">여행 계획하기</button></div>
+      <div class="primary-action-bar"><button id="home-ai" class="button primary full" type="button" data-screen-target="pet">펫 고르고 출발하기</button><button id="home-start" class="button primary full" type="button" data-screen-target="profile" hidden>여행 계획하기</button></div>
+    </section>
+    <section id="pet-panel" class="setup-panel app-screen" aria-labelledby="pet-heading" hidden>
+      <p class="eyebrow">펫 추천 1 / 3</p><h2 id="pet-heading">누구랑 같이 갈까요?</h2>
+      <p class="panel-intro">펫마다 좋아하는 여행 목적이 달라요. 여행할 때마다 바꿀 수 있어요.</p>
+      <fieldset class="pet-fieldset"><legend class="visually-hidden">함께 갈 펫</legend><div id="pet-options" class="pet-options" aria-describedby="pet-error"></div></fieldset>
+      <p id="pet-error" class="field-error" role="alert"></p>
+      <section class="location-card" aria-labelledby="location-heading"><h3 id="location-heading">현재 위치 쓰기 <small>선택</small></h3><p id="location-status" class="field-help" role="status" aria-live="polite">현재 위치를 쓰면 가까운 곳부터 계산해요. 위치는 이번 추천 계산에만 쓰고 저장하지 않아요.</p><button id="use-location" type="button" class="button subtle">현재 위치 사용하기</button></section>
+      <div class="primary-action-bar"><button id="pet-next" class="button primary full" type="button">조건 정하기</button></div>
     </section>
     <section id="ai-panel" class="setup-panel app-screen" aria-labelledby="ai-heading" hidden>
-      <p class="eyebrow">AI 추천 1 / 2</p><h2 id="ai-heading">어떤 하루를 보내고 싶나요?</h2>
-      <p class="panel-intro">서울과 근교 후보 중에서 조건에 맞는 3곳을 골라 드려요.</p>
+      <p class="eyebrow">펫 추천 2 / 3</p><h2 id="ai-heading">어떻게 다녀올까요?</h2>
+      <p id="ai-pet-line" class="panel-intro"></p>
       <form id="ai-form" novalidate>
-        <div class="field-pair"><div><label for="ai-departure" class="field-label">출발역</label><select id="ai-departure" name="ai-departure" aria-describedby="ai-departure-error" autocomplete="off"></select><p id="ai-departure-error" class="field-error"></p></div><div><label for="ai-date" class="field-label">여행 날짜</label><input id="ai-date" type="date" required name="ai-date" aria-describedby="ai-date-error" autocomplete="off"><p id="ai-date-error" class="field-error"></p></div></div>
-        <fieldset><legend>시간대</legend><div id="ai-time-options" class="interest-options ai-choice-options" aria-describedby="ai-timeSlot-error"></div><p id="ai-timeSlot-error" class="field-error"></p></fieldset>
+        <label for="ai-departure" class="field-label">출발 위치</label><select id="ai-departure" name="ai-departure" aria-describedby="ai-departure-error" autocomplete="off"></select><p id="ai-departure-error" class="field-error"></p>
+        <fieldset><legend>쓸 수 있는 시간 <small>오가는 시간 포함</small></legend><div id="ai-hours-options" class="interest-options ai-choice-options" aria-describedby="ai-hours-error"></div><p id="ai-hours-error" class="field-error"></p></fieldset>
         <label for="ai-party" class="field-label">함께 가는 인원 <small>나 포함, 1~6명</small></label><input id="ai-party" type="number" min="1" max="6" step="1" value="1" inputmode="numeric" name="ai-party" aria-describedby="ai-partySize-error" autocomplete="off"><p id="ai-partySize-error" class="field-error"></p>
         <fieldset><legend>걷기 정도</legend><div id="ai-walk-options" class="interest-options ai-choice-options" aria-describedby="ai-walkLevel-error"></div><p id="ai-walkLevel-error" class="field-error"></p></fieldset>
-        <fieldset><legend>관심사 <small>1~4개</small></legend><div id="ai-interest-options" class="interest-options" aria-describedby="ai-interests-error"></div><p id="ai-interests-error" class="field-error"></p></fieldset>
-        <details class="optional-profile"><summary>나이대·학생 여부 <span>선택</span></summary>
-          <div class="field-pair"><div><label for="ai-age" class="field-label">나이대</label><select id="ai-age" name="ai-age" aria-describedby="ai-ageGroup-error" autocomplete="off"></select><p id="ai-ageGroup-error" class="field-error"></p></div><div><label for="ai-student" class="field-label">대학생 여부</label><select id="ai-student" name="ai-student" aria-describedby="ai-studentStatus-error" autocomplete="off"></select><p id="ai-studentStatus-error" class="field-error"></p></div></div>
-          <p class="field-help">추천 설명에 참고해요. 학생 할인은 현장에서 학생증으로 확인해 주세요.</p>
-        </details>
+        <fieldset><legend>출발 시간대 <small>지금 시각으로 골라 뒀어요</small></legend><div id="ai-time-options" class="interest-options ai-choice-options" aria-describedby="ai-timeOfDay-error"></div><p id="ai-timeOfDay-error" class="field-error"></p></fieldset>
         <p id="ai-form-error" class="field-error" role="alert"></p>
         <p id="ai-summary" class="field-help" role="status" aria-live="polite"></p>
-        <div class="primary-action-bar"><button id="ai-submit" class="button primary full" type="submit">AI 추천 받기</button></div>
+        <div class="primary-action-bar"><button id="ai-submit" class="button primary full" type="submit">추천 받기</button></div>
       </form>
     </section>
     <section id="ai-results-panel" class="app-screen" aria-labelledby="ai-results-heading" hidden>
-      <p class="eyebrow">AI 추천 2 / 2</p><h2 id="ai-results-heading">이런 곳은 어때요?</h2>
+      <p class="eyebrow">펫 추천 3 / 3</p><h2 id="ai-results-heading">이런 곳은 어때요?</h2>
       <p id="ai-results-conditions" class="panel-intro"></p>
       <p id="ai-results-source" class="ai-source-note"></p>
       <ol id="ai-results-list" class="ai-result-list"></ol>
-      <p class="field-help">현장 소식은 여행자가 남긴 당시 상황이에요. 운영 시간과 이동 경로는 출발 전에 확인해 주세요.</p>
-      <div class="primary-action-bar"><button id="ai-change-conditions" class="button subtle full" type="button" data-screen-target="ai">조건 바꿔서 다시 추천받기</button></div>
+      <p class="field-help">이동 시간은 직선거리로 계산한 추정치예요. 현장 소식은 여행자가 남긴 당시 상황이니, 운영 시간과 경로는 출발 전에 확인해 주세요.</p>
+      <section class="friend-entry compact" aria-label="구 도착 알림"><p class="field-help">출발하면 위치를 켜 두세요. 새 구에 들어서면 동네 친구가 나타나요.</p><p class="arrival-status field-help" role="status" aria-live="polite"></p><button type="button" class="button subtle arrival-toggle">구 도착 알림 켜기</button></section>
+      <div class="primary-action-bar"><button id="ai-results-map" class="button primary full" type="button">추천 3곳 지도에서 보기</button><button id="ai-change-conditions" class="button subtle full" type="button" data-screen-target="ai">조건 바꿔서 다시 추천받기</button></div>
+    </section>
+    <section id="arrival-panel" class="app-screen" aria-labelledby="arrival-heading" hidden>
+      <p id="arrival-eyebrow" class="eyebrow"></p>
+      <div class="friend-hero"><span id="arrival-friend-art" class="friend-art-slot"></span><div><h2 id="arrival-heading"></h2><p id="arrival-met" class="small-label"></p></div></div>
+      <p id="arrival-greeting" class="friend-greeting"></p>
+      <p id="arrival-concept" class="panel-intro"></p>
+      <section id="arrival-question" class="friend-question" aria-labelledby="arrival-question-heading" hidden></section>
+      <section class="arrival-section" aria-labelledby="arrival-picks-heading"><h3 id="arrival-picks-heading">가까운 후보지</h3><ol id="arrival-picks" class="arrival-list"></ol></section>
+      <section class="arrival-section" aria-labelledby="arrival-search-heading"><h3 id="arrival-search-heading">내가 찾는 곳</h3><label for="arrival-search" class="field-label">이 구의 후보지 이름으로 찾기</label><input id="arrival-search" type="search" autocomplete="off" enterkeyhint="search" placeholder="예: 시장, 공원"><p id="arrival-search-status" class="field-help" role="status" aria-live="polite"></p><ul id="arrival-search-results" class="arrival-list"></ul></section>
+      <section class="arrival-section" aria-labelledby="arrival-reports-heading"><h3 id="arrival-reports-heading">이 구의 최신 현장 소식</h3><ul id="arrival-reports" class="arrival-report-list"></ul></section>
+      <p class="field-help">거리는 지금 위치에서 잰 직선거리예요. 위치는 저장하지 않아요.</p>
+      <div class="primary-action-bar"><button id="arrival-map" class="button primary full" type="button">이 구를 지도에서 보기</button><button class="button subtle full" type="button" data-screen-target="dex">동네 친구 도감 보기</button></div>
+    </section>
+    <section id="map-panel" class="app-screen" aria-labelledby="map-heading" hidden>
+      <p class="eyebrow">살아 있는 지도</p><h2 id="map-heading">지금 서울의 현장 소식</h2>
+      <p id="map-scope" class="panel-intro"></p>
+      <div id="living-map" class="living-map" hidden></div>
+      <div id="map-zoom" class="map-zoom" role="group" aria-label="지도 확대·축소" hidden><button id="map-zoom-out" type="button" class="button subtle">축소 −</button><button id="map-zoom-in" type="button" class="button subtle">확대 +</button></div>
+      <p id="map-status" class="field-help" role="status" aria-live="polite"></p>
+      <p id="map-news" class="map-news" role="status" aria-live="polite"></p>
+      <ul class="map-legend" aria-label="지도 표시"><li><span class="map-legend-mark live" aria-hidden="true"></span>지금 유효한 소식</li><li><span class="map-legend-mark fading" aria-hidden="true"></span>유효시간이 지난 소식</li><li><span class="map-legend-mark sleeping" aria-hidden="true"></span>48시간 넘게 소식 없음</li></ul>
+      <section class="arrival-section" aria-labelledby="map-live-heading"><h3 id="map-live-heading">소식이 있는 곳</h3><ul id="map-live-list" class="arrival-list"></ul></section>
+      <section class="arrival-section" aria-labelledby="map-sleep-heading"><h3 id="map-sleep-heading">깨어나길 기다리는 곳</h3><p class="field-help">48시간 넘게 소식이 없는 곳이에요. 다녀왔다면 현장 소식을 남겨 깨워 주세요.</p><ul id="map-sleep-list" class="arrival-list"></ul></section>
+      <p class="field-help">소식은 30초마다 새로 불러와요. 말풍선은 여행자가 남긴 당시 상황이에요.</p>
+      <div class="primary-action-bar"><button id="map-refresh" class="button subtle full" type="button">소식 새로 고침</button></div>
+    </section>
+    <section id="dex-panel" class="app-screen" aria-labelledby="dex-heading" hidden>
+      <p class="eyebrow">동네 친구 도감</p><h2 id="dex-heading">만난 친구 <span class="dex-count">0</span> / 25</h2>
+      <p class="panel-intro">구에 도착하면 그 구의 동네 친구를 만날 수 있어요. 아직 그림이 없어 모두 실루엣이고, 만난 친구만 이름이 보여요. 도감은 이 기기에만 저장돼요.</p>
+      <div id="dex-regions" class="dex-regions"></div>
     </section>
     <section id="discover-view" hidden>
       <div id="journey-progress" role="progressbar" aria-label="여행 만들기" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" aria-valuetext="1/5 내 설정"><span></span></div>
@@ -148,6 +186,7 @@
     </section>
     <footer class="page-footer"><span>growing travel</span></footer>
   </main>
+  <div id="arrival-banner" class="arrival-banner" role="status" aria-live="polite" hidden><p id="arrival-banner-text"></p><button id="arrival-banner-open" type="button" class="button primary">만나기</button><button id="arrival-banner-close" type="button" class="icon-button" aria-label="도착 알림 닫기">×</button></div>
   <nav class="bottom-nav" aria-label="주 메뉴">
     <button id="discover-tab" class="nav-button" type="button"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10 12 3l9 7v11h-6v-7H9v7H3Z"/></svg></span><span>여행</span></button>
     <button id="benefits-tab" class="nav-button" type="button"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18v5a2 2 0 0 0 0 4v5H3v-5a2 2 0 0 0 0-4Z"/><path d="M9 10h.01M15 16h.01M9 16l6-6"/></svg></span><span>혜택</span></button>

@@ -1,10 +1,11 @@
 import path from 'node:path';
 import { REAL_PLACES } from '../dist/real-catalog.mjs';
-import { loadPlaces } from './places.mjs';
+import { loadCatalog, loadPlaces, loadBoundaries } from './places.mjs';
 import { createReportStore, ReportError, REPORT_CATEGORIES } from './field-reports.mjs';
 import { recommendPlaces } from './recommend.mjs';
+import { arrivalInfo, normalizeArrival } from './arrival.mjs';
+import { livingMap } from './living-map.mjs';
 import { normalizeConditions } from '../dist/ai-conditions.mjs';
-import { seoulToday } from '../dist/benefit-catalog.mjs';
 
 const MAX_BODY = 4096;
 
@@ -36,10 +37,26 @@ async function readJson(req) {
 // Writes only from this demo's own pages: browsers send Origin on POST, so a different origin is refused.
 function sameOrigin(req) {
   const origin = req.headers.origin;
-  return !origin || origin === `http://${req.headers.host}`;
+  return !origin || origin === `${req.socket.encrypted ? 'https' : 'http'}://${req.headers.host}`;
 }
 
-export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 20000 }) {
+// District outlines for the browser's arrival check, keyed by district id instead of the census code.
+async function districtOutlines(dataDir, districts) {
+  const byCode = new Map(districts.map((district) => [district.boundary_code, district.id]));
+  const features = await loadBoundaries(dataDir);
+  return { type: 'FeatureCollection', features: features.filter((feature) => byCode.has(feature.properties.code)).map((feature) => ({ type: 'Feature', properties: { gu: byCode.get(feature.properties.code) }, geometry: feature.geometry })) };
+}
+
+// What the browser needs to draw the pet and friend screens; places stay on the server until the map stage.
+function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
+  return {
+    pets: pets.map(({ id, name, purpose, tags, intro }) => ({ id, name, purpose, intro, tags: tags.map((tag) => tagLabels[tag]) })),
+    regions, districts: districts.map(({ id, name, region }) => ({ id, name, region })),
+    friends: friends.map(({ id, gu, name, concept, greeting }) => ({ id, gu, name, concept, greeting })),
+  };
+}
+
+export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null }) {
   const placeIds = createPlaceIndex(dataDir);
   const reports = createReportStore({ file: path.join(dataDir, 'runtime', 'reports.json'), isKnownPlace: async (id) => (await placeIds()).has(id) });
 
@@ -62,15 +79,48 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 20000 }) {
         return send(res, 200, { report: await reports.vote(vote[1], viewer, body?.vote) });
       }
       if (pathname === '/api/contributors/me' && req.method === 'GET') return send(res, 200, await reports.contribution(viewer));
+      if (pathname === '/api/catalog' && req.method === 'GET') {
+        const catalog = await loadCatalog(dataDir);
+        if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);
+        return send(res, 200, publicCatalog(catalog));
+      }
       if (pathname === '/api/recommend' && req.method === 'POST') {
         const body = await readJson(req);
+        const catalog = await loadCatalog(dataDir);
+        if (catalog.errors.length) throw new ReportError('NO_CANDIDATES', '후보지 파일 형식을 먼저 고쳐 주세요.', 503);
         let conditions;
-        try { conditions = normalizeConditions(body?.conditions, { today: seoulToday() }); }
+        try { conditions = normalizeConditions(body?.conditions, { petIds: catalog.pets.map((pet) => pet.id) }); }
         catch (error) { if (error.name !== 'ConditionError') throw error; return send(res, 400, { error: { code: 'INVALID_CONDITIONS', message: error.message, fields: error.fields } }); }
-        const { places, errors } = await loadPlaces(dataDir);
-        if (!places.length) throw new ReportError('NO_CANDIDATES', errors.length ? '후보지 파일 형식을 먼저 고쳐 주세요.' : '후보지 목록이 없어요.', 503);
-        const reportSummaries = await reports.recentSummaries(places.map((place) => place.id));
-        return send(res, 200, await recommendPlaces({ conditions, places, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs }));
+        const districtIds = new Set(catalog.districts.map((district) => district.id));
+        conditions.metFriends = conditions.metFriends.filter((id) => districtIds.has(id));
+        const reportSummaries = await reports.recentSummaries(catalog.places.map((place) => place.id));
+        return send(res, 200, await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs }));
+      }
+      if (pathname === '/api/map' && req.method === 'GET') {
+        const catalog = await loadCatalog(dataDir);
+        if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);
+        return send(res, 200, livingMap(catalog, await reports.recentSummaries(catalog.places.map((place) => place.id)), Date.now()));
+      }
+      // The Kakao JavaScript key is meant for browsers and only works on the domains registered for it; it lives in
+      // .env (KAKAO_JS_KEY) so it never enters the repository.
+      if (pathname === '/api/map-config' && req.method === 'GET') return send(res, 200, { kakaoJsKey });
+      if (pathname === '/api/boundaries' && req.method === 'GET') {
+        const catalog = await loadCatalog(dataDir);
+        if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);
+        const outlines = await districtOutlines(dataDir, catalog.districts);
+        if (outlines.features.length !== catalog.districts.length) throw new ReportError('BOUNDARIES_MISSING', '자치구 경계 파일을 찾을 수 없어요.', 503);
+        return send(res, 200, outlines);
+      }
+      // POST so the traveler's location travels in the body, not in a URL that may be logged.
+      if (pathname === '/api/arrival' && req.method === 'POST') {
+        const body = await readJson(req);
+        const catalog = await loadCatalog(dataDir);
+        if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);
+        let request;
+        try { request = normalizeArrival(body, catalog); }
+        catch (error) { if (error.name !== 'ArrivalError') throw error; return send(res, 400, { error: { code: 'INVALID_ARRIVAL', message: error.message } }); }
+        const reportSummaries = await reports.recentSummaries(catalog.places.filter((place) => place.gu === request.gu).map((place) => place.id));
+        return send(res, 200, arrivalInfo(request, catalog, reportSummaries));
       }
       return send(res, 404, { error: { code: 'NOT_FOUND', message: 'Not found' } });
     } catch (error) {

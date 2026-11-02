@@ -21,7 +21,7 @@ function anthropic(env) {
       const message = await postJson('https://api.anthropic.com/v1/messages', {
         'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2026-10-21', 'anthropic-beta': 'server-side-fallback-2026-07-01',
       }, {
-        model, max_tokens: 4000, system, messages: [{ role: 'user', content: user }],
+        model, max_tokens: 16000, system, messages: [{ role: 'user', content: user }],
         // Low effort keeps the demo responsive; the schema makes the reply parseable JSON.
         output_config: { effort: env.AI_EFFORT || 'low', format: { type: 'json_schema', schema } },
         fallbacks: 'default',
