@@ -227,7 +227,51 @@ export function setupAiFlow({ goScreen, showResults }) {
     $('ai-results-source').textContent = sourceNote(result);
     $('ai-results-source').dataset.source = result.source;
     $('ai-results-list').replaceChildren(...(result.items.length ? result.items.map((item, index) => resultCard(item, index, result)) : [node('li', 'report-empty', FALLBACK_COPY.no_candidates)]));
+    renderMore(result);
   }
+
+  // D31/P44 "더 보기": the other purpose places within reach in rule order, shown 10 at a time. No scores are shown.
+  const MORE_STEP = 10;
+  let moreShown = 0;
+  function moreItem(entry) {
+    const { place } = entry;
+    const item = node('li', 'arrival-place');
+    const head = node('div', 'arrival-place-head');
+    head.append(node('b', '', place.name), node('span', 'muted', `${place.guName} · ${minutesLabel(entry.minutes)}`));
+    const open = node('button', 'button subtle', '상세·현장 소식'); open.type = 'button';
+    open.setAttribute('aria-label', `${place.name} 상세와 현장 소식 보기`);
+    open.addEventListener('click', () => openPlaceDetail({ place, minutes: entry.minutes, reason: '' }, () => {}));
+    item.append(head, node('p', 'arrival-place-tags', entry.purpose_tags.join(' · ')), node('p', 'field-help', latestReportLine(entry.latest_report)));
+    if (place.needs_check) item.append(node('p', 'field-help', fromTourApi(place) ? '가는 방법은 확인 전 초안이에요.' : '교통·위치 정보는 확인 전 초안이에요.'));
+    item.append(open);
+    return item;
+  }
+  function showMore() {
+    const more = state.result?.more ?? [];
+    $('ai-more-list').append(...more.slice(moreShown, moreShown + MORE_STEP).map(moreItem));
+    moreShown = Math.min(more.length, moreShown + MORE_STEP);
+    const left = more.length - moreShown;
+    $('ai-more-next').hidden = left <= 0;
+    $('ai-more-next').textContent = `${Math.min(MORE_STEP, left)}곳 더 보기 (${left}곳 남음)`;
+  }
+  function renderMore(result) {
+    const more = result.more ?? [];
+    moreShown = 0;
+    $('ai-more-list').replaceChildren(); $('ai-more-list').hidden = true; $('ai-more-next').hidden = true;
+    $('ai-results-more').hidden = !more.length;
+    if (!more.length) return;
+    $('ai-more-heading').textContent = `${result.pet.name}의 ${result.pet.purpose} 목적에 맞는 다른 곳 ${more.length}곳`;
+    $('ai-more-toggle').textContent = '다른 곳 더 보기'; $('ai-more-toggle').setAttribute('aria-expanded', 'false');
+  }
+  $('ai-more-toggle').addEventListener('click', () => {
+    const open = $('ai-more-toggle').getAttribute('aria-expanded') !== 'true';
+    $('ai-more-toggle').setAttribute('aria-expanded', String(open));
+    $('ai-more-toggle').textContent = open ? '다른 곳 접기' : '다른 곳 더 보기';
+    $('ai-more-list').hidden = !open;
+    if (open && !moreShown) showMore();
+    $('ai-more-next').hidden = !open || moreShown >= (state.result?.more?.length ?? 0);
+  });
+  $('ai-more-next').addEventListener('click', showMore);
 
   async function requestRecommendations(conditions) {
     let response;

@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadCatalog } from '../scripts/places.mjs';
-import { recommendPlaces, rankCandidates, parseRecommendations, buildPrompt, systemPrompt, estimateMinutes, oneWayBudget, RESPONSE_SCHEMA, CANDIDATE_COUNT, MAX_MINUTES } from '../scripts/recommend.mjs';
+import { recommendPlaces, rankCandidates, parseRecommendations, buildPrompt, systemPrompt, estimateMinutes, oneWayBudget, RESPONSE_SCHEMA, CANDIDATE_COUNT, MAX_MINUTES, MORE_COUNT } from '../scripts/recommend.mjs';
 import { providerFromEnv } from '../scripts/ai-provider.mjs';
 import { createServer } from '../scripts/serve.mjs';
 import { SCENARIOS, scenarioConditions, checkScenario, runScenarios, scenarioTable } from '../scripts/scenarios.mjs';
@@ -71,6 +71,22 @@ for (const [index, [pet, departure, hours, partySize, walkLevel, timeOfDay]] of 
     }
   });
 }
+
+test('"더 보기" lists the other purpose places within reach in rule order, beyond the 20 sent to the AI', async () => {
+  const conditions = conditionsOf('golden', 'hongik', 4, 2, 3);
+  const ranked = rankCandidates(conditions, catalog);
+  const result = await recommendPlaces({ conditions, catalog, provider: providerFromEnv({ AI_PROVIDER: 'none' }) });
+  const shown = new Set(result.items.map((item) => item.place_id));
+  assert.ok(ranked.length > CANDIDATE_COUNT, 'golden from 홍대입구 has more than 20 places within reach');
+  assert.deepEqual(result.more.map((entry) => entry.place_id), ranked.map(({ place }) => place.id).filter((id) => !shown.has(id)).slice(0, MORE_COUNT));
+  assert.ok(result.more.every((entry) => entry.minutes <= MAX_MINUTES && catalog.places.find((place) => place.id === entry.place_id).purposes.includes('golden')));
+  assert.ok(result.more.every((entry) => entry.place.guName && entry.purpose_tags.length && !('score' in entry)), 'no internal score is sent');
+  // With an AI pick from the middle of the 20, that place leaves "더 보기" and the rest keeps the rule order.
+  const pick = ranked[7].place.id;
+  const ai = await recommendPlaces({ conditions, catalog, provider: fake(JSON.stringify({ recommendations: [item(pick), item(ranked[0].place.id), item(ranked[1].place.id)] })) });
+  assert.ok(!ai.more.some((entry) => [pick, ranked[0].place.id, ranked[1].place.id].includes(entry.place_id)));
+  assert.equal(ai.more[0].place_id, ranked[2].place.id);
+});
 
 test('the 단계 4 runner sends all ten scenarios through the API and reports each pass rule', async () => {
   const rows = await runScenarios({ provider: providerFromEnv({ AI_PROVIDER: 'none' }) });

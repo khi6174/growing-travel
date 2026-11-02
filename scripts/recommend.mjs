@@ -8,6 +8,9 @@ import { CAUTION_CATEGORIES } from './field-reports.mjs';
 export const RESULT_COUNT = 3;
 export const CANDIDATE_COUNT = 20;
 export const MAX_MINUTES = 60;
+// D31/P44: below the 3 cards, the other purpose places within reach in rule order ("더 보기"). They are not
+// sent to the AI, so the list costs nothing; the AI still sees the top 20 only.
+export const MORE_COUNT = 50;
 const LIMITS = { reason: 240, route_summary: 200, live_note: 140, friend_hint: 100 };
 
 // Straight-line estimate until a route API is chosen (명세 5): about 8 minutes to reach a platform and wait,
@@ -150,7 +153,8 @@ export async function recommendPlaces({ conditions, catalog, reportSummaries = {
   const pet = catalog.pets.find((item) => item.id === conditions.pet);
   const origin = departurePoint(conditions);
   const guName = new Map(catalog.districts.map((district) => [district.id, district.name]));
-  const candidates = rankCandidates(conditions, catalog, reportSummaries).slice(0, CANDIDATE_COUNT);
+  const ranked = rankCandidates(conditions, catalog, reportSummaries);
+  const candidates = ranked.slice(0, CANDIDATE_COUNT);
   const want = Math.min(RESULT_COUNT, candidates.length);
   const started = Date.now();
   let aiItems = []; let fallbackReason = null; let dropped = 0;
@@ -192,5 +196,9 @@ export async function recommendPlaces({ conditions, catalog, reportSummaries = {
         latest_report: latest,
       };
     }),
+    more: ranked.filter((entry) => !chosen.has(entry.place.id) && !filled.some((item) => item.place_id === entry.place.id)).slice(0, MORE_COUNT).map((entry) => ({
+      place_id: entry.place.id, minutes: entry.minutes, minutesEstimated: true, place: publicPlace(entry.place, catalog),
+      purpose_tags: entry.matched.map((tag) => catalog.tagLabels[tag]), latest_report: activeReport(entry),
+    })),
   };
 }
