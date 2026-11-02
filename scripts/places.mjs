@@ -70,6 +70,11 @@ export function validateCatalog({ pets: petFile, districts: districtFile, friend
     // A TourAPI point names the entry it came from, so a person can tell a near-miss (e.g. a renamed hall).
     else if (place.coords_source === 'tourapi' && (!text(place.tourapi_id) || !text(place.tourapi_title))) errors.push(`${at}: TourAPI 좌표는 tourapi_id·tourapi_title 필요`);
     if (place?.tourapi_keyword !== undefined && !text(place.tourapi_keyword)) errors.push(`${at}: tourapi_keyword는 빈 글자가 아니어야 해요`);
+    // The route text is checked against an official "오시는 길" page; both the page and the day are kept.
+    if (place?.access_source !== undefined && !/^https?:\/\/\S+$/.test(place.access_source)) errors.push(`${at}: access_source는 http(s) 주소`);
+    if (place?.access_checked_at !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(place.access_checked_at)) errors.push(`${at}: access_checked_at은 YYYY-MM-DD`);
+    // A place leaves the draft list only with a TourAPI point and an officially checked route.
+    if (place?.needs_check === false && (place.coords_source !== 'tourapi' || !place.access_source || !place.access_checked_at)) errors.push(`${at}: needs_check를 false로 하려면 TourAPI 좌표와 access_source·access_checked_at이 필요해요`);
   });
 
   if (errors.length) return { errors, pets: [], tagLabels: {}, regions: [], districts: [], friends: [], places: [] };
@@ -110,12 +115,14 @@ export async function loadBoundaries(dataDir) {
 const kakao = (kind, place, withPoint) => `https://map.kakao.com/link/${kind}/${encodeURIComponent(place.name)}${withPoint ? `,${place.lat},${place.lng}` : ''}`;
 export function checkTable(catalog) {
   const byId = new Map(catalog.districts.map((district) => [district.id, district]));
-  const rows = catalog.places.map((place, index) => `| ${index + 1} | ${place.name} | ${byId.get(place.gu).name} | [이 좌표의 핀](${kakao('map', place, true)}) · [이름으로 검색](${kakao('search', place, false)}) | ${place.coords_source === 'tourapi' ? `TourAPI: ${place.tourapi_title}` : '초안'} | ${place.nearest_station} · ${place.access_summary} | ${place.walk_level} | ${place.needs_check ? '☐' : '☑'} |`);
+  const rows = catalog.places.map((place, index) => `| ${index + 1} | ${place.name} | ${byId.get(place.gu).name} | [이 좌표의 핀](${kakao('map', place, true)}) · [이름으로 검색](${kakao('search', place, false)}) | ${place.coords_source === 'tourapi' ? `TourAPI: ${place.tourapi_title}` : '초안'} | ${place.nearest_station} · ${place.access_summary}${place.access_source ? ` ([공식 안내](${place.access_source}), ${place.access_checked_at})` : ''} | ${place.walk_level} | ${place.needs_check ? '☐' : '☑'} |`);
   const fromApi = catalog.places.filter((place) => place.coords_source === 'tourapi').length;
+  const sourced = catalog.places.filter((place) => place.access_source).length;
+  const cleared = catalog.places.filter((place) => !place.needs_check).length;
   return [
     '# 후보지 확인표 (data/places.json)',
     '',
-    `\`node scripts/places.mjs --check-table\`로 만든 표다. 서울 25개 구 ${catalog.places.length}곳 중 좌표 출처가 "TourAPI"인 ${fromApi}곳은 한국관광공사 TourAPI 검색 결과의 좌표이고, "초안"인 ${catalog.places.length - fromApi}곳은 작업자 기억으로 쓴 좌표다. 가까운 역·교통 요약은 모두 작업자 기억으로 쓴 **초안**이다. needs_check가 true인 곳은 좌표나 교통 정보 중 사람이 확인하지 않은 값이 있다. 대조 기록은 [서울 펫 MVP 기록](../plans/15_SEOUL_PET_MVP.md)에 있다.`,
+    `\`node scripts/places.mjs --check-table\`로 만든 표다. 서울 25개 구 ${catalog.places.length}곳 중 좌표 출처가 "TourAPI"인 ${fromApi}곳은 한국관광공사 TourAPI 검색 결과의 좌표이고, "초안"인 ${catalog.places.length - fromApi}곳은 작업자 기억으로 쓴 좌표다. 가까운 역·교통 요약은 "공식 안내" 링크가 있는 ${sourced}곳만 그 안내 문구로 고쳤고, 나머지는 작업자 기억으로 쓴 **초안**이다. 확인 완료(${cleared}곳)는 TourAPI 좌표와 공식 안내로 확인한 교통 요약을 모두 갖춘 곳이다. 대조 기록은 [서울 펫 MVP 기록](../plans/15_SEOUL_PET_MVP.md)에 있다.`,
     '',
     '확인 방법',
     '1. 좌표 출처가 초안인 곳은 `node scripts/tourapi-places.mjs`로 다시 대조할 수 있다. 이름이 TourAPI 제목과 달라 검색되지 않으면 places.json에 `tourapi_keyword`를 넣는다.',

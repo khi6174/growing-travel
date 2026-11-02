@@ -142,7 +142,7 @@ const activeReport = (entry) => entry.reports.find((report) => report.active) ??
 // What a card or detail view shows of a place; the stage 5 arrival screen uses the same shape.
 export function publicPlace(place, catalog) {
   const guName = catalog.districts.find((district) => district.id === place.gu)?.name;
-  return { id: place.id, name: place.name, gu: place.gu, guName, lat: place.lat, lng: place.lng, tags: place.tags.map((tag) => catalog.tagLabels[tag]), nearest_station: place.nearest_station, access_summary: place.access_summary, walk_level: place.walk_level, summary: place.summary, needs_check: place.needs_check, coords_source: place.coords_source, address: place.address ?? null };
+  return { id: place.id, name: place.name, gu: place.gu, guName, lat: place.lat, lng: place.lng, tags: place.tags.map((tag) => catalog.tagLabels[tag]), nearest_station: place.nearest_station, access_summary: place.access_summary, walk_level: place.walk_level, summary: place.summary, needs_check: place.needs_check, coords_source: place.coords_source, address: place.address ?? null, access_source: place.access_source ?? null, access_checked_at: place.access_checked_at ?? null };
 }
 const reportNote = (report) => `최근 제보: ${report.categoryLabel} · ${report.text}`.slice(0, LIMITS.live_note);
 

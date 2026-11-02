@@ -181,7 +181,8 @@ export function setupAiFlow({ goScreen, showResults }) {
     for (const [label, text] of [['추천 이유', item.reason], ['주소', place.address], ['가는 방법', `${place.nearest_station} ${place.access_summary}`], ['예상 이동', item.minutes != null && `${minutesLabel(item.minutes)}, 직선거리로 계산`], ['여기서 거리', item.distanceKm != null && distanceLabel(item.distanceKm)], ['걷기', `${walk.label} (${walk.hint})`], ['동네 친구', item.friend && (item.friend_hint || `${place.guName}의 동네 친구 ‘${item.friend.name}’는 이미 만났어요.`)]]) if (text) facts.append(node('dt', '', label), node('dd', '', text));
     content.append(facts);
     if (place.needs_check) content.append(node('p', 'field-help', fromTourApi(place) ? '위치·주소는 한국관광공사 TourAPI 자료예요. 가는 방법은 팀이 아직 확인하지 않은 초안이라 지도 앱에서 함께 확인해 주세요.' : '위치와 교통 정보는 팀이 아직 확인하지 않은 초안이에요. 지도 앱에서 함께 확인해 주세요.'));
-    else if (fromTourApi(place)) content.append(node('p', 'field-help', '위치·주소 출처: 한국관광공사 TourAPI'));
+    else content.append(node('p', 'field-help', `위치·주소는 한국관광공사 TourAPI 자료이고, 가는 방법은 ${place.access_checked_at} 공식 안내로 확인했어요. 당일 출구 공사 등은 다를 수 있어요.`));
+    if (place.access_source) content.append(externalLink(place.access_source, '가는 방법 공식 안내'));
     content.append(externalLink(kakaoPlaceUrl(place), '카카오맵에서 위치 보기'), fieldReportsSection(place));
     const dialog = $('evidence-dialog');
     dialog.addEventListener('close', onClose, { once: true });

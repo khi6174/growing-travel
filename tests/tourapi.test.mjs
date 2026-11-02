@@ -65,7 +65,8 @@ test('with no exact title, a sight containing the name is taken and marked as pa
 
 test('every TourAPI point names its entry, and a keyword is never blank', async () => {
   const fromApi = catalog.places.filter((place) => place.coords_source === 'tourapi');
-  assert.ok(fromApi.every((place) => place.tourapi_id && place.tourapi_title && place.needs_check), 'transit text is still a draft, so needs_check stays true');
+  assert.ok(fromApi.every((place) => place.tourapi_id && place.tourapi_title));
+  assert.ok(fromApi.every((place) => place.needs_check || (place.access_source && place.access_checked_at)), 'only a route checked against an official page leaves the draft list');
   const raw = JSON.parse(await fs.readFile(path.join(dataDir, 'places.json'), 'utf8'));
   const { validateCatalog } = await import('../scripts/places.mjs');
   const files = { pets: JSON.parse(await fs.readFile(path.join(dataDir, 'pets.json'), 'utf8')), districts: JSON.parse(await fs.readFile(path.join(dataDir, 'districts.json'), 'utf8')), friends: JSON.parse(await fs.readFile(path.join(dataDir, 'gu_friends.json'), 'utf8')) };

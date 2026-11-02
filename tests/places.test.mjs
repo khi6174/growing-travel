@@ -56,6 +56,17 @@ test('existing Seoul place ids are kept so earlier field reports still point at 
   for (const id of kept) assert.ok(ids.has(id), id);
 });
 
+test('a place leaves the draft list only with a TourAPI point and an officially checked route', async () => {
+  const files = { pets: await readRaw('pets.json'), districts: await readRaw('districts.json'), friends: await readRaw('gu_friends.json') };
+  const base = catalog.places.find((place) => place.coords_source === 'tourapi');
+  const check = (place) => validateCatalog({ ...files, places: { places: [place] } }).errors.join('\n');
+  assert.equal(check({ ...base, needs_check: false, access_source: 'https://example.org/visit', access_checked_at: '2026-11-02' }), '');
+  assert.match(check({ ...base, needs_check: false }), /access_source·access_checked_at/);
+  assert.match(check({ ...base, coords_source: 'draft', needs_check: false, access_source: 'https://example.org', access_checked_at: '2026-11-02' }), /초안 좌표/);
+  assert.match(check({ ...base, access_source: 'example.org' }), /access_source는 http/);
+  assert.match(check({ ...base, access_checked_at: '11/2' }), /YYYY-MM-DD/);
+});
+
 test('the boundary file has the 25 districts and every coordinate lands in its own district', async () => {
   const features = await loadBoundaries(dataDir);
   assert.equal(features.length, 25);
