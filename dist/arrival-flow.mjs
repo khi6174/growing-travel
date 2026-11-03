@@ -1,7 +1,8 @@
 import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY } from './district-arrival.mjs';
 import { postReport, reportAge } from './field-reports.mjs';
-import { distanceLabel, latestReportLine } from './ai-flow.mjs';
+import { distanceLabel, latestReportLine, petFace } from './ai-flow.mjs';
 import { josa } from './ai-conditions.mjs';
+import { createSeoulBoard } from './seoul-board.mjs';
 
 // Stage 5 (명세 2-5 ⑤·⑥, 단계 5): district arrival → 동네 친구 → one field question → 도감. The device location is
 // used for the district check and distances only and is never stored; the 도감 stays in this browser.
@@ -180,12 +181,20 @@ export function setupArrivalFlow({ goScreen, pets }) {
     const { district, friend } = state.info;
     try { recordFriend({ gu: district.id, friend: friend.id, metAt: new Date().toISOString(), answer }); }
     catch { message.textContent = '이 브라우저에 저장할 수 없어 도감에 남기지 못했어요. 시크릿 창이 아닌지 확인해 주세요.'; return; }
+    state.justMet = district.id; state.boardRise = district.id;
     renderDex(); renderFriend();
+    // The silhouette fills with its district colour, a stamp lands on the card and pieces burst from the friend.
+    $('arrival-friend-art').querySelector('svg')?.classList.add('revealing');
+    const burst = node('span', `burst region-${district.region}`); burst.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 12; i += 1) burst.append(node('i'));
+    burst.addEventListener('animationend', () => burst.remove());
+    $('arrival-friend-art').closest('.friend-hero').append(burst);
     $('arrival-banner').hidden = true;
     $('arrival-met').textContent = '처음 만났어요 · 도감에 등록했어요';
     const heading = node('h3', '', '도감에 등록했어요'); heading.id = 'arrival-question-heading';
     const done = node('p', 'field-help', `${sharedPlace ? `${sharedPlace.name}의 현장 소식으로 올렸어요. 기여 점수가 올라갔어요. ` : ''}동네 친구 도감 ${metCount()}/25`);
-    $('arrival-question').replaceChildren(heading, node('p', 'friend-says', `${friend.name}: 고마워요! 도감에 적어 둘게요.`), done);
+    const stamp = node('span', 'stamp', `${district.name} 도장`); stamp.setAttribute('aria-hidden', 'true');
+    $('arrival-question').replaceChildren(heading, stamp, node('p', 'friend-says', `${friend.name}: 고마워요! 도감에 적어 둘게요.`), done);
     heading.tabIndex = -1; heading.focus();
     if (sharedPlace) refreshArrival();
   }
@@ -220,13 +229,37 @@ export function setupArrivalFlow({ goScreen, pets }) {
         const slot = entry ? button('', 'dex-slot met', () => openFriend(friend, district, region, entry)) : node('div', 'dex-slot');
         slot.append(friendArt({ region: region.id, initial: friend.name[0], met: Boolean(entry) }), node('b', '', entry ? friend.name : '???'), node('small', '', district.name));
         if (entry) slot.setAttribute('aria-label', `${district.name} 동네 친구 ${friend.name}, 자세히 보기`);
+        // A friend met just now springs into its slot the first time the 도감 is shown.
+        if (entry && district.id === state.justMet) {
+          slot.classList.add('just-met');
+          slot.addEventListener('animationend', () => { slot.classList.remove('just-met'); state.justMet = null; }, { once: true });
+        }
         else slot.append(node('span', 'visually-hidden', '아직 못 만났어요'));
         const item = node('li'); item.append(slot); list.append(item);
       }
       section.append(head, list);
       return section;
     }));
+    if (frame.dataset.screen === 'dex') showBoard();
   }
+
+  // D34/P48: the 3D Seoul board above the 도감 list. It repeats the list for the eye (the list stays the accessible
+  // way in), so it is hidden from screen readers and simply left out if the outlines cannot be loaded.
+  const frame = document.querySelector('.app-frame');
+  const board = createSeoulBoard($('dex-board'), { onPick: (gu) => {
+    const district = state.catalog?.districts.find((item) => item.id === gu);
+    const entry = metEntry(gu);
+    if (district && entry) openFriend(state.catalog.friends.find((item) => item.gu === gu), district, state.catalog.regions.find((region) => region.id === district.region), entry);
+  } });
+  async function showBoard() {
+    if (!state.catalog) return;
+    try { state.features ??= (await json('/api/boundaries')).features; }
+    catch { $('dex-board').closest('.seoul-board').hidden = true; return; }
+    const met = new Map(readFriendLog().map((entry) => [entry.gu, { initial: state.catalog.friends.find((item) => item.gu === entry.gu)?.name[0] ?? '?' }]));
+    board.update({ features: state.features, districts: state.catalog.districts, met, current: state.watchId === null ? null : state.current, pet: pets.petId() ? () => petFace(pets.petId()) : null });
+    if (state.boardRise && met.has(state.boardRise)) { board.rise(state.boardRise); state.boardRise = null; }
+  }
+  new MutationObserver(() => { if (frame.dataset.screen === 'dex') showBoard(); }).observe(frame, { attributes: true, attributeFilter: ['data-screen'] });
   window.addEventListener('storage', (event) => { if (event.key === FRIENDS_KEY) { renderDex(); if (state.info) renderFriend(); } });
   pets.catalogReady().then((catalog) => { state.catalog = catalog; renderDex(); });
   renderDex();

@@ -105,9 +105,18 @@ export function fieldReportsSection(place) {
   const body = node('div', 'field-reports-body');
   section.append(head, node('p', 'field-help', '여행자가 남긴 당시 상황이에요. 지금도 같은지는 확인 표시와 시간을 함께 봐 주세요.'), status, body);
 
+  let lastScore = null;
   async function refreshScore() {
-    try { const mine = await fetchContribution(); score.textContent = `내 기여 ${mine.score}점`; }
-    catch { score.textContent = ''; }
+    try {
+      const mine = await fetchContribution(); score.textContent = `내 기여 ${mine.score}점`;
+      // A report or confirmation that raised the score shows the gain floating up once.
+      if (lastScore !== null && mine.score > lastScore) {
+        const gain = node('span', 'score-pop', `+${mine.score - lastScore}`); gain.setAttribute('aria-hidden', 'true');
+        gain.addEventListener('animationend', () => gain.remove(), { once: true });
+        head.append(gain);
+      }
+      lastScore = mine.score;
+    } catch { score.textContent = ''; }
   }
   async function load(notice = '') {
     status.textContent = notice || '현장 소식을 불러오는 중이에요.';

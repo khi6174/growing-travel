@@ -16,6 +16,12 @@ import { fieldReportsSection } from './field-reports.mjs';
 import { setupAiFlow } from './ai-flow.mjs';
 import { setupArrivalFlow } from './arrival-flow.mjs';
 import { setupLivingMap } from './living-map.mjs';
+import { setupThemePicker } from './theme-picker.mjs';
+import { setupSky } from './sky.mjs';
+
+// D33: apply the chosen design draft before the rest of the app renders.
+setupThemePicker();
+setupSky();
 
 const $ = (id) => document.getElementById(id);
 const EXPERIENCES = [...REAL_PLACES, ...LEGACY_EXPERIENCES];

@@ -21,6 +21,14 @@ test('loopback demo serves only public assets and unknown API routes are not fou
       assert.equal(asset.headers.get('content-type'), 'image/png');
       assert.deepEqual([...new Uint8Array(await asset.arrayBuffer()).slice(0, 8)], [137,80,78,71,13,10,26,10]);
     }
+    // P47: the self-hosted Pretendard subsets come from this server, so the CSP stays 'self'.
+    const fontSheet = await fetch(base + '/fonts/pretendard/pretendardvariable-dynamic-subset.css');
+    assert.equal(fontSheet.status, 200);
+    const fontFile = (await fontSheet.text()).match(/url\(\.\/([^)]+\.woff2)\)/)[1];
+    const font = await fetch(`${base}/fonts/pretendard/${fontFile}`);
+    assert.equal(font.status, 200);
+    assert.equal(font.headers.get('content-type'), 'font/woff2');
+    assert.equal(new TextDecoder().decode(new Uint8Array(await font.arrayBuffer()).slice(0, 4)), 'wOF2');
     for (const route of ['/README.md','/..%2fREADME.md','/..%5cREADME.md','/api/courses']) {
       assert.equal((await fetch(base + route)).status, 404, route);
     }

@@ -56,7 +56,7 @@ function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
   };
 }
 
-export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null }) {
+export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }) }) {
   const placeIds = createPlaceIndex(dataDir);
   const reports = createReportStore({ file: path.join(dataDir, 'runtime', 'reports.json'), isKnownPlace: async (id) => (await placeIds()).has(id) });
 
@@ -104,6 +104,8 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
       // The Kakao JavaScript key is meant for browsers and only works on the domains registered for it; it lives in
       // .env (KAKAO_JS_KEY) so it never enters the repository.
       if (pathname === '/api/map-config' && req.method === 'GET') return send(res, 200, { kakaoJsKey });
+      // D35: the season backdrop blends in Seoul's current weather (KMA). Only the summary reaches the browser.
+      if (pathname === '/api/weather' && req.method === 'GET') return send(res, 200, await weather());
       if (pathname === '/api/boundaries' && req.method === 'GET') {
         const catalog = await loadCatalog(dataDir);
         if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);

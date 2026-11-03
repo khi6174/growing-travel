@@ -1,6 +1,7 @@
 import { SEOUL_STATIONS, CURRENT_LOCATION, HOUR_CHOICES, WALK_CHOICES, TIME_OF_DAY, insideSeoul, defaultTimeOfDay, normalizeConditions, describeConditions, josa } from './ai-conditions.mjs';
 import { fieldReportsSection, fetchReports, reportAge } from './field-reports.mjs';
 import { readFriendLog } from './district-arrival.mjs';
+import { petFace } from './pet-art.mjs';
 
 // D27: the pet recommendation flow (펫 → 조건 → 추천 → 상세·현장 제보). Choices, location and results stay in
 // memory for this visit only; the device location is never stored.
@@ -52,21 +53,8 @@ function chip(container, { type, name, value, label, hint, checked }) {
   wrapper.append(input, text); $(container).append(wrapper);
 }
 
-// A simple drawn face until the team's illustrations exist; ears tell the five apart along with the colors.
-const SVG = 'http://www.w3.org/2000/svg';
-const EARS = { floppy: ['M11 11c-6 0-8 9-5 16 3 0 7-5 8-12Z', 'M29 11c6 0 8 9 5 16-3 0-7-5-8-12Z'], pointy: ['M9 17 9 3l11 8Z', 'M31 17 31 3 20 11Z'] };
-const PET_EARS = { golden: 'floppy', bichon: 'floppy' };
-export function petFace(id) {
-  const svg = document.createElementNS(SVG, 'svg');
-  svg.setAttribute('viewBox', '0 0 40 40'); svg.setAttribute('class', `pet-face pet-${id}`); svg.setAttribute('aria-hidden', 'true');
-  const shape = (tag, attrs) => { const element = document.createElementNS(SVG, tag); for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value); svg.append(element); };
-  for (const d of EARS[PET_EARS[id] ?? 'pointy']) shape('path', { d, class: 'pet-ear' });
-  shape('circle', { cx: 20, cy: 22, r: 13, class: 'pet-fur' });
-  shape('ellipse', { cx: 20, cy: 27.5, rx: 7, ry: 5.5, class: 'pet-muzzle' });
-  for (const cx of [15, 25]) shape('circle', { cx, cy: 20, r: 1.7, class: 'pet-eye' });
-  shape('ellipse', { cx: 20, cy: 25.5, rx: 2.3, ry: 1.7, class: 'pet-eye' });
-  return svg;
-}
+// D35/P51: the pets are drawn in pet-art.mjs; re-exported here for the modules that already import them from this one.
+export { petFace };
 
 export function setupAiFlow({ goScreen, showResults }) {
   const state = { catalog: null, petId: null, location: null, result: null };
@@ -295,6 +283,8 @@ export function setupAiFlow({ goScreen, showResults }) {
     }
     showErrors(); $('ai-form-error').textContent = '';
     busy = true; $('ai-submit').disabled = true; $('ai-submit').textContent = '추천 고르는 중…';
+    // The chosen pet walks along a dotted path while the server (and up to 10 s of AI) works.
+    $('ai-loading').replaceChildren(petFace(pet().id)); $('ai-loading').hidden = false;
     $('ai-summary').textContent = `${describeConditions(conditions, { petName: pet().name })} 조건으로 후보를 살펴보고 있어요. 10초쯤 걸릴 수 있어요.`;
     try {
       const result = await requestRecommendations(conditions);
@@ -305,7 +295,7 @@ export function setupAiFlow({ goScreen, showResults }) {
       $('ai-form-error').textContent = error.message;
       if (error.fields?.pet) goScreen('pet');
       else if (error.fields) showErrors(error.fields);
-    } finally { busy = false; $('ai-submit').disabled = false; $('ai-submit').textContent = '추천 받기'; }
+    } finally { busy = false; $('ai-submit').disabled = false; $('ai-submit').textContent = '추천 받기'; $('ai-loading').hidden = true; $('ai-loading').replaceChildren(); }
   });
 
   const catalogReady = () => (state.catalog ? Promise.resolve(state.catalog) : new Promise((resolve) => catalogWaiters.push(resolve)));
