@@ -61,7 +61,7 @@ function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
   return {
     pets: pets.map(({ id, name, purpose, tags, intro }) => ({ id, name, purpose, intro, tags: tags.map((tag) => tagLabels[tag]) })),
     regions, districts: districts.map(({ id, name, region }) => ({ id, name, region })),
-    friends: friends.map(({ id, gu, name, concept, greeting }) => ({ id, gu, name, concept, greeting })),
+    friends: friends.map(({ id, gu, name, concept, greeting, personality, catchphrase, look, pal }) => ({ id, gu, name, concept, greeting, personality, catchphrase, look, pal })),
   };
 }
 

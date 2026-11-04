@@ -1,4 +1,4 @@
-import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY } from './district-arrival.mjs';
+import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY, PREVIEW_ALL_FRIENDS, friendProfile } from './district-arrival.mjs';
 import { postReport, reportAge } from './field-reports.mjs';
 import { distanceLabel, latestReportLine, petFace } from './ai-flow.mjs';
 import { josa } from './ai-conditions.mjs';
@@ -268,19 +268,23 @@ export function setupArrivalFlow({ goScreen, pets }) {
     const met = new Set(readFriendLog().map((entry) => entry.gu));
     return state.catalog ? state.catalog.districts.filter((district) => met.has(district.id)).length : met.size;
   }
-  function openFriend(friend, district, region, entry) {
+  // `entry` is null for a friend not met yet (D47 preview): the character is shown, the meeting rows are not made up.
+  function openFriend(friend, district, region, entry = null) {
     const content = $('evidence-content');
     const heading = node('h2', '', friend.name); heading.id = 'evidence-heading'; heading.tabIndex = -1;
     const facts = node('dl', 'place-facts');
-    for (const [label, text] of [['처음 만난 날', dateLabel(entry.metAt)], ['현장 질문', ANSWER_COPY[entry.answer] ?? '이전 기록']]) facts.append(node('dt', '', label), node('dd', '', text));
-    content.replaceChildren(node('span', 'small-label', `${region.name} · ${district.name}`), friendArt({ region: region.id, initial: friend.name[0], met: true }), heading,
-      node('p', 'friend-greeting', `“${friend.greeting}”`), node('p', 'intro', friend.concept), facts, node('p', 'field-help', '이름과 설정은 팀이 최종 이름·그림을 정하기 전의 임시안이에요.'));
+    const met = entry ? [['처음 만난 날', dateLabel(entry.metAt)], ['현장 질문', ANSWER_COPY[entry.answer] ?? '이전 기록']] : [['만난 날', `아직 못 만났어요. ${district.name}에 가면 만나요`]];
+    for (const [label, text] of [...friendProfile(friend, state.catalog?.friends ?? []), ...met]) facts.append(node('dt', '', label), node('dd', '', text));
+    const note = `${entry ? '' : '시연용 미리 보기예요. '}이름과 설정은 팀이 최종 이름·그림을 정하기 전의 임시안이에요.`;
+    content.replaceChildren(node('span', 'small-label', `${region.name} · ${district.name}${entry ? '' : ' · 아직 못 만남'}`), friendArt({ region: region.id, initial: friend.name[0], met: true }), heading,
+      node('p', 'friend-greeting', `“${friend.greeting}”`), node('p', 'intro', friend.concept), facts, node('p', 'field-help', note));
     $('evidence-dialog').showModal(); heading.focus();
   }
   function renderDex() {
     const count = metCount();
     document.querySelectorAll('.dex-count').forEach((element) => { element.textContent = String(count); });
     document.querySelectorAll('.dex-progress').forEach((element) => element.style.setProperty('--progress', `${(count / 25) * 100}%`));
+    if (PREVIEW_ALL_FRIENDS) $('dex-intro').textContent = '구에 도착하면 그 구의 동네 친구를 만날 수 있어요. 지금은 시연용으로 못 만난 친구도 눌러서 미리 볼 수 있어요. 진한 테두리 칸이 실제로 만난 친구고, 도감은 이 기기에만 저장돼요.';
     if (!state.catalog) return;
     const log = new Map(readFriendLog().map((entry) => [entry.gu, entry]));
     $('dex-regions').replaceChildren(...state.catalog.regions.map((region) => {
@@ -291,16 +295,17 @@ export function setupArrivalFlow({ goScreen, pets }) {
       const list = node('ul', 'dex-grid');
       for (const district of districts) {
         const friend = state.catalog.friends.find((item) => item.gu === district.id);
-        const entry = log.get(district.id);
-        const slot = entry ? button('', 'dex-slot met', () => openFriend(friend, district, region, entry)) : node('div', 'dex-slot');
-        slot.append(friendArt({ region: region.id, initial: friend.name[0], met: Boolean(entry) }), node('b', '', entry ? friend.name : '???'), node('small', '', district.name));
-        if (entry) slot.setAttribute('aria-label', `${district.name} 동네 친구 ${friend.name}, 자세히 보기`);
+        const entry = log.get(district.id) ?? null;
+        const open = Boolean(entry) || PREVIEW_ALL_FRIENDS;
+        const slot = open ? button('', `dex-slot ${entry ? 'met' : 'preview'}`, () => openFriend(friend, district, region, entry)) : node('div', 'dex-slot');
+        slot.append(friendArt({ region: region.id, initial: friend.name[0], met: open }), node('b', '', open ? friend.name : '???'), node('small', '', district.name));
+        if (open) slot.setAttribute('aria-label', `${district.name} 동네 친구 ${friend.name}${entry ? '' : ', 아직 못 만났어요'}, 자세히 보기`);
         // A friend met just now springs into its slot the first time the 도감 is shown.
         if (entry && district.id === state.justMet) {
           slot.classList.add('just-met');
           slot.addEventListener('animationend', () => { slot.classList.remove('just-met'); state.justMet = null; }, { once: true });
         }
-        else slot.append(node('span', 'visually-hidden', '아직 못 만났어요'));
+        if (!entry) slot.append(node('span', 'visually-hidden', '아직 못 만났어요'));
         const item = node('li'); item.append(slot); list.append(item);
       }
       section.append(head, list);
@@ -315,7 +320,7 @@ export function setupArrivalFlow({ goScreen, pets }) {
   const board = createSeoulBoard($('dex-board'), { onPick: (gu) => {
     const district = state.catalog?.districts.find((item) => item.id === gu);
     const entry = metEntry(gu);
-    if (district && entry) openFriend(state.catalog.friends.find((item) => item.gu === gu), district, state.catalog.regions.find((region) => region.id === district.region), entry);
+    if (district && (entry || PREVIEW_ALL_FRIENDS)) openFriend(state.catalog.friends.find((item) => item.gu === gu), district, state.catalog.regions.find((region) => region.id === district.region), entry);
   } });
   async function showBoard() {
     if (!state.catalog) return;

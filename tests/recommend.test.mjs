@@ -204,6 +204,7 @@ test('GET /api/catalog and POST /api/recommend validate and answer without expos
     const catalogBody = await (await fetch(`${base}/api/catalog`)).json();
     assert.deepEqual([catalogBody.pets.length, catalogBody.districts.length, catalogBody.friends.length], [5, 25, 25]);
     assert.equal(catalogBody.places, undefined);
+    assert.ok(catalogBody.friends.every((friend) => friend.personality && friend.catchphrase && friend.look), 'D47 the 도감 detail gets each friend’s character');
     assert.deepEqual(catalogBody.pets[0].tags, ['공원', '한강', '산책로', '전망 산책']);
     const invalid = await post({ conditions: { ...demo, pet: 'cat' } });
     assert.equal(invalid.status, 400);

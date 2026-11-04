@@ -360,6 +360,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .dex-grid{list-style:none;margin:var(--refine-space-8) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--refine-space-8)}
 .app-frame .dex-slot{width:100%;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:var(--refine-space-8) var(--refine-space-4);border:1px dashed var(--line);border-radius:var(--radius-box);background:var(--travel-subtle);color:var(--muted);text-align:center}
 .app-frame .dex-slot.met{border-style:solid;background:var(--white);color:var(--ink);cursor:pointer}
+.app-frame .dex-slot.preview{color:var(--ink);cursor:pointer}
+.app-frame .dex-slot.preview .friend-art{opacity:.7}
 .app-frame .dex-slot b{font-size:var(--refine-type-caption)}
 .app-frame .dex-slot small{font-size:var(--travel-type-micro)}
 #evidence-content>.friend-art{width:64px;height:64px;margin:var(--refine-space-8) 0}

@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY, MAX_ACCURACY_M } from '../dist/district-arrival.mjs';
+import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY, MAX_ACCURACY_M, PREVIEW_ALL_FRIENDS, friendProfile } from '../dist/district-arrival.mjs';
 import { resolveScreen, parentScreen } from '../dist/navigation.mjs';
 import { metFriends } from '../dist/ai-flow.mjs';
 import { arrivalInfo, normalizeArrival, QUESTION_RADIUS_KM } from '../scripts/arrival.mjs';
@@ -46,6 +46,18 @@ test('the 도감 keeps the first meeting, reads older entries and refuses nothin
   assert.deepEqual(metFriends(storage), ['jongno', 'mapo', 'gangnam'], 'the recommendation reads the same log');
   assert.throws(() => recordFriend({ gu: 'jung' }, { getItem: () => null, setItem() { throw new Error('quota'); } }));
   assert.deepEqual(readFriendLog({ getItem() { throw new Error('blocked'); } }), []);
+});
+
+test('D47 the demo 도감 opens every friend with its character rows', async () => {
+  assert.equal(PREVIEW_ALL_FRIENDS, true, 'turned on for the demo');
+  const friends = JSON.parse(await fs.readFile(new URL('../data/gu_friends.json', import.meta.url), 'utf8')).friends;
+  for (const friend of friends) {
+    const labels = friendProfile(friend, friends).map(([label]) => label);
+    assert.deepEqual(labels.slice(0, 3), ['성격', '말버릇', '모습'], friend.id);
+    assert.equal(labels.includes('아는 친구'), Boolean(friend.pal), friend.id);
+  }
+  const lonely = friendProfile({ name: 'x', pal: { id: 'nobody', note: '없는 친구' } }, friends);
+  assert.deepEqual(lonely, [], 'a missing field or an unknown pal adds no row');
 });
 
 test('answers map to shared reports only when they say something, and 한산함 is not a caution', () => {

@@ -8,6 +8,20 @@ export const MAX_ACCURACY_M = 300;
 // Staying this close to the current district keeps it: the 2013 outline is coarse and GPS jitters at borders.
 export const STAY_KM = 0.2;
 export const FRIENDS_KEY = 'growing-travel.friends.v1';
+// D47: for the demo every friend can be opened in the 도감 before it is met. Only the slots open: the met count,
+// the board and the stored log still hold just the friends actually met. Set to false to hide unmet friends again.
+export const PREVIEW_ALL_FRIENDS = true;
+
+// D46/P63 character rows for the 도감 detail: personality, catchphrase, look (until there is a drawing) and the
+// friend it talks about. Rows whose data is missing are left out.
+export function friendProfile(friend, friends = []) {
+  const rows = [];
+  if (friend?.personality) rows.push(['성격', friend.personality]);
+  if (friend?.catchphrase) rows.push(['말버릇', `“${friend.catchphrase}”`]);
+  if (friend?.look) rows.push(['모습', friend.look]);
+  if (friend?.pal?.note && friends.some((item) => item.id === friend.pal.id)) rows.push(['아는 친구', friend.pal.note]);
+  return rows;
+}
 // The friend's one question about the place the traveler is at; busy/calm become shared field reports.
 export const ANSWERS = Object.freeze({
   busy: { label: '붐비거나 줄을 서요', category: 'crowd', text: '지금 붐비거나 줄을 서요.' },
