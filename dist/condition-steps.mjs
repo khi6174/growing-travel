@@ -3,7 +3,7 @@ import { WALK_CHOICES, TIME_OF_DAY, durationLabel, validHours, josa } from './ai
 // D42/P58: the conditions screen asks one thing at a time, like a Toss form. Steps 1·2 move on by themselves after
 // a tap; step 3 holds two answers (인원·걷기) and step 4 shows everything before 추천 받기. No DOM access here.
 export const CONDITION_STEPS = Object.freeze([
-  { id: 'departure', fields: ['departure'], question: '어디서 출발해요?', hint: '주소·역·건물·가게 이름으로 찾거나 역을 바로 골라요.', auto: true },
+  { id: 'departure', fields: ['departure'], question: '어디 근처에서 찾을까요?', hint: '정한 곳 근처를 지금 검색해서 골라 드려요. 주소·역·가게 이름이나 역을 골라요.', auto: true },
   { id: 'hours', fields: ['hours'], question: '시간은 얼마나 있어요?', hint: '오가는 시간까지 포함해서 골라 주세요.', auto: true },
   { id: 'party', fields: ['partySize', 'walkLevel'], question: '몇 명이서, 얼마나 걸을까요?', hint: '인원은 나를 포함해서 세요.', auto: false },
   { id: 'time', fields: ['timeOfDay'], question: '언제 출발해요?', hint: '지금 시각으로 골라 뒀어요. 확인하고 추천을 받아 보세요.', auto: false },

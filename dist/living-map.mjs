@@ -139,6 +139,7 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
       kakao.maps.event.addListener(state.map, 'idle', spreadRanked);
       $('map-zoom').hidden = false;
     }
+    $('map-here').hidden = false; $('map-crosshair').hidden = false;
     state.map.relayout();
     state.overlays.forEach((overlay) => overlay.setMap(null));
     const shown = state.data.places.filter(inScope);
@@ -177,7 +178,7 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
       // A map just unhidden settles its size after layout, so the bounds are fitted on the next task.
       if (fit) await new Promise((resolve) => setTimeout(() => { state.map.relayout(); fitMap(kakao); resolve(); }, 0));
     } catch (error) {
-      $('living-map').hidden = true; $('map-zoom').hidden = true;
+      $('living-map').hidden = true; $('map-zoom').hidden = true; $('map-here').hidden = true; $('map-crosshair').hidden = true;
       say(error.message === 'no-key' ? '카카오맵 키가 설정되지 않아 지도 대신 목록으로 보여 드려요.'
         : error.message === 'load' ? '카카오맵을 불러오지 못했어요. 이 주소가 카카오 앱의 JavaScript SDK 도메인에 등록됐는지 확인해 주세요. 목록은 그대로 쓸 수 있어요.'
           : error.message);
@@ -191,6 +192,8 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     catch (error) { say(error.message); return; }
     // A place that was waiting and now has a valid report has just been woken up.
     state.woke = new Set(data.places.filter((place) => state.previous.get(place.id) === 'sleeping' && place.state === 'live').map((place) => place.id));
+    // D44: picks found nearby are not on the shared map until someone reports on them; they still show as numbers.
+    for (const place of state.focus.extra ?? []) if (!data.places.some((other) => other.id === place.id)) data.places.push({ ...place, purposes: place.purposes ?? [], state: 'sleeping', lastNewsAt: null, report: null });
     state.previous = new Map(data.places.map((place) => [place.id, place.state]));
     state.data = data;
     renderLists();
@@ -213,7 +216,23 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     else goScreen('map');
   }
   $('home-map').addEventListener('click', () => open({}));
-  $('ai-results-map').addEventListener('click', () => open({ places: (pets.lastResult()?.items ?? []).map((item) => item.place_id) }));
+  $('ai-results-map').addEventListener('click', () => { const items = pets.lastResult()?.items ?? []; open({ places: items.map((item) => item.place_id), extra: items.map((item) => item.place) }); });
+  // D44: like a map app's "이 지역에서 찾기": the centre of the map (under the cross) becomes the place to search around.
+  $('map-here').addEventListener('click', async () => {
+    if (!state.map) return;
+    const centre = state.map.getCenter();
+    const point = { lat: Math.round(centre.getLat() * 1000) / 1000, lng: Math.round(centre.getLng() * 1000) / 1000 };
+    $('map-here').disabled = true; say('고른 곳의 동네 이름을 찾는 중이에요.');
+    let label = '지도에서 고른 곳';
+    try {
+      const response = await fetch('/api/places/region', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(point) });
+      const body = await response.json();
+      if (!response.ok) { say(body.error?.message ?? '이 위치는 쓸 수 없어요.'); return; }
+      if (body.region?.dong) label = `${body.region.dong} 근처`;
+    } catch { /* keep the plain label */ } finally { $('map-here').disabled = false; }
+    say('');
+    pets.pickPoint({ ...point, label });
+  });
   $('arrival-map').addEventListener('click', () => { const info = arrival.info(); open(info ? { gu: info.district.id } : {}); });
   $('map-refresh').addEventListener('click', () => refresh());
   for (const [id, step] of [['map-zoom-in', -1], ['map-zoom-out', 1]]) {

@@ -35,17 +35,19 @@ export const weatherKeyFrom = (env) => env.KMA_SERVICE_KEY || env.TOURAPI_KEY ||
 // D30: the Kakao map SDK loads from dapi.kakao.com, pulls its main script from kakaocdn.net (4.5.x, seen
 // 2026-11-02) and draws tiles from daumcdn.net/kakaocdn.net. Those hosts are allowed only when a key is configured;
 // host sources without a scheme follow the page's own http/https.
-export function contentSecurityPolicy(kakaoJsKey = null) {
+// D44: with a TourAPI key, nearby places may show 한국관광공사 photos, served from tong.visitkorea.or.kr over HTTPS.
+export function contentSecurityPolicy(kakaoJsKey = null, { photos = false } = {}) {
   const map = kakaoJsKey ? ' dapi.kakao.com *.kakaocdn.net *.daumcdn.net' : '';
-  return `default-src 'self'; script-src 'self'${map}; style-src 'self'; img-src 'self' data:${map}; connect-src 'self'${map}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`;
+  const photo = photos ? ' https://tong.visitkorea.or.kr' : '';
+  return `default-src 'self'; script-src 'self'${map}; style-src 'self'; img-src 'self' data:${map}${photo}; connect-src 'self'${map}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`;
 }
 
 // Loopback HTTP by default. With `tls`, `hosts` and `accessCode` (the --lan mode) other devices may connect, but only
 // through this computer's own addresses and only after opening the printed address that carries the code once.
-export function createServer({ dataDir = defaultDataDir, aiProvider = providerFromEnv(), aiTimeoutMs = Number(process.env.AI_TIMEOUT_MS) || 10000, tls = null, hosts = LOCAL_HOSTS, accessCode = null, kakaoJsKey = kakaoKeyFrom(process.env.KAKAO_JS_KEY), weather = createWeather({ key: weatherKeyFrom(process.env) }), kakaoRestKey = kakaoKeyFrom(process.env.KAKAO_REST_KEY), searchFetch = fetch } = {}) {
-  const api = createApi({ dataDir, aiProvider, aiTimeoutMs, kakaoJsKey, weather, kakaoRestKey, searchFetch });
+export function createServer({ dataDir = defaultDataDir, aiProvider = providerFromEnv(), aiTimeoutMs = Number(process.env.AI_TIMEOUT_MS) || 10000, tls = null, hosts = LOCAL_HOSTS, accessCode = null, kakaoJsKey = kakaoKeyFrom(process.env.KAKAO_JS_KEY), weather = createWeather({ key: weatherKeyFrom(process.env) }), kakaoRestKey = kakaoKeyFrom(process.env.KAKAO_REST_KEY), tourKey = process.env.TOURAPI_KEY || null, searchFetch = fetch } = {}) {
+  const api = createApi({ dataDir, aiProvider, aiTimeoutMs, kakaoJsKey, weather, kakaoRestKey, tourKey, searchFetch });
   const allowed = new Set(hosts);
-  const policy = contentSecurityPolicy(kakaoJsKey);
+  const policy = contentSecurityPolicy(kakaoJsKey, { photos: Boolean(tourKey) });
   // Kakao checks the requesting site against the key's registered domains, so map mode sends the origin (never the
   // path) to other sites; without a key nothing is sent.
   const referrer = kakaoJsKey ? 'strict-origin-when-cross-origin' : 'no-referrer';
@@ -117,7 +119,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const map = process.env.KAKAO_JS_KEY && !kakaoKeyFrom(process.env.KAKAO_JS_KEY) ? 'KAKAO_JS_KEY 형식이 달라요(32자리 JavaScript 키). 지도 대신 목록으로 보여요.' : `지도: ${kakaoKeyFrom(process.env.KAKAO_JS_KEY) ? '카카오맵 (키 설정됨)' : '카카오맵 키 없음, 목록으로 표시'}`;
     const sky = `날씨: ${weatherKeyFrom(process.env) ? '기상청 단기예보 (공공데이터포털 키 설정됨, 활용신청이 안 됐으면 계절만 보여요)' : '키 없음, 계절만 보여요'}`;
     const search = `출발지 검색: ${kakaoKeyFrom(process.env.KAKAO_REST_KEY) ? '카카오 장소 검색 (REST 키 설정됨)' : 'REST 키 없음, 앱 안의 역·후보지에서만 찾아요'}`;
-    const ai = `AI: ${aiProvider.configured ? `${aiProvider.name} (${aiProvider.model})` : `${aiProvider.name} not configured, rule ranking only`}\n${map}\n${sky}\n${search}`;
+    const around = `근처 추천: ${[kakaoKeyFrom(process.env.KAKAO_REST_KEY) && '카카오 장소 검색', process.env.TOURAPI_KEY && 'TourAPI 위치 기반·행사'].filter(Boolean).join(' + ') || '키 없음, 팀이 정리한 장소에서만 골라요'}`;
+    const ai = `AI: ${aiProvider.configured ? `${aiProvider.name} (${aiProvider.model})` : `${aiProvider.name} not configured, rule ranking only`}\n${map}\n${sky}\n${search}\n${around}`;
     server.listen(port, lan ? '0.0.0.0' : '127.0.0.1', () => {
       if (!lan) { console.log(`Growing Travel · Local: http://127.0.0.1:${port}\n${ai}\nStop: Ctrl+C`); return; }
       console.log(`Growing Travel · 같은 와이파이 휴대폰 시연 (HTTPS, 자체 서명 인증서)\n이 컴퓨터: https://127.0.0.1:${port}`);

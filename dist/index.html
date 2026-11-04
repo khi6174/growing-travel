@@ -54,19 +54,19 @@
     <section id="ai-panel" class="setup-panel app-screen cond-screen" aria-labelledby="ai-heading" hidden>
       <div class="cond-top"><p class="eyebrow">펫 추천 2 / 3</p><div id="cond-progress" class="cond-progress" role="progressbar" aria-label="조건 단계" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><i id="cond-progress-fill"></i></div></div>
       <div class="cond-pet"><span id="cond-pet-face" class="cond-pet-face" aria-hidden="true"></span><p id="ai-pet-line" class="cond-bubble"></p></div>
-      <h2 id="ai-heading" class="cond-question">어디서 출발해요?</h2>
+      <h2 id="ai-heading" class="cond-question">어디 근처에서 찾을까요?</h2>
       <p id="cond-hint" class="cond-hint"></p>
       <ol id="cond-answers" class="cond-answers" aria-label="고른 조건, 누르면 그 질문으로 돌아가요" hidden></ol>
       <form id="ai-form" novalidate>
         <div class="ai-step" data-step="departure">
           <fieldset class="departure-field"><legend class="visually-hidden">출발 위치</legend>
-            <button id="use-location" type="button" class="departure-here" aria-pressed="false" aria-describedby="location-status"><span class="departure-pin" aria-hidden="true"></span><span class="departure-here-text"><b>지금 있는 곳에서 출발</b><small>위치는 이번 추천 계산에만 쓰고 저장하지 않아요</small></span></button>
+            <button id="use-location" type="button" class="departure-here" aria-pressed="false" aria-describedby="location-status"><span class="departure-pin" aria-hidden="true"></span><span class="departure-here-text"><b>지금 있는 곳 근처에서 찾기</b><small>위치는 근처를 찾는 데만 쓰고 저장하지 않아요</small></span></button>
             <p id="location-status" class="field-help" role="status" aria-live="polite"></p>
             <div class="departure-search"><input id="ai-departure-query" type="search" maxlength="60" enterkeyhint="search" autocomplete="off" placeholder="예: 합정역, 연남동 239-49, 스타벅스 신촌" aria-label="출발 위치 찾기" aria-describedby="ai-departure-status ai-departure-error"><button id="ai-departure-find" type="button" class="button subtle">찾기</button></div>
             <p id="ai-departure-error" class="field-error"></p>
             <p id="ai-departure-status" class="field-help" role="status" aria-live="polite"></p>
             <ul id="ai-departure-results" class="departure-results" hidden></ul>
-            <p class="departure-list-label" aria-hidden="true">역에서 바로 출발</p>
+            <p class="departure-list-label" aria-hidden="true">역 근처에서 찾기</p>
             <div id="ai-departure-options" class="station-options" aria-describedby="ai-departure-error"></div>
             <div hidden><input id="ai-departure-current" type="radio" name="ai-departure" value="current" autocomplete="off" tabindex="-1"><input id="ai-departure-place" type="radio" name="ai-departure" value="place" autocomplete="off" tabindex="-1"></div>
           </fieldset>
@@ -93,10 +93,12 @@
     </section>
     <section id="ai-results-panel" class="app-screen" aria-labelledby="ai-results-heading" hidden>
       <p class="eyebrow">펫 추천 3 / 3</p><h2 id="ai-results-heading">이런 곳은 어때요?</h2>
+      <p id="ai-results-where" class="results-where" hidden></p>
       <p id="ai-results-conditions" class="panel-intro"></p>
       <p id="ai-results-source" class="ai-source-note"></p>
       <ol id="ai-results-list" class="ai-result-list"></ol>
-      <section id="ai-results-more" class="arrival-section ai-more" aria-labelledby="ai-more-heading" hidden><h3 id="ai-more-heading"></h3><p class="field-help">추정 60분 안에 갈 수 있는 곳을 목적·이동 부담·현장 소식 순서로 정리했어요.</p><button id="ai-more-toggle" type="button" class="button subtle full" aria-expanded="false" aria-controls="ai-more-list"></button><ul id="ai-more-list" class="arrival-list" hidden></ul><button id="ai-more-next" type="button" class="button subtle full" hidden></button></section>
+      <section id="ai-results-events" class="arrival-section ai-events" aria-labelledby="ai-events-heading" hidden><h3 id="ai-events-heading">지금 이 근처에서 하는 행사</h3><ul id="ai-events-list" class="ai-event-list"></ul><p class="field-help">행사 정보는 한국관광공사 TourAPI 자료예요. 일정과 장소는 바뀔 수 있으니 출발 전에 확인해 주세요.</p></section>
+      <section id="ai-results-more" class="arrival-section ai-more" aria-labelledby="ai-more-heading" hidden><h3 id="ai-more-heading"></h3><p class="field-help">쓸 수 있는 시간 안에 다녀올 수 있는 곳을 목적·이동 부담·현장 소식 순서로 정리했어요.</p><button id="ai-more-toggle" type="button" class="button subtle full" aria-expanded="false" aria-controls="ai-more-list"></button><ul id="ai-more-list" class="arrival-list" hidden></ul><button id="ai-more-next" type="button" class="button subtle full" hidden></button></section>
       <p id="ai-results-note" class="field-help">이동 시간은 직선거리로 계산한 추정치예요. 현장 소식은 여행자가 남긴 당시 상황이니, 운영 시간과 경로는 출발 전에 확인해 주세요.</p>
       <section class="friend-entry compact" aria-label="구 도착 알림"><p class="field-help">출발하면 위치를 켜 두세요. 새 구에 들어서면 동네 친구가 나타나요.</p><p class="arrival-status field-help" role="status" aria-live="polite"></p><button type="button" class="button subtle arrival-toggle">구 도착 알림 켜기</button></section>
       <div class="primary-action-bar"><button id="ai-results-map" class="button primary full" type="button">추천 3곳 지도에서 보기</button><button id="ai-change-conditions" class="button subtle full" type="button" data-screen-target="ai">조건 바꿔서 다시 추천받기</button></div>
@@ -117,7 +119,7 @@
     <section id="map-panel" class="app-screen" aria-labelledby="map-heading" hidden>
       <p class="eyebrow">살아 있는 지도</p><h2 id="map-heading">지금 서울의 현장 소식</h2>
       <p id="map-scope" class="panel-intro"></p>
-      <div id="living-map" class="living-map" hidden></div>
+      <div class="map-stage"><div id="living-map" class="living-map" hidden></div><span id="map-crosshair" class="map-crosshair" aria-hidden="true" hidden></span><button id="map-here" type="button" class="button primary map-here" hidden>이 근처에서 추천 받기</button></div>
       <div id="map-zoom" class="map-zoom" role="group" aria-label="지도 확대·축소" hidden><button id="map-zoom-out" type="button" class="button subtle">축소 −</button><button id="map-zoom-in" type="button" class="button subtle">확대 +</button></div>
       <p id="map-status" class="field-help" role="status" aria-live="polite"></p>
       <p id="map-news" class="map-news" role="status" aria-live="polite"></p>

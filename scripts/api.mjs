@@ -5,7 +5,9 @@ import { createReportStore, ReportError, REPORT_CATEGORIES } from './field-repor
 import { recommendPlaces } from './recommend.mjs';
 import { arrivalInfo, normalizeArrival } from './arrival.mjs';
 import { livingMap } from './living-map.mjs';
-import { normalizeConditions } from '../dist/ai-conditions.mjs';
+import { normalizeConditions, departurePoint, insideSeoul } from '../dist/ai-conditions.mjs';
+import { createNearby, NEARBY_TAG_LABELS } from './nearby.mjs';
+import { createPlaceRegistry, NEARBY_ID } from './place-registry.mjs';
 import { createPlaceSearch } from './place-search.mjs';
 import { createTransit } from './transit.mjs';
 import { createStatsStore } from './stats.mjs';
@@ -60,13 +62,25 @@ function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
   };
 }
 
-export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, searchFetch = fetch }) {
+export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, tourKey = null, searchFetch = fetch }) {
   // D39: typed departures; the app's own places are the fallback when Kakao is not set up or does not answer.
   const placeSearch = createPlaceSearch({ key: kakaoRestKey, fetchImpl: searchFetch, places: async () => (await loadCatalog(dataDir)).places });
   // D40: real transit times for the three picks, with the same REST key; null without one (cards keep the estimate).
   const transit = createTransit({ key: kakaoRestKey, fetchImpl: searchFetch });
-  const placeIds = createPlaceIndex(dataDir);
-  const reports = createReportStore({ file: path.join(dataDir, 'runtime', 'reports.json'), isKnownPlace: async (id) => (await placeIds()).has(id) });
+  const catalogIds = createPlaceIndex(dataDir);
+  // D44: places around the chosen point (Kakao, TourAPI) and the ones a recommendation showed (memory) or someone
+  // reported on (data/runtime/places-seen.json).
+  const nearby = createNearby({ kakaoKey: kakaoRestKey, tourKey, fetchImpl: searchFetch });
+  const registry = createPlaceRegistry({ file: path.join(dataDir, 'runtime', 'places-seen.json') });
+  const known = async (id) => (await catalogIds()).has(id) || (NEARBY_ID.test(id) && (await registry.has(id)));
+  // Shared screens (map, 뜨는 곳, counts) only use places that are public: the catalog and reported nearby places.
+  const isPublic = async (id) => (await catalogIds()).has(id) || (await registry.saved()).some((place) => place.id === id);
+  const placeIds = async () => new Set([...(await catalogIds()), ...(await registry.saved()).map((place) => place.id)]);
+  async function withSaved(catalog) {
+    const saved = (await registry.saved()).filter((place) => catalog.districts.some((district) => district.id === place.gu) && Array.isArray(place.purposes));
+    return { ...catalog, places: [...catalog.places, ...saved], tagLabels: { ...catalog.tagLabels, ...NEARBY_TAG_LABELS } };
+  }
+  const reports = createReportStore({ file: path.join(dataDir, 'runtime', 'reports.json'), isKnownPlace: known });
   // D41: counts for the "뜨는 곳" tabs (picks, 길찾기 openings, arrivals); never who or where from.
   const stats = createStatsStore({ file: path.join(dataDir, 'runtime', 'stats.json') });
 
@@ -76,12 +90,15 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
       if (req.method === 'POST' && !sameOrigin(req)) throw new ReportError('FORBIDDEN_ORIGIN', '다른 사이트의 요청은 받을 수 없어요.', 403);
       if (pathname === '/api/reports' && req.method === 'GET') {
         const placeId = searchParams.get('place_id') ?? '';
-        if (!(await placeIds()).has(placeId)) throw new ReportError('UNKNOWN_PLACE', '알 수 없는 장소예요.', 404);
+        if (!(await known(placeId))) throw new ReportError('UNKNOWN_PLACE', '알 수 없는 장소예요.', 404);
         return send(res, 200, { categories: REPORT_CATEGORIES, reports: await reports.list(placeId, viewer) });
       }
       if (pathname === '/api/reports' && req.method === 'POST') {
         const body = await readJson(req);
-        return send(res, 201, { report: await reports.create({ ...body, contributorId: viewer }) });
+        const report = await reports.create({ ...body, contributorId: viewer });
+        // A report on a nearby place keeps that place (name, point, kind) so the report stays findable and mappable.
+        if (NEARBY_ID.test(report.placeId)) await registry.keep(report.placeId);
+        return send(res, 201, { report });
       }
       const vote = pathname.match(/^\/api\/reports\/([A-Za-z0-9-]{1,64})\/votes$/);
       if (vote && req.method === 'POST') {
@@ -103,14 +120,30 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         catch (error) { if (error.name !== 'ConditionError') throw error; return send(res, 400, { error: { code: 'INVALID_CONDITIONS', message: error.message, fields: error.fields } }); }
         const districtIds = new Set(catalog.districts.map((district) => district.id));
         conditions.metFriends = conditions.metFriends.filter((id) => districtIds.has(id));
-        const reportSummaries = await reports.recentSummaries(catalog.places.map((place) => place.id));
-        const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit });
-        await stats.recordPicks(conditions.pet, result.items.map((item) => item.place_id));
+        // D44: the candidates are places found around the chosen point right now; data/places.json is the fallback.
+        let found = null;
+        if (nearby.configured) {
+          const point = departurePoint(conditions);
+          const [around, region, festivals] = await Promise.all([
+            nearby.places({ point, hours: conditions.hours, pet: conditions.pet, pets: catalog.pets, districts: catalog.districts, catalogPlaces: catalog.places }),
+            nearby.region(point), nearby.festivals(point),
+          ]);
+          found = { ...around, region, festivals };
+          registry.remember(around.places);
+        }
+        const pool = found?.places?.length ? found.places : catalog.places;
+        const reportSummaries = await reports.recentSummaries(pool.map((place) => place.id));
+        const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit, nearby: found });
+        const counted = [];
+        for (const item of result.items) if (await isPublic(item.place_id)) counted.push(item.place_id);
+        await stats.recordPicks(conditions.pet, counted);
         return send(res, 200, result);
       }
       if (pathname === '/api/stats/route' && req.method === 'POST') {
         const placeId = String((await readJson(req))?.placeId ?? '');
-        if (!(await placeIds()).has(placeId)) throw new ReportError('UNKNOWN_PLACE', '알 수 없는 장소예요.', 404);
+        if (!(await known(placeId))) throw new ReportError('UNKNOWN_PLACE', '알 수 없는 장소예요.', 404);
+        // A nearby place nobody reported on is not counted: the counts would trace where people searched.
+        if (!(await isPublic(placeId))) return send(res, 200, { counted: false });
         await stats.recordRoute(placeId);
         return send(res, 200, { counted: true });
       }
@@ -119,13 +152,15 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);
         const gu = searchParams.get('gu') ?? '';
         if (!catalog.districts.some((district) => district.id === gu)) return send(res, 404, { error: { code: 'UNKNOWN_DISTRICT', message: '알 수 없는 구예요.' } });
-        const inGu = catalog.places.filter((place) => place.gu === gu).map((place) => place.id);
-        return send(res, 200, trending({ gu, catalog, activity: await reports.activity(inGu, { days: TRENDING_DAYS }), totals: await stats.totals({ days: TRENDING_DAYS }) }));
+        const all = await withSaved(catalog);
+        const inGu = all.places.filter((place) => place.gu === gu).map((place) => place.id);
+        return send(res, 200, trending({ gu, catalog: all, activity: await reports.activity(inGu, { days: TRENDING_DAYS }), totals: await stats.totals({ days: TRENDING_DAYS }) }));
       }
       if (pathname === '/api/map' && req.method === 'GET') {
         const catalog = await loadCatalog(dataDir);
         if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);
-        return send(res, 200, livingMap(catalog, await reports.recentSummaries(catalog.places.map((place) => place.id)), Date.now()));
+        const all = await withSaved(catalog);
+        return send(res, 200, livingMap(all, await reports.recentSummaries(all.places.map((place) => place.id)), Date.now()));
       }
       // The Kakao JavaScript key is meant for browsers and only works on the domains registered for it; it lives in
       // .env (KAKAO_JS_KEY) so it never enters the repository.
@@ -134,6 +169,13 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
       if (pathname === '/api/weather' && req.method === 'GET') return send(res, 200, await weather());
       // The typed departure travels in the body (it may be a home address), never in the URL.
       if (pathname === '/api/places/search' && req.method === 'POST') return send(res, 200, await placeSearch((await readJson(req))?.query));
+      // D44: the 행정동 of a point picked on the map ("○○동 근처"); the point travels in the body, never the URL.
+      if (pathname === '/api/places/region' && req.method === 'POST') {
+        const body = await readJson(req);
+        const point = { lat: Number(body?.lat), lng: Number(body?.lng) };
+        if (!insideSeoul(point)) return send(res, 400, { error: { code: 'OUTSIDE_SEOUL', message: '서울 안의 위치를 골라 주세요.' } });
+        return send(res, 200, { region: await nearby.region(point) });
+      }
       if (pathname === '/api/boundaries' && req.method === 'GET') {
         const catalog = await loadCatalog(dataDir);
         if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);
@@ -149,10 +191,11 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         let request;
         try { request = normalizeArrival(body, catalog); }
         catch (error) { if (error.name !== 'ArrivalError') throw error; return send(res, 400, { error: { code: 'INVALID_ARRIVAL', message: error.message } }); }
-        const reportSummaries = await reports.recentSummaries(catalog.places.filter((place) => place.gu === request.gu).map((place) => place.id));
+        const all = await withSaved(catalog);
+        const reportSummaries = await reports.recentSummaries(all.places.filter((place) => place.gu === request.gu).map((place) => place.id));
         // Only the arrival itself counts (the screen sends arrived: true then), not the refreshes after it.
         if (body?.arrived === true) await stats.recordArrival(request.gu);
-        return send(res, 200, arrivalInfo(request, catalog, reportSummaries));
+        return send(res, 200, arrivalInfo(request, all, reportSummaries));
       }
       return send(res, 404, { error: { code: 'NOT_FOUND', message: 'Not found' } });
     } catch (error) {

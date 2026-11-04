@@ -28,13 +28,32 @@ export function latestReportLine(report, now = Date.now()) {
 }
 export const minutesLabel = (minutes) => `약 ${minutes}분(추정)`;
 // D40: a pick with a Kakao route reads as transit time without (추정); others keep the straight-line estimate.
-export const travelLabel = (item) => (item.transit ? `대중교통 약 ${item.transit.minutes}분 · ${item.transit.transfers ? `환승 ${item.transit.transfers}회` : '환승 없음'}` : minutesLabel(item.minutes));
+export const travelLabel = (item) => (item.transit ? `대중교통 약 ${item.transit.minutes}분 · ${item.transit.transfers ? `환승 ${item.transit.transfers}회` : '환승 없음'}`
+  : item.walk || item.mode === 'walk' ? `걸어서 약 ${item.walk?.minutes ?? item.minutes}분(추정)` : minutesLabel(item.minutes));
+// D44: where the picks were found ("종로구 사직동 근처 · 1.3km 안") and what they came from.
+export function whereLabel(result) {
+  const nearby = result.nearby;
+  if (!nearby?.used) return '';
+  const name = nearby.region?.dong ? `${nearby.region.gu} ${nearby.region.dong}`.trim() : nearby.label || '고른 곳';
+  // A short trip says how far on foot; a long one only that the nearest come first (its reach is up to 20 km).
+  return nearby.radiusKm <= 1.5 ? `${name} 근처 · 걸어서 ${Math.round(nearby.radiusKm * 19.5)}분 안` : `${name} 근처 · 가까운 곳부터`;
+}
+const NEARBY_MISSING = { NO_KEY: '근처 검색 키가 설정되지 않아', UNAVAILABLE: '근처 검색이 응답하지 않아', NO_MATCH: '이 근처에서 펫의 목적에 맞는 곳을 찾지 못해' };
+export function nearbyNote(result) {
+  const nearby = result.nearby;
+  if (nearby?.used) return `카카오 장소 검색과 한국관광공사 자료에서 지금 찾은 근처 ${nearby.found}곳 가운데 골랐어요. 팀이 확인하지 않은 곳이라 영업시간·휴무는 카카오맵에서 확인해 주세요.`;
+  return nearby?.reason ? `${NEARBY_MISSING[nearby.reason] ?? '근처 검색을 쓸 수 없어'} 팀이 정리한 서울 장소에서 골랐어요.` : '';
+}
+export const eventDates = (start, end) => [start, end].map((day) => `${Number(day.slice(4, 6))}.${Number(day.slice(6, 8))}`).join('~');
+const SOURCE_NOTE = { kakao: '카카오 장소 검색 결과라 팀이 확인하지 않았어요. 영업시간·휴무는 카카오맵에서 확인해 주세요.', tourapi: '한국관광공사 자료예요. 팀이 확인하지 않았으니 운영 시간은 출발 전에 확인해 주세요.' };
+export const sourceCheckNote = (place) => SOURCE_NOTE[place.source] ?? null;
 const transitFacts = (transit) => [transit.lines.length ? transit.lines.join(' → ') : '', `약 ${transit.minutes}분`, transit.transfers ? `환승 ${transit.transfers}회` : '환승 없음', transit.fare].filter(Boolean).join(', ');
 export function resultsNote(result) {
   const reports = '현장 소식은 여행자가 남긴 당시 상황이니, 운영 시간과 경로는 출발 전에 확인해 주세요.';
+  const walk = result.items.some((item) => item.walk) ? '걸어서 걸리는 시간은 직선거리로 계산한 추정치예요. ' : '';
   return result.items.some((item) => item.transit)
-    ? `추천한 곳의 이동 시간·환승·요금은 카카오 대중교통 기준이라 출발 시각에 따라 달라질 수 있어요. 더 보기의 시간은 직선거리 추정치예요. ${reports}`
-    : `이동 시간은 직선거리로 계산한 추정치예요. ${reports}`;
+    ? `추천한 곳의 대중교통 시간·환승·요금은 카카오 대중교통 기준이라 출발 시각에 따라 달라질 수 있어요. ${walk}더 보기의 시간은 직선거리 추정치예요. ${reports}`
+    : `${walk || '이동 시간은 직선거리로 계산한 추정치예요. '}${reports}`;
 }
 export const distanceLabel = (km) => (km < 1 ? `약 ${Math.max(10, Math.round(km * 100) * 10)}m (직선)` : `약 ${km.toFixed(1)}km (직선)`);
 export const kakaoPlaceUrl = (place) => `https://map.kakao.com/link/map/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
@@ -77,6 +96,14 @@ function tile(container, { name, value, label, hint, checked, figure, className 
   if (hint) face.append(node('small', '', hint));
   wrapper.append(input, face); $(container).append(wrapper);
   return wrapper;
+}
+// A 한국관광공사 photo of a real place (never a generated one); it disappears quietly if it fails to load.
+function photoFigure(place) {
+  const figure = node('figure', 'place-photo');
+  const img = node('img'); img.src = place.photo; img.alt = `${place.name} 사진`; img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer';
+  img.addEventListener('error', () => figure.remove());
+  figure.append(img, node('figcaption', '', '사진: 한국관광공사'));
+  return figure;
 }
 // Restart a CSS animation by taking its class off and putting it back on the next layout.
 function replay(element, className) { element.classList.remove(className); void element.offsetWidth; element.classList.add(className); }
@@ -168,7 +195,7 @@ export function setupAiFlow({ goScreen, showResults }) {
       const point = { lat: Math.round(coords.latitude * 1000) / 1000, lng: Math.round(coords.longitude * 1000) / 1000 };
       if (!insideSeoul(point)) { setLocation(null); $('location-status').textContent = '현재 위치가 서울 밖이라 쓰지 않았어요. 출발 위치를 찾거나 역을 골라 주세요.'; return; }
       setLocation(point); clearErrors();
-      $('location-status').textContent = '현재 위치에서 출발해요. 이번 추천 계산에만 쓰고 저장하지 않아요.';
+      $('location-status').textContent = '지금 있는 곳 근처에서 찾아요. 위치는 근처를 찾는 데만 쓰고 저장하지 않아요.';
       autoNext(0);
     }, (error) => {
       done(); setLocation(null);
@@ -181,7 +208,7 @@ export function setupAiFlow({ goScreen, showResults }) {
     state.searched = { label: item.label, lat: item.lat, lng: item.lng };
     $('ai-departure-place').checked = true; syncDeparture(); clearErrors();
     $('ai-departure-query').value = item.label;
-    $('ai-departure-status').textContent = `‘${item.label}’에서 출발해요. 이번 추천 계산에만 쓰고 저장하지 않아요.`;
+    $('ai-departure-status').textContent = `‘${item.label}’ 근처에서 찾아요. 이번 추천 계산에만 쓰고 저장하지 않아요.`;
     $('location-status').textContent = '';
     autoNext(0);
   }
@@ -317,7 +344,7 @@ export function setupAiFlow({ goScreen, showResults }) {
   }
   function renderReview(changed = null) {
     const answers = labels(); const chosen = pet();
-    const rows = [['함께 갈 펫', chosen ? `${chosen.name} · ${chosen.purpose}` : '', 'pet'], ['출발', answers.departure, 0], ['쓸 수 있는 시간', answers.hours, 1], ['인원·걷기', answers.party, 2]];
+    const rows = [['함께 갈 펫', chosen ? `${chosen.name} · ${chosen.purpose}` : '', 'pet'], ['찾을 곳', answers.departure, 0], ['쓸 수 있는 시간', answers.hours, 1], ['인원·걷기', answers.party, 2]];
     $('cond-review-list').replaceChildren(...rows.map(([label, value, target], index) => {
       const row = node('div', target === changed ? 'cond-review-row just-changed' : 'cond-review-row'); row.style.setProperty('--i', String(index));
       const edit = () => editFromReview(target);
@@ -406,11 +433,18 @@ export function setupAiFlow({ goScreen, showResults }) {
     const facts = node('dl', 'place-facts');
     const walk = WALK_CHOICES.find((choice) => choice.level === place.walk_level);
     // An arrival-screen place has a distance from here instead of travel minutes and no friend line.
-    for (const [label, text] of [['추천 이유', item.reason], ['주소', place.address], ['가는 방법', `${place.nearest_station} ${place.access_summary}`], ['예상 이동', item.minutes != null && (item.transit ? `${transitFacts(item.transit)} (카카오 대중교통 기준)` : `${minutesLabel(item.minutes)}, 직선거리로 계산`)], ['여기서 거리', item.distanceKm != null && distanceLabel(item.distanceKm)], ['걷기', `${walk.label} (${walk.hint})`], ['동네 친구', item.friend && (item.friend_hint || `${place.guName}의 동네 친구 ‘${item.friend.name}’는 이미 만났어요.`)]]) if (text) facts.append(node('dt', '', label), node('dd', '', text));
+    if (place.photo) content.append(photoFigure(place));
+    const moving = item.minutes == null ? null : item.transit ? `${transitFacts(item.transit)} (카카오 대중교통 기준)`
+      : item.walk ? `걸어서 약 ${item.walk.minutes}분, 직선 ${distanceLabel(item.walk.km).replace(' (직선)', '')}(추정)` : `${minutesLabel(item.minutes)}, 직선거리로 계산`;
+    for (const [label, text] of [['추천 이유', item.reason], ['종류', place.kind], ['주소', place.address], ['가는 방법', place.nearest_station && `${place.nearest_station} ${place.access_summary}`], ['예상 이동', moving], ['여기서 거리', item.distanceKm != null && distanceLabel(item.distanceKm)], ['걷기', walk && `${walk.label} (${walk.hint})`], ['동네 친구', item.friend && (item.friend_hint || `${place.guName}의 동네 친구 ‘${item.friend.name}’는 이미 만났어요.`)]]) if (text) facts.append(node('dt', '', label), node('dd', '', text));
     content.append(facts);
-    if (place.needs_check) content.append(node('p', 'field-help', fromTourApi(place) ? '위치·주소는 한국관광공사 TourAPI 자료예요. 가는 방법은 팀이 아직 확인하지 않은 초안이라 지도 앱에서 함께 확인해 주세요.' : '위치와 교통 정보는 팀이 아직 확인하지 않은 초안이에요. 지도 앱에서 함께 확인해 주세요.'));
+    const sourced = sourceCheckNote(place);
+    if (sourced) content.append(node('p', 'field-help', sourced));
+    else if (place.needs_check) content.append(node('p', 'field-help', fromTourApi(place) ? '위치·주소는 한국관광공사 TourAPI 자료예요. 가는 방법은 팀이 아직 확인하지 않은 초안이라 지도 앱에서 함께 확인해 주세요.' : '위치와 교통 정보는 팀이 아직 확인하지 않은 초안이에요. 지도 앱에서 함께 확인해 주세요.'));
     else content.append(node('p', 'field-help', `위치·주소는 한국관광공사 TourAPI 자료이고, 가는 방법은 ${place.access_checked_at} 공식 안내로 확인했어요. 당일 출구 공사 등은 다를 수 있어요.`));
     if (place.access_source) content.append(externalLink(place.access_source, '가는 방법 공식 안내'));
+    if (item.walk?.url) content.append(externalLink(item.walk.url, '카카오맵 걷기 길찾기'));
+    if (place.source_url) content.append(externalLink(place.source_url, '카카오맵 장소 정보'));
     content.append(externalLink(kakaoPlaceUrl(place), '카카오맵에서 위치 보기'), fieldReportsSection(place));
     const dialog = $('evidence-dialog');
     dialog.addEventListener('close', onClose, { once: true });
@@ -421,7 +455,7 @@ export function setupAiFlow({ goScreen, showResults }) {
     const card = node('li', 'ai-result-card');
     const head = node('div', 'ai-result-head');
     const title = node('div');
-    title.append(node('span', 'ai-result-rank', String(index + 1).padStart(2, '0')), node('h3', '', item.place.name), node('p', 'muted', `${item.place.guName} · ${travelLabel(item)}`));
+    title.append(node('span', 'ai-result-rank', String(index + 1).padStart(2, '0')), node('h3', '', item.place.name), node('p', 'muted', [item.place.guName, item.place.kind, travelLabel(item)].filter(Boolean).join(' · ')));
     head.append(title);
     if (result.source === 'mixed' && item.source === 'rules') head.append(node('span', 'small-label', '기준 정렬로 채움'));
     const voice = node('div', 'ai-result-voice');
@@ -444,15 +478,18 @@ export function setupAiFlow({ goScreen, showResults }) {
       } catch { /* keep the previous line when the server is unreachable */ }
     }));
     actions.append(detail, externalLink(kakaoPlaceUrl(item.place), '지도'));
-    if (item.transit?.landingUrl) {
-      const route = externalLink(item.transit.landingUrl, '카카오맵 길찾기');
+    const routeUrl = item.transit?.landingUrl ?? item.walk?.url;
+    if (routeUrl) {
+      const route = externalLink(routeUrl, item.transit ? '카카오맵 길찾기' : '카카오맵 걷기 길찾기');
       // D41: opening Kakao's route counts toward #길찾기 많은 (only the place id is sent).
       route.addEventListener('click', () => { fetch('/api/stats/route', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ placeId: item.place.id }) }).catch(() => {}); });
       actions.append(route);
     }
+    if (item.place.photo) card.append(photoFigure(item.place));
     card.append(head, voice, tags, body);
     if (item.transit?.tight) card.append(node('p', 'field-help ai-result-tight', '실제 대중교통으로는 오가는 시간이 길어 그곳에서 보낼 시간이 빠듯해요. 시간을 늘리거나 다른 곳도 살펴보세요.'));
-    if (item.place.needs_check) card.append(node('p', 'field-help', fromTourApi(item.place) ? '가는 방법은 확인 전 초안이에요.' : '교통·위치 정보는 확인 전 초안이에요.'));
+    if (sourceCheckNote(item.place)) card.append(node('p', 'field-help ai-result-source', item.place.source === 'kakao' ? '카카오 장소 검색에서 지금 찾은 곳 · 팀 확인 전' : '한국관광공사 자료에서 지금 찾은 곳 · 팀 확인 전'));
+    else if (item.place.needs_check) card.append(node('p', 'field-help', fromTourApi(item.place) ? '가는 방법은 확인 전 초안이에요.' : '교통·위치 정보는 확인 전 초안이에요.'));
     card.append(actions);
     return card;
   }
@@ -462,8 +499,27 @@ export function setupAiFlow({ goScreen, showResults }) {
     $('ai-results-source').textContent = sourceNote(result);
     $('ai-results-source').dataset.source = result.source;
     $('ai-results-note').textContent = resultsNote(result);
+    const where = whereLabel(result);
+    $('ai-results-where').hidden = !where;
+    $('ai-results-where').replaceChildren(art('pin'), document.createTextNode(where));
+    const note = nearbyNote(result);
+    if (note) $('ai-results-source').textContent = `${note} ${sourceNote(result)}`;
+    renderEvents(result.festivals ?? []);
     $('ai-results-list').replaceChildren(...(result.items.length ? result.items.map((item, index) => resultCard(item, index, result)) : [node('li', 'report-empty', FALLBACK_COPY.no_candidates)]));
     renderMore(result);
+  }
+
+  // D44: festivals and events going on today near the point (한국관광공사), nearest first.
+  function renderEvents(events) {
+    $('ai-results-events').hidden = !events.length;
+    $('ai-events-list').replaceChildren(...events.map((event, index) => {
+      const item = node('li', 'ai-event'); item.style.setProperty('--i', String(index));
+      const text = node('div', 'ai-event-text');
+      text.append(node('b', '', event.title), node('span', 'muted', `${eventDates(event.start, event.end)} · ${distanceLabel(event.km)}${event.address ? ` · ${event.address}` : ''}`));
+      if (event.photo) { const thumb = node('img', 'ai-event-photo'); thumb.src = event.photo; thumb.alt = ''; thumb.loading = 'lazy'; thumb.decoding = 'async'; thumb.referrerPolicy = 'no-referrer'; thumb.addEventListener('error', () => thumb.remove()); item.append(thumb); }
+      item.append(text, externalLink(`https://map.kakao.com/link/map/${encodeURIComponent(event.title)},${event.lat},${event.lng}`, '위치'));
+      return item;
+    }));
   }
 
   // D31/P44 "더 보기": the other purpose places within reach in rule order, shown 10 at a time. No scores are shown.
@@ -473,12 +529,13 @@ export function setupAiFlow({ goScreen, showResults }) {
     const { place } = entry;
     const item = node('li', 'arrival-place');
     const head = node('div', 'arrival-place-head');
-    head.append(node('b', '', place.name), node('span', 'muted', `${place.guName} · ${minutesLabel(entry.minutes)}`));
+    head.append(node('b', '', place.name), node('span', 'muted', [place.guName, place.kind, travelLabel(entry)].filter(Boolean).join(' · ')));
     const open = node('button', 'button subtle', '상세·현장 소식'); open.type = 'button';
     open.setAttribute('aria-label', `${place.name} 상세와 현장 소식 보기`);
-    open.addEventListener('click', () => openPlaceDetail({ place, minutes: entry.minutes, reason: '' }, () => {}));
+    open.addEventListener('click', () => openPlaceDetail({ place, minutes: entry.minutes, mode: entry.mode, reason: '' }, () => {}));
     item.append(head, node('p', 'arrival-place-tags', entry.purpose_tags.join(' · ')), node('p', 'field-help', latestReportLine(entry.latest_report)));
-    if (place.needs_check) item.append(node('p', 'field-help', fromTourApi(place) ? '가는 방법은 확인 전 초안이에요.' : '교통·위치 정보는 확인 전 초안이에요.'));
+    if (sourceCheckNote(place)) item.append(node('p', 'field-help', place.source === 'kakao' ? '카카오 장소 검색 결과 · 팀 확인 전' : '한국관광공사 자료 · 팀 확인 전'));
+    else if (place.needs_check) item.append(node('p', 'field-help', fromTourApi(place) ? '가는 방법은 확인 전 초안이에요.' : '교통·위치 정보는 확인 전 초안이에요.'));
     item.append(open);
     return item;
   }
@@ -559,8 +616,21 @@ export function setupAiFlow({ goScreen, showResults }) {
     }
   });
 
+  // D44: "이 근처에서 추천 받기" on the map. The point becomes the search centre; with a pet already chosen the
+  // conditions open on the review, so 추천 받기 is one tap away (and each answer can still be changed there).
+  function pickPoint({ lat, lng, label }) {
+    state.searched = { label, lat, lng };
+    $('ai-departure-place').checked = true; syncDeparture(); clearErrors();
+    $('ai-departure-query').value = label; $('ai-departure-results').hidden = true;
+    $('ai-departure-status').textContent = `지도에서 고른 ‘${label}’ 근처에서 찾아요. 이번 추천 계산에만 쓰고 저장하지 않아요.`;
+    $('location-status').textContent = '';
+    // Without a pet yet, the pet screen comes first and then goes straight to the review (like a 바꾸기 of 출발).
+    if (!state.petId) { returnTo = LAST_STEP; edited = 0; $('pet-next').textContent = '조건 확인하기'; goScreen('pet'); return 'pet'; }
+    endEdit(); edited = null; showStep(LAST_STEP, { focus: false }); goScreen('ai');
+    return 'ai';
+  }
   const catalogReady = () => (state.catalog ? Promise.resolve(state.catalog) : new Promise((resolve) => catalogWaiters.push(resolve)));
   loadCatalog();
   // Stage 5 reads the chosen pet and catalog, and opens its places in the same detail view.
-  return { hasPet: () => Boolean(pet()), petId: () => state.petId, catalogReady, openPlaceDetail, lastResult: () => state.result };
+  return { hasPet: () => Boolean(pet()), petId: () => state.petId, catalogReady, openPlaceDetail, lastResult: () => state.result, pickPoint };
 }
