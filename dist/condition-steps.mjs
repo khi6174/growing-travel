@@ -12,6 +12,13 @@ export const LAST_STEP = CONDITION_STEPS.length - 1;
 
 export const clampStep = (index) => Math.min(LAST_STEP, Math.max(0, Number.isInteger(index) ? index : 0));
 export const stepDirection = (from, to) => (to > from ? 'forward' : to < from ? 'back' : 'none');
+// D43: a question opened with 바꾸기 on the review goes straight back to the review once it is answered.
+// `returnTo` is the review's step while such an edit is open, -1 otherwise.
+export const nextStep = (index, returnTo = -1) => (returnTo >= 0 && returnTo !== index ? returnTo : clampStep(index + 1));
+export function actionLabel(index, returnTo = -1) {
+  if (index === LAST_STEP) return '추천 받기';
+  return returnTo >= 0 ? '바꾸고 돌아가기' : '다음';
+}
 export function stepOfField(field) { return CONDITION_STEPS.findIndex((step) => step.fields.includes(field)); }
 // The earliest step holding one of these error fields, or -1 when none of them belongs to a step.
 export function firstErrorStep(fields = {}) {

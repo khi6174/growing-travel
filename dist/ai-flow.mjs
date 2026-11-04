@@ -1,5 +1,5 @@
 import { SEOUL_STATIONS, CURRENT_LOCATION, SEARCHED_PLACE, HOUR_CHOICES, WALK_CHOICES, TIME_OF_DAY, MAX_PARTY, insideSeoul, defaultTimeOfDay, normalizeConditions, describeConditions } from './ai-conditions.mjs';
-import { CONDITION_STEPS, LAST_STEP, clampStep, stepDirection, firstErrorStep, stepErrors, answerLabels, petLine } from './condition-steps.mjs';
+import { CONDITION_STEPS, LAST_STEP, clampStep, stepDirection, nextStep, actionLabel, firstErrorStep, stepErrors, answerLabels, petLine } from './condition-steps.mjs';
 import { fieldReportsSection, fetchReports, reportAge } from './field-reports.mjs';
 import { readFriendLog } from './district-arrival.mjs';
 import { petFace } from './pet-art.mjs';
@@ -92,6 +92,10 @@ export function setupAiFlow({ goScreen, showResults }) {
   let step = 0;
   let busy = false;
   let autoTimer = 0;
+  // D43: while a review row's 바꾸기 is open, returnTo is the review step and edited names the row ('pet' or a step).
+  let returnTo = -1;
+  let edited = null;
+  const endEdit = () => { returnTo = -1; edited = null; $('pet-next').textContent = '조건 정하기'; };
 
   function selectPet(id) {
     state.petId = id;
@@ -107,7 +111,7 @@ export function setupAiFlow({ goScreen, showResults }) {
       const li = node('li'); const button = node('button', 'home-pet'); button.type = 'button';
       button.setAttribute('aria-label', `${item.name}, ${item.purpose} 여행으로 시작하기`);
       button.append(petFace(item.id), node('b', '', item.name), node('small', '', item.purpose));
-      button.addEventListener('click', () => { selectPet(item.id); goScreen('pet'); });
+      button.addEventListener('click', () => { endEdit(); selectPet(item.id); goScreen('pet'); });
       li.append(button); return li;
     }));
     $('pet-options').replaceChildren(...pets.map((item) => {
@@ -305,11 +309,18 @@ export function setupAiFlow({ goScreen, showResults }) {
       const li = node('li', direction === 'forward' && index === done.length - 1 ? 'fresh' : ''); li.append(button); return li;
     }));
   }
-  function renderReview() {
+  // 바꾸기 opens that question (or the pet screen); answering it comes straight back here (nextStep).
+  function editFromReview(target) {
+    returnTo = LAST_STEP; edited = target;
+    if (target === 'pet') { $('pet-next').textContent = '바꾸고 돌아가기'; goScreen('pet'); return; }
+    showStep(target);
+  }
+  function renderReview(changed = null) {
     const answers = labels(); const chosen = pet();
-    const rows = [['함께 갈 펫', chosen ? `${chosen.name} · ${chosen.purpose}` : '', () => goScreen('pet')], ['출발', answers.departure, () => showStep(0)], ['쓸 수 있는 시간', answers.hours, () => showStep(1)], ['인원·걷기', answers.party, () => showStep(2)]];
-    $('cond-review-list').replaceChildren(...rows.map(([label, value, edit], index) => {
-      const row = node('div', 'cond-review-row'); row.style.setProperty('--i', String(index));
+    const rows = [['함께 갈 펫', chosen ? `${chosen.name} · ${chosen.purpose}` : '', 'pet'], ['출발', answers.departure, 0], ['쓸 수 있는 시간', answers.hours, 1], ['인원·걷기', answers.party, 2]];
+    $('cond-review-list').replaceChildren(...rows.map(([label, value, target], index) => {
+      const row = node('div', target === changed ? 'cond-review-row just-changed' : 'cond-review-row'); row.style.setProperty('--i', String(index));
+      const edit = () => editFromReview(target);
       const change = node('button', 'text-button', '바꾸기'); change.type = 'button';
       change.setAttribute('aria-label', `${label} 바꾸기`); change.addEventListener('click', edit);
       const answer = node('dd'); answer.append(node('span', '', value || '아직 안 골랐어요'), change);
@@ -321,21 +332,23 @@ export function setupAiFlow({ goScreen, showResults }) {
     clearTimeout(autoTimer);
     const to = clampStep(index);
     const visible = !$('ai-panel').hidden;
+    const changed = returnTo >= 0 && to === returnTo ? edited : null;
+    if (to === returnTo || to === LAST_STEP) endEdit();
     const direction = visible ? stepDirection(step, to) : 'none';
     step = to;
     steps.forEach((element, at) => { element.hidden = at !== to; });
     const info = CONDITION_STEPS[to];
     steps[to].classList.remove('shake'); steps[to].dataset.dir = direction; replay(steps[to], 'entering');
     $('ai-heading').textContent = info.question; replay($('ai-heading'), 'swap');
-    $('cond-hint').textContent = info.hint;
+    $('cond-hint').textContent = returnTo >= 0 ? '바꾸면 확인 화면으로 바로 돌아가요.' : info.hint;
     $('cond-progress').setAttribute('aria-valuenow', String(to + 1));
     $('cond-progress').setAttribute('aria-valuetext', `4단계 중 ${to + 1}단계, ${info.question}`);
     $('cond-progress-fill').style.setProperty('--progress', `${((to + 1) / CONDITION_STEPS.length) * 100}%`);
-    $('ai-submit').textContent = to === LAST_STEP ? '추천 받기' : '다음';
+    $('ai-submit').textContent = actionLabel(to, returnTo);
     showErrors(); $('ai-form-error').textContent = '';
     renderAnswers(direction);
-    if (to === LAST_STEP) renderReview();
-    say(info.id, { animate: visible });
+    if (to === LAST_STEP) renderReview(changed);
+    say(changed !== null ? 'ready' : info.id, { animate: visible });
     if (!visible) return;
     window.scrollTo({ top: 0, behavior: 'auto' });
     if (focus) { $('ai-heading').setAttribute('tabindex', '-1'); $('ai-heading').focus({ preventScroll: true }); }
@@ -350,7 +363,7 @@ export function setupAiFlow({ goScreen, showResults }) {
   function goNext() {
     const errors = checkStep(step);
     if (Object.keys(errors).length) { oops(errors); return; }
-    showStep(step + 1);
+    showStep(nextStep(step, returnTo));
   }
   // Steps 1·2 move on by themselves after a tap or a pick (not after keyboard moves between choices).
   function autoNext(from) {
@@ -367,13 +380,19 @@ export function setupAiFlow({ goScreen, showResults }) {
     });
   }
   // The header's back button goes to the previous question first, then (from question 1) to the pet screen.
+  // During a 바꾸기 it goes back to the review instead, from the question or from the pet screen.
   document.addEventListener('click', (event) => {
-    if (!event.target.closest?.('#app-back') || $('ai-panel').hidden || step === 0 || busy) return;
+    if (!event.target.closest?.('#app-back') || busy) return;
+    const onPet = !$('pet-panel').hidden; const onAi = !$('ai-panel').hidden;
+    if (onPet && returnTo >= 0 && state.petId) { event.preventDefault(); event.stopPropagation(); showStep(returnTo, { focus: false }); goScreen('ai'); return; }
+    if (!onAi || (step === 0 && returnTo < 0)) return;
     event.preventDefault(); event.stopPropagation();
-    showStep(step - 1);
+    showStep(returnTo >= 0 ? returnTo : step - 1);
   }, true);
+  // 펫 고르고 출발하기 on the home screen starts over, so an open 바꾸기 ends.
+  $('home-ai').addEventListener('click', endEdit);
   $('pet-next').addEventListener('click', () => {
-    if (state.petId) { showStep(0, { focus: false }); goScreen('ai'); return; }
+    if (state.petId) { showStep(returnTo >= 0 ? returnTo : 0, { focus: false }); goScreen('ai'); return; }
     $('pet-error').textContent = state.catalog ? '함께 갈 펫을 골라 주세요.' : '펫 정보를 불러오지 못했어요. 홈에서 다시 불러와 주세요.';
     document.querySelector('#pet-options input')?.focus();
   });

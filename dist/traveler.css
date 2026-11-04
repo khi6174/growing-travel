@@ -721,6 +721,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .cond-review dt{font-size:var(--travel-type-meta);color:var(--muted)}
 .app-frame .cond-review dd{display:flex;align-items:center;justify-content:space-between;gap:var(--refine-space-8);margin:0;font-size:var(--refine-type-caption);font-weight:700;word-break:keep-all}
 .app-frame .cond-review dd .text-button{flex:none;min-height:36px;padding:4px 6px;font-size:var(--travel-type-meta)}
+/* D43: the row just changed with 바꾸기 lights up once on the way back to the review. */
+.app-frame .cond-review-row.just-changed dd{border-radius:8px;animation:cond-changed 1.6s ease-out .3s both}
+.app-frame .cond-review-row.just-changed dd>span{transform-origin:0 50%;animation:gt-pop .45s cubic-bezier(.3,1.6,.5,1) .3s both}
+@keyframes cond-changed{0%{background:color-mix(in srgb,var(--green) 20%,transparent);box-shadow:0 0 0 6px color-mix(in srgb,var(--green) 20%,transparent)}100%{background:transparent;box-shadow:0 0 0 6px transparent}}
 @keyframes cond-heading{from{opacity:0;transform:translateY(10px)}}
 @keyframes cond-in-right{from{opacity:0;transform:translateX(48px)}}
 @keyframes cond-in-left{from{opacity:0;transform:translateX(-48px)}}

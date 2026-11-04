@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CONDITION_STEPS, LAST_STEP, clampStep, stepDirection, stepOfField, firstErrorStep, stepErrors, answerLabels, petLine } from '../dist/condition-steps.mjs';
+import { CONDITION_STEPS, LAST_STEP, clampStep, stepDirection, nextStep, actionLabel, stepOfField, firstErrorStep, stepErrors, answerLabels, petLine } from '../dist/condition-steps.mjs';
 import { normalizeConditions } from '../dist/ai-conditions.mjs';
 
 const petIds = ['golden', 'shiba', 'corgi', 'bichon', 'baekgu'];
@@ -19,6 +19,14 @@ test('D42 steps ask every condition field exactly once, in screen order', () => 
 test('step moves stay inside the four steps and know their direction', () => {
   assert.equal(clampStep(-1), 0); assert.equal(clampStep(9), 3); assert.equal(clampStep(2), 2); assert.equal(clampStep(undefined), 0);
   assert.equal(stepDirection(0, 1), 'forward'); assert.equal(stepDirection(3, 1), 'back'); assert.equal(stepDirection(2, 2), 'none');
+});
+
+test('D43 a question opened with 바꾸기 goes straight back to the review once answered', () => {
+  assert.equal(nextStep(0), 1); assert.equal(nextStep(2), 3); assert.equal(nextStep(3), 3);
+  assert.equal(nextStep(0, LAST_STEP), LAST_STEP); assert.equal(nextStep(1, LAST_STEP), LAST_STEP);
+  assert.equal(actionLabel(0), '다음'); assert.equal(actionLabel(2), '다음');
+  assert.equal(actionLabel(1, LAST_STEP), '바꾸고 돌아가기');
+  assert.equal(actionLabel(LAST_STEP), '추천 받기'); assert.equal(actionLabel(LAST_STEP, LAST_STEP), '추천 받기');
 });
 
 test('a failed check jumps to the earliest step with an error and shows only that step\'s messages', () => {
