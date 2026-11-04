@@ -258,7 +258,12 @@ export function setupAiFlow({ goScreen, showResults }) {
       } catch { /* keep the previous line when the server is unreachable */ }
     }));
     actions.append(detail, externalLink(kakaoPlaceUrl(item.place), '지도'));
-    if (item.transit?.landingUrl) actions.append(externalLink(item.transit.landingUrl, '카카오맵 길찾기'));
+    if (item.transit?.landingUrl) {
+      const route = externalLink(item.transit.landingUrl, '카카오맵 길찾기');
+      // D41: opening Kakao's route counts toward #길찾기 많은 (only the place id is sent).
+      route.addEventListener('click', () => { fetch('/api/stats/route', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ placeId: item.place.id }) }).catch(() => {}); });
+      actions.append(route);
+    }
     card.append(head, voice, tags, body);
     if (item.transit?.tight) card.append(node('p', 'field-help ai-result-tight', '실제 대중교통으로는 오가는 시간이 길어 그곳에서 보낼 시간이 빠듯해요. 시간을 늘리거나 다른 곳도 살펴보세요.'));
     if (item.place.needs_check) card.append(node('p', 'field-help', fromTourApi(item.place) ? '가는 방법은 확인 전 초안이에요.' : '교통·위치 정보는 확인 전 초안이에요.'));

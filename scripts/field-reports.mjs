@@ -70,6 +70,25 @@ export function createReportStore({ file, isKnownPlace, now = () => new Date(), 
       const { reports } = await read();
       return reports.filter((report) => report.placeId === placeId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((report) => publicReport(report, viewer, now()));
     },
+    // D41: what the "뜨는 곳" tabs need per place: the newest still-valid 한산함 and 붐빔 reports, how many reports and
+    // "아직 그래요" confirmations the last `days` brought, and when the place last woke (a report after `wakeHours` of
+    // silence, or its first report ever).
+    async activity(placeIds, { days = 7, wakeHours = 48 } = {}) {
+      const { reports } = await read();
+      const since = now().getTime() - days * 86_400_000;
+      const result = {};
+      for (const placeId of placeIds) {
+        const own = reports.filter((report) => report.placeId === placeId).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+        if (!own.length) continue;
+        let wokeAt = null;
+        own.forEach((report, index) => { if (index === 0 || Date.parse(report.createdAt) - Date.parse(own[index - 1].createdAt) >= wakeHours * 3_600_000) wokeAt = report.createdAt; });
+        const shown = own.map((report) => publicReport(report, null, now()));
+        const latestActive = (category) => shown.filter((report) => report.active && report.category === category).at(-1) ?? null;
+        const recent = shown.filter((report) => Date.parse(report.createdAt) >= since);
+        result[placeId] = { calm: latestActive('calm'), crowd: latestActive('crowd'), reports: recent.length, confirmations: recent.reduce((sum, report) => sum + report.votes.still, 0), wokeAt };
+      }
+      return result;
+    },
     // Short per-place summaries for the recommendation prompt; outdated reports are left out.
     async recentSummaries(placeIds, { perPlace = 3 } = {}) {
       const { reports } = await read();

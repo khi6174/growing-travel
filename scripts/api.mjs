@@ -8,6 +8,8 @@ import { livingMap } from './living-map.mjs';
 import { normalizeConditions } from '../dist/ai-conditions.mjs';
 import { createPlaceSearch } from './place-search.mjs';
 import { createTransit } from './transit.mjs';
+import { createStatsStore } from './stats.mjs';
+import { trending, TRENDING_DAYS } from './trending.mjs';
 
 const MAX_BODY = 4096;
 
@@ -65,6 +67,8 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
   const transit = createTransit({ key: kakaoRestKey, fetchImpl: searchFetch });
   const placeIds = createPlaceIndex(dataDir);
   const reports = createReportStore({ file: path.join(dataDir, 'runtime', 'reports.json'), isKnownPlace: async (id) => (await placeIds()).has(id) });
+  // D41: counts for the "뜨는 곳" tabs (picks, 길찾기 openings, arrivals); never who or where from.
+  const stats = createStatsStore({ file: path.join(dataDir, 'runtime', 'stats.json') });
 
   async function handle(req, res, pathname, searchParams) {
     const viewer = req.headers['x-contributor-id'] || null;
@@ -100,7 +104,23 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         const districtIds = new Set(catalog.districts.map((district) => district.id));
         conditions.metFriends = conditions.metFriends.filter((id) => districtIds.has(id));
         const reportSummaries = await reports.recentSummaries(catalog.places.map((place) => place.id));
-        return send(res, 200, await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit }));
+        const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit });
+        await stats.recordPicks(conditions.pet, result.items.map((item) => item.place_id));
+        return send(res, 200, result);
+      }
+      if (pathname === '/api/stats/route' && req.method === 'POST') {
+        const placeId = String((await readJson(req))?.placeId ?? '');
+        if (!(await placeIds()).has(placeId)) throw new ReportError('UNKNOWN_PLACE', '알 수 없는 장소예요.', 404);
+        await stats.recordRoute(placeId);
+        return send(res, 200, { counted: true });
+      }
+      if (pathname === '/api/trending' && req.method === 'GET') {
+        const catalog = await loadCatalog(dataDir);
+        if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);
+        const gu = searchParams.get('gu') ?? '';
+        if (!catalog.districts.some((district) => district.id === gu)) return send(res, 404, { error: { code: 'UNKNOWN_DISTRICT', message: '알 수 없는 구예요.' } });
+        const inGu = catalog.places.filter((place) => place.gu === gu).map((place) => place.id);
+        return send(res, 200, trending({ gu, catalog, activity: await reports.activity(inGu, { days: TRENDING_DAYS }), totals: await stats.totals({ days: TRENDING_DAYS }) }));
       }
       if (pathname === '/api/map' && req.method === 'GET') {
         const catalog = await loadCatalog(dataDir);
@@ -130,6 +150,8 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         try { request = normalizeArrival(body, catalog); }
         catch (error) { if (error.name !== 'ArrivalError') throw error; return send(res, 400, { error: { code: 'INVALID_ARRIVAL', message: error.message } }); }
         const reportSummaries = await reports.recentSummaries(catalog.places.filter((place) => place.gu === request.gu).map((place) => place.id));
+        // Only the arrival itself counts (the screen sends arrived: true then), not the refreshes after it.
+        if (body?.arrived === true) await stats.recordArrival(request.gu);
         return send(res, 200, arrivalInfo(request, catalog, reportSummaries));
       }
       return send(res, 404, { error: { code: 'NOT_FOUND', message: 'Not found' } });

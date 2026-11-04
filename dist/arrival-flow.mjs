@@ -3,6 +3,7 @@ import { postReport, reportAge } from './field-reports.mjs';
 import { distanceLabel, latestReportLine, petFace } from './ai-flow.mjs';
 import { josa } from './ai-conditions.mjs';
 import { createSeoulBoard } from './seoul-board.mjs';
+import { distanceKm } from './geo.mjs';
 
 // Stage 5 (명세 2-5 ⑤·⑥, 단계 5): district arrival → 동네 친구 → one field question → 도감. The device location is
 // used for the district check and distances only and is never stored; the 도감 stays in this browser.
@@ -44,7 +45,7 @@ async function json(path, options) {
 }
 
 export function setupArrivalFlow({ goScreen, pets }) {
-  const state = { catalog: null, features: null, watchId: null, current: null, point: null, arrivalPoint: null, info: null };
+  const state = { catalog: null, features: null, watchId: null, current: null, point: null, arrivalPoint: null, info: null, trending: null, trendingTab: null };
   const guName = (id) => state.catalog?.districts.find((district) => district.id === id)?.name ?? id;
   const say = (text) => document.querySelectorAll('.arrival-status').forEach((element) => { element.textContent = text; });
   const setToggles = (on) => document.querySelectorAll('.arrival-toggle').forEach((element) => {
@@ -83,11 +84,12 @@ export function setupArrivalFlow({ goScreen, pets }) {
   document.querySelectorAll('.arrival-toggle').forEach((element) => element.addEventListener('click', () => (state.watchId === null ? start() : stop())));
 
   // ---- arrival ----
-  async function loadArrival(gu, point) {
-    return json('/api/arrival', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ gu, pet: pets.petId(), location: point && { lat: round4(point.lat), lng: round4(point.lng) } }) });
+  // `arrived` marks the arrival itself, which the server counts for #친구 만나러 많이 간 구 (D41); refreshes do not.
+  async function loadArrival(gu, point, { arrived = false } = {}) {
+    return json('/api/arrival', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ gu, pet: pets.petId(), location: point && { lat: round4(point.lat), lng: round4(point.lng) }, ...(arrived ? { arrived: true } : {}) }) });
   }
   async function arrive(gu, point) {
-    try { state.info = await loadArrival(gu, point); state.arrivalPoint = point; }
+    try { state.info = await loadArrival(gu, point, { arrived: true }); state.arrivalPoint = point; state.trendingTab = null; }
     catch (error) { say(error.message); return; }
     renderArrival();
     const { district, friend } = state.info;
@@ -98,7 +100,7 @@ export function setupArrivalFlow({ goScreen, pets }) {
   }
   async function refreshArrival() {
     if (!state.info) return;
-    try { state.info = await loadArrival(state.info.district.id, state.arrivalPoint); renderLists(); } catch { /* keep what is shown */ }
+    try { state.info = await loadArrival(state.info.district.id, state.arrivalPoint); renderLists(); loadTrending(); } catch { /* keep what is shown */ }
   }
   $('arrival-banner-open').addEventListener('click', () => { $('arrival-banner').hidden = true; goScreen('arrival'); });
   $('arrival-banner-close').addEventListener('click', () => { $('arrival-banner').hidden = true; });
@@ -146,8 +148,70 @@ export function setupArrivalFlow({ goScreen, pets }) {
   }
   function renderArrival() {
     $('arrival-search').value = '';
-    renderFriend(); renderQuestion(); renderLists();
+    renderFriend(); renderQuestion(); renderLists(); loadTrending();
   }
+
+  // ---- D41: 지금 이 구에서 뜨는 곳 ----
+  const TRENDING_TABS = [
+    { id: 'calm', label: '#지금 한산해요', empty: '지금 유효한 한산함 소식이 없어요.' },
+    { id: 'crowd', label: '#지금 붐벼요', empty: '지금 유효한 붐빔 소식이 없어요.' },
+    { id: 'woke', label: '#방금 깨어났어요', empty: '하루 사이에 깨어난 곳이 없어요.' },
+    { id: 'reports', label: '#소식 많은', empty: '최근 7일 동안 남은 소식이 없어요.' },
+    { id: 'picks', label: '#펫들이 많이 고른', empty: '최근 7일 동안 추천에 뽑힌 곳이 없어요.' },
+    { id: 'routes', label: '#길찾기 많은', empty: '최근 7일 동안 카카오맵 길찾기를 연 곳이 없어요.' },
+    { id: 'districts', label: '#친구 만나러 많이 간 구', empty: '최근 7일 동안 구 도착 기록이 없어요.' },
+  ];
+  const ago = (iso) => reportAge(iso).split(' (')[0];
+  const TRENDING_LINE = {
+    calm: (item) => `한산함 · ${ago(item.at)} · ${item.text}`,
+    crowd: (item) => `붐빔·대기 · ${ago(item.at)} · ${item.text}`,
+    woke: (item) => `${ago(item.at)} 깨어났어요`,
+    reports: (item) => `소식 ${item.reports}건${item.confirmations ? ` · '아직 그래요' ${item.confirmations}번` : ''}`,
+    picks: (item) => `추천 ${item.picks}번 · ${item.pets.map((pet) => `${pet.name} ${pet.count}`).join(' · ')}`,
+    routes: (item) => `길찾기 ${item.routes}번`,
+  };
+  function trendingItems(data, tab) { return tab === 'districts' ? data.districts : data.tabs[tab]; }
+  function renderTrending({ picked = false } = {}) {
+    const data = state.trending;
+    if (!data || data.gu !== state.info?.district.id) return;
+    const { district } = state.info;
+    $('arrival-trending-heading').textContent = `지금 ${district.name}에서 뜨는 곳`;
+    $('arrival-trending-time').textContent = `${new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(data.generatedAt))} 기준`;
+    state.trendingTab ??= TRENDING_TABS.find((tab) => trendingItems(data, tab.id).length)?.id ?? 'calm';
+    $('arrival-trending-tabs').replaceChildren(...TRENDING_TABS.map((tab) => {
+      const count = trendingItems(data, tab.id).length;
+      const chip = button(count ? `${tab.label} ${count}` : tab.label, `trending-tab${count ? '' : ' quiet'}`, () => { state.trendingTab = tab.id; renderTrending({ picked: true }); });
+      chip.setAttribute('aria-pressed', String(tab.id === state.trendingTab));
+      return chip;
+    }));
+    // A picked tab stays in view (the row scrolls sideways) and keeps the keyboard focus after the redraw.
+    if (picked) { const chosen = $('arrival-trending-tabs').querySelector('[aria-pressed=true]'); chosen?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); chosen?.focus({ preventScroll: true }); }
+    const tab = TRENDING_TABS.find((item) => item.id === state.trendingTab);
+    const items = trendingItems(data, tab.id);
+    if (!items.length) { $('arrival-trending-list').replaceChildren(node('li', 'report-empty', tab.empty)); return; }
+    if (tab.id === 'districts') {
+      const rows = items.map((item, index) => node('li', `trending-row${item.gu === district.id ? ' here' : ''}`, `${index + 1}. ${item.name} · 도착 ${item.arrivals}번${item.gu === district.id ? ' · 지금 여기' : ''}`));
+      if (!items.some((item) => item.gu === district.id)) rows.push(node('li', 'trending-row here', `${district.name} · 도착 ${data.current.arrivals}번 · 지금 여기`));
+      $('arrival-trending-list').replaceChildren(...rows);
+      return;
+    }
+    $('arrival-trending-list').replaceChildren(...items.map((item) => {
+      const row = node('li', 'trending-row');
+      const km = state.point ? distanceKm(state.point, item.place) : null;
+      const head = node('div', 'trending-row-head');
+      head.append(node('b', '', item.place.name), node('span', 'muted', km != null ? distanceLabel(km) : ''));
+      const open = button('상세', 'button subtle', () => pets.openPlaceDetail({ place: item.place, distanceKm: km, reason: '' }, loadTrending));
+      open.setAttribute('aria-label', `${item.place.name} 상세와 현장 소식 보기`);
+      row.append(head, node('p', 'field-help', TRENDING_LINE[tab.id](item)), open);
+      return row;
+    }));
+  }
+  async function loadTrending() {
+    if (!state.info) return;
+    try { state.trending = await json(`/api/trending?gu=${encodeURIComponent(state.info.district.id)}`); renderTrending(); }
+    catch { if (!state.trending) $('arrival-trending-list').replaceChildren(node('li', 'report-empty', '뜨는 곳을 불러오지 못했어요. 잠시 뒤 다시 볼게요.')); }
+  }
+  setInterval(() => { if (document.querySelector('.app-frame')?.dataset.screen === 'arrival' && !document.hidden) loadTrending(); }, 30_000);
 
   // ---- the friend's question (first meeting only) ----
   function renderQuestion() {

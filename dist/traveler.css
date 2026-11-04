@@ -575,3 +575,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .hours-custom[hidden]{display:none}
 .app-frame .hours-custom input{width:72px}
 .app-frame .hours-custom small{flex-basis:100%;font-size:var(--travel-type-meta);color:var(--muted)}
+/* D41/P57 "지금 이 구에서 뜨는 곳" on the arrival screen: hashtag tabs that scroll sideways, then a short list. */
+.app-frame .trending-tabs{display:flex;gap:var(--refine-space-6);margin:var(--refine-space-8) calc(var(--refine-space-20) * -1) 0;padding:2px var(--refine-space-20) 6px;overflow-x:auto;scrollbar-width:none}
+.app-frame .trending-tabs::-webkit-scrollbar{display:none}
+.app-frame .trending-tab{flex:none;min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--white);color:var(--ink);font:inherit;font-size:var(--refine-type-caption);font-weight:700;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 var(--edge-card)}
+.app-frame .trending-tab.quiet{color:var(--muted);font-weight:600}
+.app-frame .trending-tab[aria-pressed=true]{border-color:var(--green);background:var(--mint);color:var(--green);box-shadow:0 2px 0 var(--green)}
+.app-frame .trending-tab:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.app-frame .trending-list{list-style:none;margin:var(--refine-space-10) 0 0;padding:0;display:grid;gap:var(--refine-space-8)}
+.app-frame .trending-row{display:grid;gap:var(--refine-space-4);justify-items:start;padding:var(--refine-space-10) var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);box-shadow:0 3px 0 var(--edge-card)}
+.app-frame .trending-row.here{border-color:var(--green);background:var(--mint);font-weight:700}
+.app-frame .trending-row-head{display:flex;justify-content:space-between;gap:var(--refine-space-8);width:100%}
+.app-frame .trending-row .button{min-height:var(--refine-target-min);padding:var(--refine-space-6) var(--refine-space-14);font-size:var(--refine-type-caption)}
