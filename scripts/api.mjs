@@ -6,6 +6,8 @@ import { recommendPlaces } from './recommend.mjs';
 import { arrivalInfo, normalizeArrival } from './arrival.mjs';
 import { livingMap } from './living-map.mjs';
 import { normalizeConditions } from '../dist/ai-conditions.mjs';
+import { createPlaceSearch } from './place-search.mjs';
+import { createTransit } from './transit.mjs';
 
 const MAX_BODY = 4096;
 
@@ -56,7 +58,11 @@ function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
   };
 }
 
-export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }) }) {
+export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, searchFetch = fetch }) {
+  // D39: typed departures; the app's own places are the fallback when Kakao is not set up or does not answer.
+  const placeSearch = createPlaceSearch({ key: kakaoRestKey, fetchImpl: searchFetch, places: async () => (await loadCatalog(dataDir)).places });
+  // D40: real transit times for the three picks, with the same REST key; null without one (cards keep the estimate).
+  const transit = createTransit({ key: kakaoRestKey, fetchImpl: searchFetch });
   const placeIds = createPlaceIndex(dataDir);
   const reports = createReportStore({ file: path.join(dataDir, 'runtime', 'reports.json'), isKnownPlace: async (id) => (await placeIds()).has(id) });
 
@@ -94,7 +100,7 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         const districtIds = new Set(catalog.districts.map((district) => district.id));
         conditions.metFriends = conditions.metFriends.filter((id) => districtIds.has(id));
         const reportSummaries = await reports.recentSummaries(catalog.places.map((place) => place.id));
-        return send(res, 200, await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs }));
+        return send(res, 200, await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit }));
       }
       if (pathname === '/api/map' && req.method === 'GET') {
         const catalog = await loadCatalog(dataDir);
@@ -106,6 +112,8 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
       if (pathname === '/api/map-config' && req.method === 'GET') return send(res, 200, { kakaoJsKey });
       // D35: the season backdrop blends in Seoul's current weather (KMA). Only the summary reaches the browser.
       if (pathname === '/api/weather' && req.method === 'GET') return send(res, 200, await weather());
+      // The typed departure travels in the body (it may be a home address), never in the URL.
+      if (pathname === '/api/places/search' && req.method === 'POST') return send(res, 200, await placeSearch((await readJson(req))?.query));
       if (pathname === '/api/boundaries' && req.method === 'GET') {
         const catalog = await loadCatalog(dataDir);
         if (catalog.errors.length) throw new ReportError('CATALOG_INVALID', '데이터 파일 형식을 먼저 고쳐 주세요.', 503);

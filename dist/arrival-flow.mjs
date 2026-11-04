@@ -214,7 +214,9 @@ export function setupArrivalFlow({ goScreen, pets }) {
     $('evidence-dialog').showModal(); heading.focus();
   }
   function renderDex() {
-    document.querySelectorAll('.dex-count').forEach((element) => { element.textContent = String(metCount()); });
+    const count = metCount();
+    document.querySelectorAll('.dex-count').forEach((element) => { element.textContent = String(count); });
+    document.querySelectorAll('.dex-progress').forEach((element) => element.style.setProperty('--progress', `${(count / 25) * 100}%`));
     if (!state.catalog) return;
     const log = new Map(readFriendLog().map((entry) => [entry.gu, entry]));
     $('dex-regions').replaceChildren(...state.catalog.regions.map((region) => {

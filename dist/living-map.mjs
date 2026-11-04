@@ -49,6 +49,19 @@ function loadKakao() {
   })();
 }
 
+// Ranked pins (1·2·3) closer than `gap` px on screen move right one step at a time until they clear the ones before,
+// so neighbours such as two Seongbuk picks stay readable at the fitted zoom.
+export function spreadOffsets(points, gap) {
+  const placed = [];
+  return points.map(({ x, y }) => {
+    let shift = 0;
+    while (placed.some((p) => Math.hypot(p.x - (x + shift), p.y - y) < gap)) shift += gap;
+    placed.push({ x: x + shift, y });
+    return shift;
+  });
+}
+const RANK_GAP = 32;
+
 export function setupLivingMap({ goScreen, pets, arrival }) {
   const state = { data: null, focus: {}, previous: new Map(), sdk: null, map: null, overlays: [], timer: null };
   const say = (text) => { $('map-status').textContent = text; };
@@ -123,6 +136,7 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
       // Kakao's own zoom control needs inline styles that this page's CSP blocks, so the page has its own buttons.
       state.map = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(SEOUL.lat, SEOUL.lng), level: 8 });
       kakao.maps.event.addListener(state.map, 'zoom_changed', () => container.classList.toggle('show-bubbles', state.map.getLevel() <= BUBBLE_LEVEL));
+      kakao.maps.event.addListener(state.map, 'idle', spreadRanked);
       $('map-zoom').hidden = false;
     }
     state.map.relayout();
@@ -132,6 +146,20 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     const here = arrival.position();
     if (here) state.overlays.push(new kakao.maps.CustomOverlay({ map: state.map, position: new kakao.maps.LatLng(here.point.lat, here.point.lng), content: node('span', 'map-me', '나'), zIndex: 4 }));
     container.classList.toggle('show-bubbles', state.map.getLevel() <= BUBBLE_LEVEL);
+    spreadRanked();
+  }
+  // Re-run whenever the map settles (zoom, pan, fit): the pin keeps its true spot, a short line points back to it.
+  function spreadRanked() {
+    const projection = state.map?.getProjection();
+    if (!projection) return;
+    const ranked = state.overlays.map((overlay) => ({ overlay, rank: Number(overlay.getContent().querySelector?.('.map-dot')?.textContent) || 0 }))
+      .filter((item) => item.rank && item.overlay.getContent().classList.contains('ranked')).sort((a, b) => a.rank - b.rank);
+    const shifts = spreadOffsets(ranked.map(({ overlay }) => projection.containerPointFromCoords(overlay.getPosition())), RANK_GAP);
+    ranked.forEach(({ overlay }, index) => {
+      const pinEl = overlay.getContent();
+      pinEl.classList.toggle('spread', shifts[index] > 0);
+      pinEl.style.setProperty('--spread', `${shifts[index]}px`);
+    });
   }
   function fitMap(kakao) {
     const focusPlaces = state.focus.places?.length ? state.data.places.filter((place) => rankOf(place)) : state.focus.gu ? state.data.places.filter(inScope) : [];

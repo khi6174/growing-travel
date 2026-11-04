@@ -1,4 +1,5 @@
 import { departurePoint, describeConditions, josa } from '../dist/ai-conditions.mjs';
+import { transitLine } from './transit.mjs';
 import { distanceKm } from '../dist/geo.mjs';
 import { CAUTION_CATEGORIES } from './field-reports.mjs';
 
@@ -18,6 +19,8 @@ const LIMITS = { reason: 240, route_summary: 200, live_note: 140, friend_hint: 1
 export function estimateMinutes(km) { return Math.max(10, Math.round((8 + km * 2.6) / 5) * 5); }
 // One way should take at most a quarter of the time the traveler has, capped at the 60-minute reach.
 export const oneWayBudget = (hours) => Math.min(MAX_MINUTES, hours * 15);
+export const MIN_STAY_MINUTES = 10;
+export const AT_DEPARTURE_KM = 0.15;
 
 export const RESPONSE_SCHEMA = Object.freeze({
   type: 'object',
@@ -64,7 +67,10 @@ export function rankCandidates(conditions, catalog, reportSummaries = {}) {
   const met = new Set(conditions.metFriends);
   const friendByGu = new Map(catalog.friends.map((friend) => [friend.gu, friend]));
   const budget = oneWayBudget(conditions.hours);
-  return catalog.places.filter((place) => place.purposes.includes(pet.id)).map((place) => {
+  // Candidates stay within the 60-minute reach; the way there and back plus at least 10 minutes at the place must fit
+  // the time the traveler has (D39, it matters for 30 minutes or 1 hour); and a place the traveler is already at
+  // (within 150 m of a typed or current departure) is not suggested as somewhere to go.
+  return catalog.places.filter((place) => place.purposes.includes(pet.id) && distanceKm(origin, place) >= AT_DEPARTURE_KM).map((place) => {
     const matched = place.tags.filter((tag) => pet.tags.includes(tag));
     const minutes = estimateMinutes(distanceKm(origin, place));
     const reports = reportSummaries[place.id] ?? [];
@@ -79,7 +85,7 @@ export function rankCandidates(conditions, catalog, reportSummaries = {}) {
     const friendMet = met.has(place.gu);
     const score = fit - burden - (cautions.length ? 6 : 0) + (friendMet ? 0 : 0.5);
     return { place, matched, minutes, reports, cautions, friend: friendByGu.get(place.gu), friendMet, score };
-  }).filter((entry) => entry.minutes <= MAX_MINUTES)
+  }).filter((entry) => entry.minutes <= MAX_MINUTES && entry.minutes * 2 + MIN_STAY_MINUTES <= conditions.hours * 60)
     .sort((a, b) => b.score - a.score || a.minutes - b.minutes || a.place.id.localeCompare(b.place.id));
 }
 
@@ -149,7 +155,7 @@ export function publicPlace(place, catalog) {
 }
 const reportNote = (report) => `최근 제보: ${report.categoryLabel} · ${report.text}`.slice(0, LIMITS.live_note);
 
-export async function recommendPlaces({ conditions, catalog, reportSummaries = {}, provider, timeoutMs = 10000, now = Date.now() }) {
+export async function recommendPlaces({ conditions, catalog, reportSummaries = {}, provider, timeoutMs = 10000, now = Date.now(), transit = null }) {
   const pet = catalog.pets.find((item) => item.id === conditions.pet);
   const origin = departurePoint(conditions);
   const guName = new Map(catalog.districts.map((district) => [district.id, district.name]));
@@ -180,17 +186,27 @@ export async function recommendPlaces({ conditions, catalog, reportSummaries = {
     source: 'rules',
   }));
   const source = !aiItems.length ? 'rules' : filled.length ? 'mixed' : 'ai';
-  console.log(`[recommend] pet=${pet.id} candidates=${candidates.length} source=${source} provider=${provider?.name ?? 'none'} dropped=${dropped} fallback=${fallbackReason ?? '-'} ${Date.now() - started}ms`);
+  // D40: real transit for the three picks, asked in parallel. It only changes what the cards show; the order above
+  // (and so the picks) stays the rule or AI order, and a pick without a Kakao route keeps its estimate.
+  const picks = [...aiItems, ...filled];
+  const routes = transit ? await Promise.all(picks.map((item) => transit(origin, byId.get(item.place_id).place))) : [];
+  console.log(`[recommend] pet=${pet.id} candidates=${candidates.length} source=${source} provider=${provider?.name ?? 'none'} dropped=${dropped} fallback=${fallbackReason ?? '-'} transit=${routes.filter(Boolean).length}/${routes.length} ${Date.now() - started}ms`);
   return {
     source, provider: provider?.name ?? 'none', fallbackReason, dropped, candidateCount: candidates.length,
     pet: { id: pet.id, name: pet.name, purpose: pet.purpose }, conditionsText: describeConditions(conditions, { petName: pet.name }),
-    items: [...aiItems, ...filled].map((item) => {
+    items: picks.map((item, index) => {
       const entry = byId.get(item.place_id); const { place } = entry;
+      const route = routes[index];
       const latest = activeReport(entry);
       // Notes the data cannot back are replaced: no active report → no live note; met or unnamed friend → data-driven hint.
       const friend_hint = entry.friendMet ? '' : item.friend_hint.includes(entry.friend.name) ? item.friend_hint : friendHint(entry, guName.get(place.gu));
+      // With a Kakao route the card shows its rides, minutes, transfers and fare, and warns when the real way there and
+      // back no longer leaves 10 minutes at the place.
+      const timing = route
+        ? { minutes: route.minutes, minutesEstimated: false, route_summary: transitLine(route).slice(0, LIMITS.route_summary), transit: { ...route, tight: route.minutes * 2 + MIN_STAY_MINUTES > conditions.hours * 60 } }
+        : { minutes: entry.minutes, minutesEstimated: true };
       return {
-        ...item, live_note: latest ? item.live_note || reportNote(latest) : '', friend_hint, minutes: entry.minutes, minutesEstimated: true,
+        ...item, live_note: latest ? item.live_note || reportNote(latest) : '', friend_hint, ...timing,
         place: publicPlace(place, catalog),
         friend: { id: entry.friend.id, name: entry.friend.name, met: entry.friendMet },
         latest_report: latest,

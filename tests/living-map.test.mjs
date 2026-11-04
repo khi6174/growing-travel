@@ -83,3 +83,9 @@ test('Kakao hosts and the origin referrer are allowed only when a valid key is s
     await fs.rm(work, { recursive: true, force: true });
   }
 });
+
+test('P54: ranked pins that overlap on screen move right until they clear; pins already apart stay put', async () => {
+  const { spreadOffsets } = await import('../dist/living-map.mjs');
+  assert.deepEqual(spreadOffsets([{ x: 100, y: 100 }, { x: 105, y: 102 }, { x: 110, y: 98 }, { x: 300, y: 300 }], 32), [0, 32, 64, 0]);
+  assert.deepEqual(spreadOffsets([{ x: 0, y: 0 }, { x: 0, y: 40 }], 32), [0, 0], 'one above the other is already readable');
+});

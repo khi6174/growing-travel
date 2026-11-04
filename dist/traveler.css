@@ -535,3 +535,43 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 @keyframes pet-flop{0%,100%{transform:none}50%{transform:rotate(5deg)}}
 @keyframes pet-jump{0%{transform:none}18%{transform:scale(1.12,.84)}45%{transform:translateY(-9px) scale(.92,1.1)}72%{transform:scale(1.08,.9)}100%{transform:none}}
 @keyframes pet-trot{0%,100%{transform:none}50%{transform:translateY(-2.5px) scale(.98,1.03)}}
+/* D37/P53 home: one action (pick a pet), a three-step strip in the hero, and three equal tiles for the 도감, the
+   map and benefits. Long explanations and the location switch live on the screens that use them. */
+.app-frame .hero-steps{list-style:none;margin:var(--refine-space-14) 0 0;padding:0;display:flex;flex-wrap:wrap;gap:var(--refine-space-6)}
+.app-frame .hero-steps li{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 5px;border-radius:999px;background:var(--travel-subtle);color:var(--ink);font-size:var(--refine-type-caption);font-weight:700}
+.app-frame .hero-steps b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:11.5px}
+:root[data-season]:not([data-theme]) .app-frame .hero-steps li{background:#ffffffd9;box-shadow:0 2px 0 #0000000f}
+.app-frame .home-pets{margin-bottom:var(--refine-space-16)}
+.app-frame .home-entries{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--refine-space-8);margin:0 0 var(--refine-space-16)}
+.app-frame .home-entry{display:grid;align-content:start;justify-items:start;gap:2px;min-height:88px;padding:var(--refine-space-10);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);text-align:left;font:inherit;cursor:pointer;box-shadow:0 4px 0 var(--edge-card);transition:transform .09s ease-out,box-shadow .09s ease-out}
+.app-frame .home-entry:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .home-entry:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.app-frame .home-entry-icon{width:24px;height:24px;margin-bottom:2px;fill:none;stroke:var(--green);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.app-frame .home-entry b{font-size:var(--refine-type-label);line-height:1.3;word-break:keep-all}
+.app-frame .home-entry small{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .dex-progress{display:block;width:100%;height:5px;margin-top:4px;border-radius:3px;background:var(--line);overflow:hidden}
+.app-frame .dex-progress span{display:block;width:var(--progress,0%);min-width:5px;height:100%;border-radius:inherit;background:var(--green)}
+@media(max-width:359px){.app-frame .home-entries{grid-template-columns:1fr}.app-frame .home-entry{min-height:0;grid-template-columns:auto 1fr;align-items:center;column-gap:10px}.app-frame .home-entry-icon{grid-row:span 2;margin:0}}
+/* D38/P54 ranked map pins that overlap at the current zoom are fanned out to the right (living-map.mjs spreadRanked);
+   a short line points back to the place's true spot. */
+.map-pin.spread{transform:translateX(var(--spread))}
+.map-pin.spread::before{content:"";position:absolute;top:50%;right:calc(100% - 14px);width:var(--spread);height:2px;margin-top:-1px;border-radius:1px;background:var(--ink);opacity:.55;pointer-events:none}
+.map-pin.spread .map-dot{position:relative}
+@media(max-height:860px){.app-frame .hero-steps{margin-top:var(--refine-space-10)}.app-frame .home-pet{min-height:84px}.app-frame .home-pet .pet-face{width:46px;height:46px}}
+@media(max-height:760px){.app-frame .home-pets{margin-bottom:var(--refine-space-10)}.app-frame .hero-steps li{padding-block:3px;font-size:12px}.app-frame .home-pet .pet-face{width:40px;height:40px}.app-frame .home-entry{min-height:0;padding:var(--refine-space-8) var(--refine-space-10)}.app-frame .home-entry-icon{width:20px;height:20px}}
+/* D39/P55 conditions: a typed departure with its search results, and a typed time. */
+.app-frame .departure-field legend small{font-weight:500;color:var(--muted)}
+.app-frame .departure-search{display:flex;gap:var(--refine-space-8);margin-top:var(--refine-space-8)}
+.app-frame .departure-search input{flex:1;min-width:0}
+.app-frame .departure-search .button{flex:none;min-height:var(--travel-target-input);padding-inline:var(--refine-space-16)}
+.app-frame .departure-results{list-style:none;margin:var(--refine-space-8) 0 0;padding:0;display:grid;gap:var(--refine-space-6)}
+.app-frame .departure-results[hidden]{display:none}
+.app-frame .departure-result{display:grid;gap:2px;width:100%;padding:var(--refine-space-10) var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);text-align:left;font:inherit;cursor:pointer;box-shadow:0 3px 0 var(--edge-card)}
+.app-frame .departure-result:active{transform:translateY(2px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .departure-result b{font-size:var(--refine-type-label)}
+.app-frame .departure-result small{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .departure-list-label{margin-top:var(--refine-space-12);font-size:var(--refine-type-caption);color:var(--muted)}
+.app-frame .hours-custom{display:flex;flex-wrap:wrap;align-items:center;gap:var(--refine-space-6);margin-top:var(--refine-space-8)}
+.app-frame .hours-custom[hidden]{display:none}
+.app-frame .hours-custom input{width:72px}
+.app-frame .hours-custom small{flex-basis:100%;font-size:var(--travel-type-meta);color:var(--muted)}

@@ -13,11 +13,11 @@
 
 /* The home hero becomes a scene; text sits above it. */
 .sky-scene,.sky-preview{display:none}
-:root[data-season]:not([data-theme]) .app-frame .home-hero{position:relative;margin:0 0 var(--refine-space-12);padding:var(--refine-space-20) var(--refine-space-20) 118px;border-radius:24px;background:none}
+:root[data-season]:not([data-theme]) .app-frame .home-hero{position:relative;margin:0 0 var(--refine-space-12);padding:var(--refine-space-18) var(--refine-space-20) 100px;border-radius:24px;background:none}
 :root[data-season]:not([data-theme]) .app-frame .home-hero>:not(.sky-scene,.sky-preview){position:relative;z-index:1}
 :root[data-season]:not([data-theme]) .app-frame .home-hero .eyebrow,:root[data-season]:not([data-theme]) .app-frame .home-hero .hero-copy{color:var(--ink)}
 :root[data-season]:not([data-theme]) .sky-scene{display:block;position:absolute;inset:0;overflow:hidden;border-radius:inherit;background:linear-gradient(180deg,color-mix(in srgb,var(--sky-top),var(--sky-mix,#fff) var(--sky-amount,0%)),color-mix(in srgb,var(--sky-mid,color-mix(in srgb,var(--sky-top),var(--sky-bottom))),var(--sky-mix,#fff) var(--sky-amount,0%)) 62%,color-mix(in srgb,var(--sky-glow,var(--sky-bottom)),var(--sky-mix,#fff) var(--sky-amount,0%)) 82%,color-mix(in srgb,var(--sky-bottom),var(--sky-mix,#fff) var(--sky-amount,0%)))}
-.sky-scene :is(.scene-land,.scene-lights){position:absolute;left:0;right:0;bottom:0;width:100%;height:116px}
+.sky-scene :is(.scene-land,.scene-lights){position:absolute;left:0;right:0;bottom:0;width:100%;height:102px}
 .sky-scene .scene-land{filter:saturate(var(--land-saturate,1)) brightness(var(--land-bright,1)) sepia(var(--time-sepia,0)) brightness(var(--time-bright,1)) saturate(var(--time-saturate,1))}
 .scene-far{fill:var(--scene-far)}.scene-hill{fill:var(--scene-hill)}.scene-tower{fill:var(--scene-tower)}.scene-city{fill:var(--scene-city)}
 .scene-river{fill:var(--scene-river)}.scene-glint{fill:none;stroke:#ffffffb3;stroke-width:1.2;stroke-linecap:round}.scene-bank{fill:var(--scene-bank)}
@@ -101,7 +101,7 @@
 .scene-tower-glow{fill:#fff1c4;opacity:.75}.scene-beacon{fill:#ff6b6b;animation:sky-beacon 2.4s steps(1) infinite}
 @keyframes sky-beacon{50%{opacity:.2}}
 /* The low sun sits on the ridge, below the hero text, half hidden by the mountains. */
-:root:is([data-time=dusk],[data-time=dawn]) .sky-sun i{top:auto;bottom:64px;right:44px;width:50px;height:50px;background:radial-gradient(circle,#fff1c9 0 30%,#ffb067 60%,#ff8a4f);box-shadow:0 0 0 10px #ffb0672e,0 0 28px 8px #ff9a5a55}
+:root:is([data-time=dusk],[data-time=dawn]) .sky-sun i{top:auto;bottom:54px;right:44px;width:46px;height:46px;background:radial-gradient(circle,#fff1c9 0 30%,#ffb067 60%,#ff8a4f);box-shadow:0 0 0 10px #ffb0672e,0 0 28px 8px #ff9a5a55}
 :root[data-time=night] .sky-sun i{width:34px;height:34px;background:none;box-shadow:inset -9px 5px 0 0 #fff3c4,0 0 24px 2px #fff3c41f;animation:none}
 :root[data-time=night]:is([data-weather=overcast],[data-weather=rain],[data-weather=snow]) .sky-sun{display:none}
 :root[data-time=night]:not([data-weather=overcast]):not([data-weather=rain]):not([data-weather=snow]) .sky-stars i{display:block;position:absolute;width:2.5px;height:2.5px;border-radius:50%;background:#fff;box-shadow:0 0 4px 1px #ffffff99;animation:sky-twinkle var(--dur,3.2s) ease-in-out var(--delay,0s) infinite}
@@ -114,3 +114,7 @@
 :root:not([data-time=day])[data-weather=rain] .sky-precip i{background:linear-gradient(#d3dfee00,#d3dfeecc)}
 :root[data-time=night] .sky-season i{opacity:.6}
 .sky-preview #sky-summary{white-space:nowrap}
+/* D38/P54 shorter phones: the hero gives up a little height so the pets and the three tiles stay above the fixed
+   button bar (measured at 390×844, 375×812 and 360×740). */
+@media(max-height:860px){:root[data-season]:not([data-theme]) .app-frame .home-hero{padding-top:var(--refine-space-14);padding-bottom:84px}.sky-scene :is(.scene-land,.scene-lights){height:86px}:root:is([data-time=dusk],[data-time=dawn]) .sky-sun i{bottom:42px}:root[data-season]:not([data-theme]) .app-frame .home-hero h1{font-size:29px;line-height:1.35}}
+@media(max-height:760px){:root[data-season]:not([data-theme]) .app-frame .home-hero{padding-bottom:58px}.sky-scene :is(.scene-land,.scene-lights){height:60px}:root:is([data-time=dusk],[data-time=dawn]) .sky-sun i{bottom:22px;width:36px;height:36px}:root[data-season]:not([data-theme]) .app-frame .home-hero h1{font-size:26px}}

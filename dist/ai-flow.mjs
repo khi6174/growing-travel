@@ -1,4 +1,4 @@
-import { SEOUL_STATIONS, CURRENT_LOCATION, HOUR_CHOICES, WALK_CHOICES, TIME_OF_DAY, insideSeoul, defaultTimeOfDay, normalizeConditions, describeConditions, josa } from './ai-conditions.mjs';
+import { SEOUL_STATIONS, CURRENT_LOCATION, SEARCHED_PLACE, HOUR_CHOICES, WALK_CHOICES, TIME_OF_DAY, insideSeoul, defaultTimeOfDay, normalizeConditions, describeConditions, josa } from './ai-conditions.mjs';
 import { fieldReportsSection, fetchReports, reportAge } from './field-reports.mjs';
 import { readFriendLog } from './district-arrival.mjs';
 import { petFace } from './pet-art.mjs';
@@ -6,7 +6,7 @@ import { petFace } from './pet-art.mjs';
 // D27: the pet recommendation flow (펫 → 조건 → 추천 → 상세·현장 제보). Choices, location and results stay in
 // memory for this visit only; the device location is never stored.
 const $ = (id) => document.getElementById(id);
-const FIELD_IDS = { departure: 'ai-departure', hours: 'ai-hours-options', partySize: 'ai-party', walkLevel: 'ai-walk-options', timeOfDay: 'ai-time-options' };
+const FIELD_IDS = { departure: 'ai-departure-query', hours: 'ai-hours-options', partySize: 'ai-party', walkLevel: 'ai-walk-options', timeOfDay: 'ai-time-options' };
 const RULES = '목적·이동 부담·현장 소식 순서의 기준 정렬';
 const FALLBACK_COPY = {
   not_configured: `AI 연결이 설정되지 않아 ${RULES}로 골랐어요.`,
@@ -14,7 +14,7 @@ const FALLBACK_COPY = {
   error: `AI에 연결하지 못해 ${RULES}로 골랐어요.`,
   invalid_response: `AI 응답을 읽을 수 없어 ${RULES}로 골랐어요.`,
   incomplete_response: 'AI 응답에 후보 밖의 곳이나 빈 항목이 있어 그 자리는 기준 정렬로 채웠어요.',
-  no_candidates: '이 펫의 목적에 맞으면서 60분 안에 갈 수 있는 곳을 찾지 못했어요. 출발 위치나 펫을 바꿔 보세요.',
+  no_candidates: '이 펫의 목적에 맞으면서 쓸 수 있는 시간 안에 다녀올 수 있는 곳을 찾지 못했어요. 시간을 늘리거나 출발 위치·펫을 바꿔 보세요.',
 };
 
 export function sourceNote(result) {
@@ -26,6 +26,15 @@ export function latestReportLine(report, now = Date.now()) {
   return `${report.categoryLabel} · ${reportAge(report.createdAt, now)} · ${report.text}`;
 }
 export const minutesLabel = (minutes) => `약 ${minutes}분(추정)`;
+// D40: a pick with a Kakao route reads as transit time without (추정); others keep the straight-line estimate.
+export const travelLabel = (item) => (item.transit ? `대중교통 약 ${item.transit.minutes}분 · ${item.transit.transfers ? `환승 ${item.transit.transfers}회` : '환승 없음'}` : minutesLabel(item.minutes));
+const transitFacts = (transit) => [transit.lines.length ? transit.lines.join(' → ') : '', `약 ${transit.minutes}분`, transit.transfers ? `환승 ${transit.transfers}회` : '환승 없음', transit.fare].filter(Boolean).join(', ');
+export function resultsNote(result) {
+  const reports = '현장 소식은 여행자가 남긴 당시 상황이니, 운영 시간과 경로는 출발 전에 확인해 주세요.';
+  return result.items.some((item) => item.transit)
+    ? `추천한 곳의 이동 시간·환승·요금은 카카오 대중교통 기준이라 출발 시각에 따라 달라질 수 있어요. 더 보기의 시간은 직선거리 추정치예요. ${reports}`
+    : `이동 시간은 직선거리로 계산한 추정치예요. ${reports}`;
+}
 export const distanceLabel = (km) => (km < 1 ? `약 ${Math.max(10, Math.round(km * 100) * 10)}m (직선)` : `약 ${km.toFixed(1)}km (직선)`);
 export const kakaoPlaceUrl = (place) => `https://map.kakao.com/link/map/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
 // Coordinates and address taken from TourAPI; the station and walking text are still the team's draft.
@@ -57,7 +66,7 @@ function chip(container, { type, name, value, label, hint, checked }) {
 export { petFace };
 
 export function setupAiFlow({ goScreen, showResults }) {
-  const state = { catalog: null, petId: null, location: null, result: null };
+  const state = { catalog: null, petId: null, location: null, searched: null, result: null };
   const catalogWaiters = [];
   const pet = () => state.catalog?.pets.find((item) => item.id === state.petId) ?? null;
 
@@ -134,8 +143,51 @@ export function setupAiFlow({ goScreen, showResults }) {
 
   const placeholder = node('option', '', '출발 위치를 골라 주세요'); placeholder.value = '';
   const current = node('option', '', '현재 위치'); current.value = CURRENT_LOCATION; current.disabled = true;
-  $('ai-departure').append(placeholder, current, ...SEOUL_STATIONS.map(({ id, label }) => { const option = node('option', '', label); option.value = id; return option; }));
+  const found = node('option', '', '찾은 곳'); found.value = SEARCHED_PLACE; found.hidden = true;
+  $('ai-departure').append(placeholder, current, found, ...SEOUL_STATIONS.map(({ id, label }) => { const option = node('option', '', label); option.value = id; return option; }));
   HOUR_CHOICES.forEach(({ hours, label, hint }) => chip('ai-hours-options', { type: 'radio', name: 'ai-hours', value: String(hours), label, hint, checked: hours === 3 }));
+  chip('ai-hours-options', { type: 'radio', name: 'ai-hours', value: 'custom', label: '직접 입력', checked: false });
+  // D39: a typed time shows its two boxes only while 직접 입력 is picked.
+  $('ai-hours-options').addEventListener('change', () => {
+    const custom = document.querySelector('#ai-form input[name="ai-hours"]:checked')?.value === 'custom';
+    $('ai-hours-custom').hidden = !custom;
+    if (custom && !$('ai-hours-h').value && !$('ai-hours-m').value) $('ai-hours-h').focus();
+  });
+  const customHours = () => ($('ai-hours-h').value === '' && $('ai-hours-m').value === '' ? NaN : Number($('ai-hours-h').value || 0) + Number($('ai-hours-m').value || 0) / 60);
+
+  // D39: a typed departure (주소·역·건물·가게 이름) found through the server; picking a result makes it the 출발 위치.
+  function chooseDeparture(item) {
+    state.searched = { label: item.label, lat: item.lat, lng: item.lng };
+    found.textContent = `찾은 곳: ${item.label}`; found.hidden = false; $('ai-departure').value = SEARCHED_PLACE;
+    $('ai-departure-results').hidden = true; $('ai-departure-query').value = item.label;
+    $('ai-departure-status').textContent = `‘${item.label}’에서 출발해요. 이번 추천 계산에만 쓰고 저장하지 않아요.`;
+    $('ai-departure-error').textContent = '';
+  }
+  async function findDeparture() {
+    const query = $('ai-departure-query').value.trim();
+    if (!query) { $('ai-departure-status').textContent = '주소나 역, 건물·가게 이름을 적어 주세요.'; $('ai-departure-query').focus(); return; }
+    $('ai-departure-find').disabled = true; $('ai-departure-status').textContent = '찾는 중이에요.';
+    try {
+      const response = await fetch('/api/places/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+      const { results = [], source, reason } = await response.json();
+      $('ai-departure-results').replaceChildren(...results.map((item) => {
+        const pick = node('button', 'departure-result'); pick.type = 'button';
+        pick.append(node('b', '', item.label), node('small', '', item.address));
+        pick.addEventListener('click', () => chooseDeparture(item));
+        const row = node('li'); row.append(pick); return row;
+      }));
+      $('ai-departure-results').hidden = !results.length;
+      // Kakao found nothing (NO_MATCH), or was not available: the results then come from the app's own list.
+      const local = source === 'local';
+      const from = !local ? '' : reason === 'NO_MATCH' ? '카카오에 없는 이름이라 앱 안의 역·후보지에서 ' : '카카오 검색을 쓸 수 없어 앱 안의 역·후보지에서 ';
+      $('ai-departure-status').textContent = results.length
+        ? `${from}${results.length}곳을 찾았어요. 출발할 곳을 골라 주세요.`
+        : reason === 'NO_MATCH' ? '찾지 못했어요. 가게·건물 이름이나 도로명 주소로 적어 보세요(예: 합정역, 양화로 55).' : '찾지 못했어요. 아래 목록에서 역을 골라 주세요.';
+    } catch { $('ai-departure-status').textContent = '찾지 못했어요. 아래 목록에서 역을 골라 주세요.'; }
+    finally { $('ai-departure-find').disabled = false; }
+  }
+  $('ai-departure-find').addEventListener('click', findDeparture);
+  $('ai-departure-query').addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); findDeparture(); } });
   WALK_CHOICES.forEach(({ level, label, hint }) => chip('ai-walk-options', { type: 'radio', name: 'ai-walk', value: String(level), label, hint, checked: level === 2 }));
   const slot = defaultTimeOfDay(seoulHour());
   TIME_OF_DAY.forEach(({ id, label }) => chip('ai-time-options', { type: 'radio', name: 'ai-time', value: id, label, checked: id === slot }));
@@ -143,8 +195,10 @@ export function setupAiFlow({ goScreen, showResults }) {
   function rawConditions() {
     const checked = (name) => document.querySelector(`#ai-form input[name="${name}"]:checked`)?.value;
     return {
-      pet: state.petId, departure: $('ai-departure').value, location: state.location,
-      hours: Number(checked('ai-hours')), partySize: $('ai-party').value === '' ? NaN : Number($('ai-party').value),
+      pet: state.petId, departure: $('ai-departure').value,
+      location: $('ai-departure').value === SEARCHED_PLACE ? state.searched : state.location,
+      departureLabel: $('ai-departure').value === SEARCHED_PLACE ? state.searched?.label : undefined,
+      hours: checked('ai-hours') === 'custom' ? customHours() : Number(checked('ai-hours')), partySize: $('ai-party').value === '' ? NaN : Number($('ai-party').value),
       walkLevel: Number(checked('ai-walk')), timeOfDay: checked('ai-time'), metFriends: metFriends(),
     };
   }
@@ -166,7 +220,7 @@ export function setupAiFlow({ goScreen, showResults }) {
     const facts = node('dl', 'place-facts');
     const walk = WALK_CHOICES.find((choice) => choice.level === place.walk_level);
     // An arrival-screen place has a distance from here instead of travel minutes and no friend line.
-    for (const [label, text] of [['추천 이유', item.reason], ['주소', place.address], ['가는 방법', `${place.nearest_station} ${place.access_summary}`], ['예상 이동', item.minutes != null && `${minutesLabel(item.minutes)}, 직선거리로 계산`], ['여기서 거리', item.distanceKm != null && distanceLabel(item.distanceKm)], ['걷기', `${walk.label} (${walk.hint})`], ['동네 친구', item.friend && (item.friend_hint || `${place.guName}의 동네 친구 ‘${item.friend.name}’는 이미 만났어요.`)]]) if (text) facts.append(node('dt', '', label), node('dd', '', text));
+    for (const [label, text] of [['추천 이유', item.reason], ['주소', place.address], ['가는 방법', `${place.nearest_station} ${place.access_summary}`], ['예상 이동', item.minutes != null && (item.transit ? `${transitFacts(item.transit)} (카카오 대중교통 기준)` : `${minutesLabel(item.minutes)}, 직선거리로 계산`)], ['여기서 거리', item.distanceKm != null && distanceLabel(item.distanceKm)], ['걷기', `${walk.label} (${walk.hint})`], ['동네 친구', item.friend && (item.friend_hint || `${place.guName}의 동네 친구 ‘${item.friend.name}’는 이미 만났어요.`)]]) if (text) facts.append(node('dt', '', label), node('dd', '', text));
     content.append(facts);
     if (place.needs_check) content.append(node('p', 'field-help', fromTourApi(place) ? '위치·주소는 한국관광공사 TourAPI 자료예요. 가는 방법은 팀이 아직 확인하지 않은 초안이라 지도 앱에서 함께 확인해 주세요.' : '위치와 교통 정보는 팀이 아직 확인하지 않은 초안이에요. 지도 앱에서 함께 확인해 주세요.'));
     else content.append(node('p', 'field-help', `위치·주소는 한국관광공사 TourAPI 자료이고, 가는 방법은 ${place.access_checked_at} 공식 안내로 확인했어요. 당일 출구 공사 등은 다를 수 있어요.`));
@@ -181,7 +235,7 @@ export function setupAiFlow({ goScreen, showResults }) {
     const card = node('li', 'ai-result-card');
     const head = node('div', 'ai-result-head');
     const title = node('div');
-    title.append(node('span', 'ai-result-rank', String(index + 1).padStart(2, '0')), node('h3', '', item.place.name), node('p', 'muted', `${item.place.guName} · ${minutesLabel(item.minutes)}`));
+    title.append(node('span', 'ai-result-rank', String(index + 1).padStart(2, '0')), node('h3', '', item.place.name), node('p', 'muted', `${item.place.guName} · ${travelLabel(item)}`));
     head.append(title);
     if (result.source === 'mixed' && item.source === 'rules') head.append(node('span', 'small-label', '기준 정렬로 채움'));
     const voice = node('div', 'ai-result-voice');
@@ -204,7 +258,9 @@ export function setupAiFlow({ goScreen, showResults }) {
       } catch { /* keep the previous line when the server is unreachable */ }
     }));
     actions.append(detail, externalLink(kakaoPlaceUrl(item.place), '지도'));
+    if (item.transit?.landingUrl) actions.append(externalLink(item.transit.landingUrl, '카카오맵 길찾기'));
     card.append(head, voice, tags, body);
+    if (item.transit?.tight) card.append(node('p', 'field-help ai-result-tight', '실제 대중교통으로는 오가는 시간이 길어 그곳에서 보낼 시간이 빠듯해요. 시간을 늘리거나 다른 곳도 살펴보세요.'));
     if (item.place.needs_check) card.append(node('p', 'field-help', fromTourApi(item.place) ? '가는 방법은 확인 전 초안이에요.' : '교통·위치 정보는 확인 전 초안이에요.'));
     card.append(actions);
     return card;
@@ -214,6 +270,7 @@ export function setupAiFlow({ goScreen, showResults }) {
     $('ai-results-conditions').textContent = result.conditionsText;
     $('ai-results-source').textContent = sourceNote(result);
     $('ai-results-source').dataset.source = result.source;
+    $('ai-results-note').textContent = resultsNote(result);
     $('ai-results-list').replaceChildren(...(result.items.length ? result.items.map((item, index) => resultCard(item, index, result)) : [node('li', 'report-empty', FALLBACK_COPY.no_candidates)]));
     renderMore(result);
   }

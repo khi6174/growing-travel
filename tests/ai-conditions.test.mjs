@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeConditions, describeConditions, departurePoint, defaultTimeOfDay, josa, ConditionError, SEOUL_STATIONS, CURRENT_LOCATION } from '../dist/ai-conditions.mjs';
+import { normalizeConditions, describeConditions, departurePoint, defaultTimeOfDay, josa, ConditionError, SEOUL_STATIONS, CURRENT_LOCATION, SEARCHED_PLACE, durationLabel } from '../dist/ai-conditions.mjs';
 import { resolveScreen, parentScreen, navigationTab } from '../dist/navigation.mjs';
 
 const petIds = ['golden', 'shiba', 'corgi', 'bichon', 'baekgu'];
@@ -30,7 +30,7 @@ test('current location is rounded to about 100 m and must be inside Seoul', () =
 });
 
 test('every invalid field is reported together', () => {
-  const bad = { pet: 'cat', departure: '', hours: 5, partySize: 0, walkLevel: 4, timeOfDay: 'night', metFriends: ['종로구'] };
+  const bad = { pet: 'cat', departure: '', hours: 12.5, partySize: 0, walkLevel: 4, timeOfDay: 'night', metFriends: ['종로구'] };
   assert.throws(() => normalizeConditions(bad, { petIds }), (error) => {
     assert.ok(error instanceof ConditionError);
     assert.deepEqual(Object.keys(error.fields).sort(), ['departure', 'hours', 'metFriends', 'partySize', 'pet', 'timeOfDay', 'walkLevel']);
@@ -60,7 +60,7 @@ test('result copy says where the picks came from, marks times as estimates and d
   assert.match(sourceNote({ source: 'rules', fallbackReason: 'not_configured' }), /설정되지 않아 목적·이동 부담·현장 소식 순서/);
   assert.match(sourceNote({ source: 'rules', fallbackReason: 'timeout' }), /10초를 넘겨/);
   assert.match(sourceNote({ source: 'mixed', fallbackReason: 'incomplete_response' }), /후보 밖의 곳/);
-  assert.match(sourceNote({ source: 'rules', fallbackReason: 'no_candidates' }), /60분 안에 갈 수 있는 곳을 찾지 못했어요/);
+  assert.match(sourceNote({ source: 'rules', fallbackReason: 'no_candidates' }), /쓸 수 있는 시간 안에 다녀올 수 있는 곳을 찾지 못했어요/);
   assert.equal(minutesLabel(25), '약 25분(추정)');
   const now = Date.parse('2026-11-02T09:00:00Z');
   assert.equal(latestReportLine({ categoryLabel: '붐빔·대기', text: '대기 20분', createdAt: '2026-11-02T06:00:00Z' }, now), '붐빔·대기 · 3시간 전 (11. 2. 15:00) · 대기 20분');
@@ -71,4 +71,21 @@ test('result copy says where the picks came from, marks times as estimates and d
   assert.deepEqual(metFriends(storage('not json')), []);
   assert.deepEqual(metFriends({ getItem() { throw new Error('blocked'); } }), []);
   assert.equal(seoulHour(new Date('2026-11-02T09:30:00Z')), 18);
+});
+
+test('D39: 30 minutes, 1 hour and a typed time from 30 minutes to 12 hours in 10-minute steps', () => {
+  const fieldsOf = (raw) => { try { normalizeConditions({ ...demo, ...raw }, { petIds }); return {}; } catch (error) { return error.fields; } };
+  for (const hours of [0.5, 1, 1 + 10 / 60, 5, 12]) assert.deepEqual(fieldsOf({ hours }), {}, String(hours));
+  for (const hours of [0, 0.25, 1 + 5 / 60, 12.5, NaN]) assert.ok(fieldsOf({ hours }).hours, String(hours));
+  assert.deepEqual([0.5, 1, 1.5, 2 + 10 / 60, 5, 8].map(durationLabel), ['30분', '1시간', '1시간 30분', '2시간 10분', '5시간', '하루']);
+});
+
+test('D39: a searched departure needs its name and a point inside Seoul, and reads with its own name', () => {
+  const fieldsOf = (raw) => { try { normalizeConditions({ ...demo, ...raw }, { petIds }); return {}; } catch (error) { return error.fields; } };
+  const here = normalizeConditions({ ...demo, departure: SEARCHED_PLACE, departureLabel: '  연남동 카페거리 ', location: { lat: 37.56212, lng: 126.92531 } }, { petIds });
+  assert.deepEqual([here.departureLabel, here.location], ['연남동 카페거리', { lat: 37.562, lng: 126.925 }]);
+  assert.deepEqual(departurePoint(here), { label: '연남동 카페거리', lat: 37.562, lng: 126.925 });
+  assert.match(describeConditions(here, { petName: '골든' }), /연남동 카페거리 출발/);
+  assert.ok(fieldsOf({ departure: SEARCHED_PLACE, location: { lat: 37.56, lng: 126.92 } }).departure, 'a name is needed');
+  assert.match(fieldsOf({ departure: SEARCHED_PLACE, departureLabel: '부산역', location: { lat: 35.115, lng: 129.041 } }).departure, /서울 밖/);
 });
