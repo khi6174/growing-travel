@@ -3,6 +3,7 @@ import { transitLine } from './transit.mjs';
 import { distanceKm } from '../dist/geo.mjs';
 import { CAUTION_CATEGORIES } from './field-reports.mjs';
 import { NEARBY_TAG_LABELS, PET_EXTRA_TAGS, walkMinutes } from './nearby.mjs';
+import { CROWD_LEVELS } from './congestion.mjs';
 
 // D27 (명세 2-4): the app filters by purpose and a 60-minute reach, the AI picks 3 of the top 20 and explains
 // them in the pet's voice, and anything it returns is checked against those 20. Rule ranking (principles 1-3)
@@ -96,7 +97,7 @@ export function rankCandidates(conditions, catalog, reportSummaries = {}, { esti
     const known = place.source === 'catalog' || place.source === 'tourapi' || Boolean(place.photo);
     let fit = generic ? (specific.length ? 10 : 9) + (known ? 1 : 0) : 10 + 2 * (matched.length - 1);
     if (place.tags.includes('night_view') && pet.tags.includes('night_view')) fit += conditions.timeOfDay === 'evening' ? 5 : nightOnly ? -5 : 0;
-    const burden = Math.max(0, place.walk_level - conditions.walkLevel) * 4 + Math.max(0, minutes - budget) * 0.3 + minutes / (generic ? 8 * Math.max(1, conditions.hours) : 30) + (place.chain ? 1.5 : 0);
+    const burden = Math.max(0, place.walk_level - conditions.walkLevel) * 4 + Math.max(0, minutes - budget) * 0.3 + minutes / (generic ? 6 * Math.sqrt(Math.max(1, conditions.hours)) : 30) + (place.chain ? 1.5 : 0);
     // 4 an unmet friend only breaks near-ties.
     const friendMet = met.has(place.gu);
     const score = fit - burden - (cautions.length ? 6 : 0) + (friendMet ? 0 : 0.5);
@@ -111,12 +112,13 @@ export function buildPrompt(conditions, catalog, candidates, now = Date.now()) {
   const pet = catalog.pets.find((item) => item.id === conditions.pet);
   const guName = new Map(catalog.districts.map((district) => [district.id, district.name]));
   const label = (tag) => catalog.tagLabels[tag];
-  const list = candidates.map(({ place, matched, minutes, reports, friend, friendMet }) => ({
+  const list = candidates.map(({ place, matched, minutes, reports, friend, friendMet, crowd }) => ({
     place_id: place.id, name: place.name, gu: guName.get(place.gu), purpose_tags: matched.map(label), tags: place.tags.map(label),
     walk_level: place.walk_level, minutes_est: minutes, nearest_station: place.nearest_station, access_summary: place.access_summary,
     summary: place.summary, needs_check: place.needs_check,
     live_reports: reports.map((report) => ({ category: report.categoryLabel, text: report.text, hours_ago: hoursAgo(report.createdAt, now), still_true_votes: report.votes.still, active: report.active })),
     friend: { name: friend.name, met: friendMet },
+    live_crowd: crowd ? `${crowd.level} (서울시 실시간, ${crowd.area})` : null,
   }));
   return [
     `사용자 조건: ${describeConditions(conditions, { petName: pet.name })}`,
@@ -184,7 +186,7 @@ const GENERIC_TAGS = new Set(Object.keys(NEARBY_TAG_LABELS));
 
 // D44: with `nearby` (scripts/nearby.mjs found places around the point), the candidates are those places instead of
 // data/places.json; without them, or when the search found nothing, the catalog way below stays as the fallback.
-export async function recommendPlaces({ conditions, catalog: baseCatalog, reportSummaries = {}, provider, timeoutMs = 10000, now = Date.now(), transit = null, nearby = null }) {
+export async function recommendPlaces({ conditions, catalog: baseCatalog, reportSummaries = {}, provider, timeoutMs = 10000, now = Date.now(), transit = null, nearby = null, crowd = null }) {
   const useNearby = Boolean(nearby?.places?.length);
   const catalog = useNearby ? { ...baseCatalog, places: nearby.places, tagLabels: { ...baseCatalog.tagLabels, ...NEARBY_TAG_LABELS } } : baseCatalog;
   const pet = catalog.pets.find((item) => item.id === conditions.pet);
@@ -194,6 +196,13 @@ export async function recommendPlaces({ conditions, catalog: baseCatalog, report
   const skipAt = !useNearby || ['current', 'place'].includes(conditions.departure);
   const ranked = rankCandidates(conditions, catalog, reportSummaries, useNearby ? { estimate: travelEstimate, extraTags: PET_EXTRA_TAGS, skipAt, generic: GENERIC_TAGS } : {});
   const candidates = ranked.slice(0, CANDIDATE_COUNT);
+  // D44/Q16: 서울시 실시간 혼잡도 near a candidate moves it a little (붐빔 −2 … 여유 +0.5) before the picks are made.
+  const crowding = crowd ? await crowd(candidates.map((entry) => entry.place)).catch(() => new Map()) : new Map();
+  for (const entry of candidates) {
+    entry.crowd = crowding.get(entry.place.id) ?? null;
+    if (entry.crowd) entry.score += CROWD_LEVELS[entry.crowd.level]?.score ?? 0;
+  }
+  candidates.sort((a, b) => b.score - a.score || a.minutes - b.minutes || a.place.id.localeCompare(b.place.id));
   const want = Math.min(RESULT_COUNT, candidates.length);
   const started = Date.now();
   let aiItems = []; let fallbackReason = null; let dropped = 0;
@@ -224,7 +233,7 @@ export async function recommendPlaces({ conditions, catalog: baseCatalog, report
   const picks = [...aiItems, ...filled];
   // A walk needs no transit route; the card links Kakao Map's walking directions instead.
   const routes = transit ? await Promise.all(picks.map((item) => (byId.get(item.place_id).mode === 'walk' ? null : transit(origin, byId.get(item.place_id).place)))) : [];
-  console.log(`[recommend] pet=${pet.id} nearby=${useNearby ? catalog.places.length : "-"} candidates=${candidates.length} source=${source} provider=${provider?.name ?? 'none'} dropped=${dropped} fallback=${fallbackReason ?? '-'} transit=${routes.filter(Boolean).length}/${routes.length} ${Date.now() - started}ms`);
+  console.log(`[recommend] pet=${pet.id} nearby=${useNearby ? catalog.places.length : "-"} crowd=${crowding.size} candidates=${candidates.length} source=${source} provider=${provider?.name ?? 'none'} dropped=${dropped} fallback=${fallbackReason ?? '-'} transit=${routes.filter(Boolean).length}/${routes.length} ${Date.now() - started}ms`);
   return {
     source, provider: provider?.name ?? 'none', fallbackReason, dropped, candidateCount: candidates.length,
     pet: { id: pet.id, name: pet.name, purpose: pet.purpose }, conditionsText: describeConditions(conditions, { petName: pet.name }),
@@ -242,7 +251,7 @@ export async function recommendPlaces({ conditions, catalog: baseCatalog, report
           : { minutes: entry.minutes, minutesEstimated: true };
       return {
         ...item, live_note: latest ? item.live_note || reportNote(latest) : '', friend_hint, ...timing,
-        place: publicPlace(place, catalog),
+        place: publicPlace(place, catalog), crowd: entry.crowd ?? null,
         friend: { id: entry.friend.id, name: entry.friend.name, met: entry.friendMet },
         latest_report: latest,
       };

@@ -47,10 +47,13 @@ export function nearbyNote(result) {
 export const eventDates = (start, end) => [start, end].map((day) => `${Number(day.slice(4, 6))}.${Number(day.slice(6, 8))}`).join('~');
 const SOURCE_NOTE = { kakao: '카카오 장소 검색 결과라 팀이 확인하지 않았어요. 영업시간·휴무는 카카오맵에서 확인해 주세요.', tourapi: '한국관광공사 자료예요. 팀이 확인하지 않았으니 운영 시간은 출발 전에 확인해 주세요.' };
 export const sourceCheckNote = (place) => SOURCE_NOTE[place.source] ?? null;
+// Q16: 서울시 실시간 도시데이터 crowding near a pick ("지금 약간 붐빔 · 광화문·덕수궁 16:20").
+export const crowdLabel = (crowd) => `지금 ${crowd.level} · ${crowd.area}${crowd.time ? ` ${crowd.time}` : ''}`;
 const transitFacts = (transit) => [transit.lines.length ? transit.lines.join(' → ') : '', `약 ${transit.minutes}분`, transit.transfers ? `환승 ${transit.transfers}회` : '환승 없음', transit.fare].filter(Boolean).join(', ');
 export function resultsNote(result) {
   const reports = '현장 소식은 여행자가 남긴 당시 상황이니, 운영 시간과 경로는 출발 전에 확인해 주세요.';
-  const walk = result.items.some((item) => item.walk) ? '걸어서 걸리는 시간은 직선거리로 계산한 추정치예요. ' : '';
+  const walk = (result.items.some((item) => item.walk) ? '걸어서 걸리는 시간은 직선거리로 계산한 추정치예요. ' : '')
+    + (result.items.some((item) => item.crowd) ? '혼잡도는 서울 열린데이터광장(서울특별시) 실시간 도시데이터예요. ' : '');
   return result.items.some((item) => item.transit)
     ? `추천한 곳의 대중교통 시간·환승·요금은 카카오 대중교통 기준이라 출발 시각에 따라 달라질 수 있어요. ${walk}더 보기의 시간은 직선거리 추정치예요. ${reports}`
     : `${walk || '이동 시간은 직선거리로 계산한 추정치예요. '}${reports}`;
@@ -436,7 +439,7 @@ export function setupAiFlow({ goScreen, showResults }) {
     if (place.photo) content.append(photoFigure(place));
     const moving = item.minutes == null ? null : item.transit ? `${transitFacts(item.transit)} (카카오 대중교통 기준)`
       : item.walk ? `걸어서 약 ${item.walk.minutes}분, 직선 ${distanceLabel(item.walk.km).replace(' (직선)', '')}(추정)` : `${minutesLabel(item.minutes)}, 직선거리로 계산`;
-    for (const [label, text] of [['추천 이유', item.reason], ['종류', place.kind], ['주소', place.address], ['가는 방법', place.nearest_station && `${place.nearest_station} ${place.access_summary}`], ['예상 이동', moving], ['여기서 거리', item.distanceKm != null && distanceLabel(item.distanceKm)], ['걷기', walk && `${walk.label} (${walk.hint})`], ['동네 친구', item.friend && (item.friend_hint || `${place.guName}의 동네 친구 ‘${item.friend.name}’는 이미 만났어요.`)]]) if (text) facts.append(node('dt', '', label), node('dd', '', text));
+    for (const [label, text] of [['추천 이유', item.reason], ['종류', place.kind], ['주소', place.address], ['가는 방법', place.nearest_station && `${place.nearest_station} ${place.access_summary}`], ['예상 이동', moving], ['지금 혼잡도', item.crowd && `${item.crowd.level}. ${item.crowd.message} (${item.crowd.area}${item.crowd.time ? `, ${item.crowd.time} 기준` : ''}, 서울시 실시간 도시데이터)`], ['여기서 거리', item.distanceKm != null && distanceLabel(item.distanceKm)], ['걷기', walk && `${walk.label} (${walk.hint})`], ['동네 친구', item.friend && (item.friend_hint || `${place.guName}의 동네 친구 ‘${item.friend.name}’는 이미 만났어요.`)]]) if (text) facts.append(node('dt', '', label), node('dd', '', text));
     content.append(facts);
     const sourced = sourceCheckNote(place);
     if (sourced) content.append(node('p', 'field-help', sourced));
@@ -456,6 +459,7 @@ export function setupAiFlow({ goScreen, showResults }) {
     const head = node('div', 'ai-result-head');
     const title = node('div');
     title.append(node('span', 'ai-result-rank', String(index + 1).padStart(2, '0')), node('h3', '', item.place.name), node('p', 'muted', [item.place.guName, item.place.kind, travelLabel(item)].filter(Boolean).join(' · ')));
+    if (item.crowd) { const chip = node('p', `crowd-chip crowd-${item.crowd.rank}`, crowdLabel(item.crowd)); chip.setAttribute('aria-label', `서울시 실시간 혼잡도 ${crowdLabel(item.crowd)}`); title.append(chip); }
     head.append(title);
     if (result.source === 'mixed' && item.source === 'rules') head.append(node('span', 'small-label', '기준 정렬로 채움'));
     const voice = node('div', 'ai-result-voice');

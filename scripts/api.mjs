@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import { REAL_PLACES } from '../dist/real-catalog.mjs';
 import { loadCatalog, loadPlaces, loadBoundaries } from './places.mjs';
 import { createReportStore, ReportError, REPORT_CATEGORIES } from './field-reports.mjs';
@@ -8,6 +9,7 @@ import { livingMap } from './living-map.mjs';
 import { normalizeConditions, departurePoint, insideSeoul } from '../dist/ai-conditions.mjs';
 import { createNearby, NEARBY_TAG_LABELS } from './nearby.mjs';
 import { createPlaceRegistry, NEARBY_ID } from './place-registry.mjs';
+import { createCongestion } from './congestion.mjs';
 import { createPlaceSearch } from './place-search.mjs';
 import { createTransit } from './transit.mjs';
 import { createStatsStore } from './stats.mjs';
@@ -62,7 +64,7 @@ function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
   };
 }
 
-export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, tourKey = null, searchFetch = fetch }) {
+export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, tourKey = null, seoulKey = null, searchFetch = fetch }) {
   // D39: typed departures; the app's own places are the fallback when Kakao is not set up or does not answer.
   const placeSearch = createPlaceSearch({ key: kakaoRestKey, fetchImpl: searchFetch, places: async () => (await loadCatalog(dataDir)).places });
   // D40: real transit times for the three picks, with the same REST key; null without one (cards keep the estimate).
@@ -72,6 +74,12 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
   // reported on (data/runtime/places-seen.json).
   const nearby = createNearby({ kakaoKey: kakaoRestKey, tourKey, fetchImpl: searchFetch });
   const registry = createPlaceRegistry({ file: path.join(dataDir, 'runtime', 'places-seen.json') });
+  // Q16: 서울시 실시간 도시데이터 crowding for picks near the places it covers (data/seoul_hotspots.json).
+  const congestion = createCongestion({ seoulKey, kakaoKey: kakaoRestKey, fetchImpl: searchFetch, areas: async () => {
+    try { return JSON.parse(await fs.readFile(path.join(dataDir, 'seoul_hotspots.json'), 'utf8')).areas ?? []; } catch { return []; }
+  } });
+  // Looking ~120 names up takes a few seconds, so it starts with the server instead of the first recommendation.
+  if (congestion.configured) congestion.points().catch(() => {});
   const known = async (id) => (await catalogIds()).has(id) || (NEARBY_ID.test(id) && (await registry.has(id)));
   // Shared screens (map, 뜨는 곳, counts) only use places that are public: the catalog and reported nearby places.
   const isPublic = async (id) => (await catalogIds()).has(id) || (await registry.saved()).some((place) => place.id === id);
@@ -133,7 +141,7 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         }
         const pool = found?.places?.length ? found.places : catalog.places;
         const reportSummaries = await reports.recentSummaries(pool.map((place) => place.id));
-        const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit, nearby: found });
+        const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit, nearby: found, crowd: congestion.configured ? (places) => congestion.forPlaces(places) : null });
         const counted = [];
         for (const item of result.items) if (await isPublic(item.place_id)) counted.push(item.place_id);
         await stats.recordPicks(conditions.pet, counted);

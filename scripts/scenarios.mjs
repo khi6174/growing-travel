@@ -17,7 +17,7 @@ export const SCENARIOS = Object.freeze([
   ['corgi', 'konkuk', 2, 2, 1], ['bichon', 'seongsu', 3, 2, 2], ['bichon', 'yeouido', 2, 2, 2, 'evening'], ['baekgu', 'gyeongbokgung', 4, 2, 2], ['baekgu', 'dongnimmun', 2, 1, 1],
 ]);
 export const scenarioConditions = ([pet, departure, hours, partySize, walkLevel, timeOfDay = 'day']) => ({ pet, departure, location: null, hours, partySize, walkLevel, timeOfDay, metFriends: [] });
-const DATA_FILES = ['pets.json', 'districts.json', 'gu_friends.json', 'places.json'];
+const DATA_FILES = ['pets.json', 'districts.json', 'gu_friends.json', 'places.json', 'seoul_hotspots.json'];
 
 // "이유가 목적과 연결됨" is read as the reason naming a purpose tag of that pet or the purpose itself; whether the
 // pet's voice reads well is still a person's call.

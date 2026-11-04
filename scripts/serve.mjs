@@ -32,6 +32,8 @@ function hasAccess(req, code) {
 export const kakaoKeyFrom = (value) => (/^[0-9a-f]{32}$/i.test(value ?? '') ? value : null);
 // D35: KMA 단기예보 uses the data.go.kr account key; KMA_SERVICE_KEY wins, else the TourAPI key from the same account.
 export const weatherKeyFrom = (env) => env.KMA_SERVICE_KEY || env.TOURAPI_KEY || null;
+// 서울 열린데이터광장 general keys are letters and digits only; anything else is not sent.
+export const seoulKeyFrom = (value) => (/^[0-9A-Za-z]{20,64}$/.test(value ?? '') ? value : null);
 // D30: the Kakao map SDK loads from dapi.kakao.com, pulls its main script from kakaocdn.net (4.5.x, seen
 // 2026-11-02) and draws tiles from daumcdn.net/kakaocdn.net. Those hosts are allowed only when a key is configured;
 // host sources without a scheme follow the page's own http/https.
@@ -44,8 +46,8 @@ export function contentSecurityPolicy(kakaoJsKey = null, { photos = false } = {}
 
 // Loopback HTTP by default. With `tls`, `hosts` and `accessCode` (the --lan mode) other devices may connect, but only
 // through this computer's own addresses and only after opening the printed address that carries the code once.
-export function createServer({ dataDir = defaultDataDir, aiProvider = providerFromEnv(), aiTimeoutMs = Number(process.env.AI_TIMEOUT_MS) || 10000, tls = null, hosts = LOCAL_HOSTS, accessCode = null, kakaoJsKey = kakaoKeyFrom(process.env.KAKAO_JS_KEY), weather = createWeather({ key: weatherKeyFrom(process.env) }), kakaoRestKey = kakaoKeyFrom(process.env.KAKAO_REST_KEY), tourKey = process.env.TOURAPI_KEY || null, searchFetch = fetch } = {}) {
-  const api = createApi({ dataDir, aiProvider, aiTimeoutMs, kakaoJsKey, weather, kakaoRestKey, tourKey, searchFetch });
+export function createServer({ dataDir = defaultDataDir, aiProvider = providerFromEnv(), aiTimeoutMs = Number(process.env.AI_TIMEOUT_MS) || 10000, tls = null, hosts = LOCAL_HOSTS, accessCode = null, kakaoJsKey = kakaoKeyFrom(process.env.KAKAO_JS_KEY), weather = createWeather({ key: weatherKeyFrom(process.env) }), kakaoRestKey = kakaoKeyFrom(process.env.KAKAO_REST_KEY), tourKey = process.env.TOURAPI_KEY || null, seoulKey = seoulKeyFrom(process.env.SEOUL_DATA_KEY), searchFetch = fetch } = {}) {
+  const api = createApi({ dataDir, aiProvider, aiTimeoutMs, kakaoJsKey, weather, kakaoRestKey, tourKey, seoulKey, searchFetch });
   const allowed = new Set(hosts);
   const policy = contentSecurityPolicy(kakaoJsKey, { photos: Boolean(tourKey) });
   // Kakao checks the requesting site against the key's registered domains, so map mode sends the origin (never the
@@ -120,7 +122,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const sky = `날씨: ${weatherKeyFrom(process.env) ? '기상청 단기예보 (공공데이터포털 키 설정됨, 활용신청이 안 됐으면 계절만 보여요)' : '키 없음, 계절만 보여요'}`;
     const search = `출발지 검색: ${kakaoKeyFrom(process.env.KAKAO_REST_KEY) ? '카카오 장소 검색 (REST 키 설정됨)' : 'REST 키 없음, 앱 안의 역·후보지에서만 찾아요'}`;
     const around = `근처 추천: ${[kakaoKeyFrom(process.env.KAKAO_REST_KEY) && '카카오 장소 검색', process.env.TOURAPI_KEY && 'TourAPI 위치 기반·행사'].filter(Boolean).join(' + ') || '키 없음, 팀이 정리한 장소에서만 골라요'}`;
-    const ai = `AI: ${aiProvider.configured ? `${aiProvider.name} (${aiProvider.model})` : `${aiProvider.name} not configured, rule ranking only`}\n${map}\n${sky}\n${search}\n${around}`;
+    const crowd = `혼잡도: ${seoulKeyFrom(process.env.SEOUL_DATA_KEY) ? (kakaoKeyFrom(process.env.KAKAO_REST_KEY) ? '서울시 실시간 도시데이터 (키 설정됨)' : '서울 키는 있지만 장소 위치를 찾을 KAKAO_REST_KEY가 없어 쓰지 않아요') : process.env.SEOUL_DATA_KEY ? 'SEOUL_DATA_KEY 형식이 달라요(영문·숫자만)' : '키 없음, 표시하지 않아요'}`;
+    const ai = `AI: ${aiProvider.configured ? `${aiProvider.name} (${aiProvider.model})` : `${aiProvider.name} not configured, rule ranking only`}\n${map}\n${sky}\n${search}\n${around}\n${crowd}`;
     server.listen(port, lan ? '0.0.0.0' : '127.0.0.1', () => {
       if (!lan) { console.log(`Growing Travel · Local: http://127.0.0.1:${port}\n${ai}\nStop: Ctrl+C`); return; }
       console.log(`Growing Travel · 같은 와이파이 휴대폰 시연 (HTTPS, 자체 서명 인증서)\n이 컴퓨터: https://127.0.0.1:${port}`);

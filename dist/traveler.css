@@ -769,3 +769,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .map-here:active:not(:disabled){transform:translate(-50%,3px)}
 .app-frame .map-here[hidden]{display:none}
 @keyframes cond-live{0%{box-shadow:0 0 0 0 #ff5a5f80}100%{box-shadow:0 0 0 8px #ff5a5f00}}
+
+/* Q16 서울시 실시간 혼잡도 on a pick: 여유 green, 보통 grey-blue, 약간 붐빔 amber, 붐빔 red, with a live dot. */
+.app-frame .crowd-chip{display:inline-flex;align-items:center;gap:6px;margin:var(--refine-space-6) 0 0;padding:3px 10px 3px 8px;border-radius:99px;font-size:var(--travel-type-meta);font-weight:700;background:var(--crowd-bg);color:var(--crowd-ink);animation:gt-pop .4s cubic-bezier(.3,1.5,.5,1) .35s both}
+.app-frame .crowd-chip::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--crowd-ink);animation:cond-live 1.8s ease-out infinite;box-shadow:0 0 0 0 var(--crowd-ink)}
+.app-frame .crowd-0{--crowd-bg:#e3f6e8;--crowd-ink:#1c7a3d}
+.app-frame .crowd-1{--crowd-bg:#e8eef8;--crowd-ink:#3c5a8c}
+.app-frame .crowd-2{--crowd-bg:#fff1d6;--crowd-ink:#9a5a00}
+.app-frame .crowd-3{--crowd-bg:#fde4e2;--crowd-ink:#b3261e}
