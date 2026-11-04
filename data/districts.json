@@ -1,0 +1,38 @@
+{
+  "version": "2026-11-02",
+  "note": "서울 25개 자치구와 5개 권역(명세 2-2 확정 사항). boundary_code는 data/boundaries/seoul_gu_kostat2013_simple.geojson의 properties.code와 같다.",
+  "regions": [
+    { "id": "dosim", "name": "도심권" },
+    { "id": "seobuk", "name": "서북권" },
+    { "id": "dongbuk", "name": "동북권" },
+    { "id": "seonam", "name": "서남권" },
+    { "id": "dongnam", "name": "동남권" }
+  ],
+  "districts": [
+    { "id": "jongno", "name": "종로구", "region": "dosim", "boundary_code": "11010" },
+    { "id": "jung", "name": "중구", "region": "dosim", "boundary_code": "11020" },
+    { "id": "yongsan", "name": "용산구", "region": "dosim", "boundary_code": "11030" },
+    { "id": "eunpyeong", "name": "은평구", "region": "seobuk", "boundary_code": "11120" },
+    { "id": "seodaemun", "name": "서대문구", "region": "seobuk", "boundary_code": "11130" },
+    { "id": "mapo", "name": "마포구", "region": "seobuk", "boundary_code": "11140" },
+    { "id": "seongdong", "name": "성동구", "region": "dongbuk", "boundary_code": "11040" },
+    { "id": "gwangjin", "name": "광진구", "region": "dongbuk", "boundary_code": "11050" },
+    { "id": "dongdaemun", "name": "동대문구", "region": "dongbuk", "boundary_code": "11060" },
+    { "id": "jungnang", "name": "중랑구", "region": "dongbuk", "boundary_code": "11070" },
+    { "id": "seongbuk", "name": "성북구", "region": "dongbuk", "boundary_code": "11080" },
+    { "id": "gangbuk", "name": "강북구", "region": "dongbuk", "boundary_code": "11090" },
+    { "id": "dobong", "name": "도봉구", "region": "dongbuk", "boundary_code": "11100" },
+    { "id": "nowon", "name": "노원구", "region": "dongbuk", "boundary_code": "11110" },
+    { "id": "yangcheon", "name": "양천구", "region": "seonam", "boundary_code": "11150" },
+    { "id": "gangseo", "name": "강서구", "region": "seonam", "boundary_code": "11160" },
+    { "id": "guro", "name": "구로구", "region": "seonam", "boundary_code": "11170" },
+    { "id": "geumcheon", "name": "금천구", "region": "seonam", "boundary_code": "11180" },
+    { "id": "yeongdeungpo", "name": "영등포구", "region": "seonam", "boundary_code": "11190" },
+    { "id": "dongjak", "name": "동작구", "region": "seonam", "boundary_code": "11200" },
+    { "id": "gwanak", "name": "관악구", "region": "seonam", "boundary_code": "11210" },
+    { "id": "seocho", "name": "서초구", "region": "dongnam", "boundary_code": "11220" },
+    { "id": "gangnam", "name": "강남구", "region": "dongnam", "boundary_code": "11230" },
+    { "id": "songpa", "name": "송파구", "region": "dongnam", "boundary_code": "11240" },
+    { "id": "gangdong", "name": "강동구", "region": "dongnam", "boundary_code": "11250" }
+  ]
+}

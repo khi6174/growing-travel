@@ -44,7 +44,14 @@ for (const file of definitionFiles) {
 }
 let localLinkCount = 0;
 let identifierReferenceCount = 0;
+// Team specs kept byte-for-byte; their bracket text (e.g. `purposes[](펫 id)`) is not our link syntax.
+const verbatimSpecs = { 'handoff/growing-travel/GROWING_TRAVEL_SPEC_2026-11-02.md': '101918c785ee07fc23e2ec648e489929037cb5f77632965e30e49acd3e08cb4f' };
+for (const [file, expected] of Object.entries(verbatimSpecs)) {
+  const actual = bodies.has(file) ? crypto.createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex') : null;
+  if (actual !== expected) failures.push(`Supplied spec snapshot missing or changed: ${file}`);
+}
 for (const [file, body] of bodies) {
+  if (Object.hasOwn(verbatimSpecs, file)) continue;
   const text = stripFences(body);
   // Supports this repository's inline Markdown file links, optional heading fragments.
   for (const match of text.matchAll(/!?\[[^\]\n]*\]\(([^)\n]+)\)/g)) {

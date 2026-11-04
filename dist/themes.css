@@ -1,0 +1,58 @@
+/* D33/P46 design drafts to compare. "base" is the approved graphite·cobalt design (D16·D17·D19) and stays the
+   default; the four travel drafts below change only tokens and a few surfaces, so every screen follows them.
+   All drafts also raise the small type sizes and darken secondary text for readability. Chosen on the home
+   screen ("디자인 시안") or with ?theme=… ; nothing here is a final decision. */
+
+/* Readability shared by every draft. */
+:root[data-theme]{--refine-type-body:15px;--refine-type-caption:13px;--refine-type-label:14px;--refine-type-item:16px;--travel-type-meta:12.5px;--travel-type-micro:11.5px}
+:root[data-theme] .app-frame .field-help,:root[data-theme] .app-frame .muted{line-height:1.7}
+:root[data-theme] .app-frame .home-hero{position:relative;overflow:hidden;margin:0 0 var(--refine-space-12);padding:var(--refine-space-20) var(--refine-space-20) var(--travel-space-large);border-radius:24px}
+:root[data-theme] .app-frame .home-hero>*{position:relative}
+
+/* 바다 여행: sky and sea with a coral accent. */
+:root[data-theme=coast]{--ink:#0f2a36;--muted:#3e5965;--green:#0b6e9f;--green-dark:#08577f;--cream:#e4f2f7;--white:#fff;--line:#cfe4ec;--mint:#e1f2fa;--travel-subtle:#eef7fb;--travel-selected:#f1f9fd;--travel-selected-line:#93cbe5;--travel-input:#6c8c99;--theme-accent:#c2410c}
+:root[data-theme=coast] .app-frame .home-hero{background:linear-gradient(180deg,#cdeefc 0%,#e9f7fd 60%,#fff 100%)}
+:root[data-theme=coast] .app-frame .home-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none'%3E%3Cpath d='M0 12 Q15 4 30 12 T60 12 T90 12 T120 12 V20 H0Z' fill='%23ffffff'/%3E%3Cpath d='M0 9 Q15 1 30 9 T60 9 T90 9 T120 9' fill='none' stroke='%2393cbe5' stroke-width='1.2'/%3E%3C/svg%3E") bottom/100% 100% no-repeat}
+:root[data-theme=coast] .app-frame h1 span,:root[data-theme=coast] .app-frame .eyebrow{color:var(--theme-accent)}
+:root[data-theme=coast] .app-frame .ai-result-card,:root[data-theme=coast] .app-frame .arrival-place{border-color:#d7eaf2;box-shadow:0 4px 0 var(--edge-card),0 10px 22px #0b6e9f14}
+
+/* 엽서 여행: postcard paper, postmark red and navy ink. */
+:root[data-theme=postcard]{--ink:#2b2119;--muted:#5b4b3d;--green:#b0362a;--green-dark:#8f2a20;--cream:#ece2cf;--white:#fffaf1;--line:#dfd0b6;--mint:#f7e6d3;--travel-subtle:#f5eadb;--travel-selected:#fff4e4;--travel-selected-line:#d4ad8d;--travel-input:#87735f;--theme-accent:#1f3b63}
+:root[data-theme=postcard] body,:root[data-theme=postcard] .app-frame{background:var(--white)}
+:root[data-theme=postcard] .app-frame .home-hero{background:#f6ead6}
+:root[data-theme=postcard] .app-frame .home-hero::before{content:"SEOUL";position:absolute;top:18px;right:18px;padding:14px 10px;border:2px dashed #b0362a99;border-radius:4px;color:#b0362a;font-weight:800;font-size:12px;letter-spacing:.12em;transform:rotate(6deg)}
+:root[data-theme=postcard] .app-frame .eyebrow{color:var(--theme-accent)}
+:root[data-theme=postcard] .app-frame .ai-result-card,:root[data-theme=postcard] .app-frame .arrival-place,:root[data-theme=postcard] .app-frame .dex-slot.met{border:1.5px dashed var(--travel-selected-line);border-radius:8px}
+:root[data-theme=postcard] .app-frame .ai-result-voice p,:root[data-theme=postcard] .app-frame .friend-greeting{background:#fbefdc}
+
+/* 노을 산책: golden hour peach and burnt orange. */
+:root[data-theme=sunset]{--ink:#2a1720;--muted:#5f434d;--green:#c2410c;--green-dark:#9a3412;--cream:#fbeee6;--white:#fff;--line:#f0d8cb;--mint:#fff1ea;--travel-subtle:#fff3ec;--travel-selected:#fff7f2;--travel-selected-line:#f2b494;--travel-input:#97777f;--theme-accent:#9d174d}
+:root[data-theme=sunset] .app-frame .home-hero{background:radial-gradient(circle at 82% 24%,#ffd27a 0 34px,transparent 35px),linear-gradient(180deg,#ffd9bf 0%,#ffd0d8 55%,#fff 100%)}
+:root[data-theme=sunset] .app-frame h1 span,:root[data-theme=sunset] .app-frame .eyebrow{color:var(--theme-accent)}
+:root[data-theme=sunset] .app-frame .ai-result-card,:root[data-theme=sunset] .app-frame .arrival-place{border-color:#f5ded2;box-shadow:0 4px 0 var(--edge-card),0 10px 22px #c2410c14}
+
+/* 서울 지하철: signage contrast with line colours as markers. */
+:root[data-theme=metro]{--ink:#111418;--muted:#3b4149;--green:#007a38;--green-dark:#00612c;--cream:#eef0f3;--white:#fff;--line:#d2d6dc;--mint:#ebf7f0;--travel-subtle:#f2f4f6;--travel-selected:#f3faf6;--travel-selected-line:#79c099;--travel-input:#6b727b}
+:root[data-theme=metro] .app-frame .home-hero{background:#fff;border-bottom:6px solid transparent;border-image:linear-gradient(90deg,#0052a4 0 20%,#00a84d 20% 40%,#ef7c1c 40% 60%,#00a5de 60% 80%,#996cac 80%) 1}
+:root[data-theme=metro] .app-frame .eyebrow{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--green);color:#fff;letter-spacing:0}
+:root[data-theme=metro] .app-frame h1,:root[data-theme=metro] .app-frame h2{font-weight:800;letter-spacing:-1px}
+:root[data-theme=metro] .app-frame .section-heading h2::before{content:"";display:inline-block;width:12px;height:12px;margin-right:8px;border:3px solid var(--green);border-radius:50%;vertical-align:2px;background:#fff}
+:root[data-theme=metro] .app-frame .ai-result-rank{display:inline-grid;place-items:center;width:28px;height:28px;border:3px solid var(--green);border-radius:50%;color:var(--ink);font-weight:800}
+:root[data-theme=metro] .app-frame .ai-result-card,:root[data-theme=metro] .app-frame .arrival-place{border:1.5px solid #c4c9d0}
+
+/* Theme picker on the home screen. */
+.app-frame .theme-picker{border-top:1px solid var(--line);padding-top:var(--refine-space-20);margin-top:var(--travel-space-section)}
+.app-frame .theme-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:var(--refine-space-8);margin-top:var(--refine-space-12)}
+.app-frame .theme-option{position:relative;display:block}
+.app-frame .theme-option input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.app-frame .theme-option span{display:grid;gap:2px;min-height:64px;padding:var(--refine-space-10);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white)}
+.app-frame .theme-option b{font-size:var(--refine-type-label)}
+.app-frame .theme-option small{font-size:var(--travel-type-micro);color:var(--muted)}
+.app-frame .theme-option i{display:block;height:8px;border-radius:4px;margin-bottom:4px}
+.app-frame .theme-option input:checked+span{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}
+.app-frame .theme-option input:focus-visible+span{outline:3px solid var(--green);outline-offset:2px}
+.theme-swatch-base{background:linear-gradient(90deg,#202124 0 50%,#3651e8 50%)}
+.theme-swatch-coast{background:linear-gradient(90deg,#0b6e9f 0 50%,#cdeefc 50% 80%,#c2410c 80%)}
+.theme-swatch-postcard{background:linear-gradient(90deg,#b0362a 0 40%,#f6ead6 40% 80%,#1f3b63 80%)}
+.theme-swatch-sunset{background:linear-gradient(90deg,#c2410c 0 40%,#ffd9bf 40% 80%,#9d174d 80%)}
+.theme-swatch-metro{background:linear-gradient(90deg,#0052a4 0 20%,#00a84d 20% 40%,#ef7c1c 40% 60%,#00a5de 60% 80%,#996cac 80%)}

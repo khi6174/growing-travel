@@ -1,5 +1,5 @@
 /* D23: traveler wireframe applied to the existing functional MVP. */
-:root{--ink:#202124;--muted:#62656d;--green:#3651e8;--green-dark:#293fc0;--cream:#eceef1;--line:#dfe2e9;--mint:#eef1fd;--white:#fff;--danger:#a62b25;--radius:20px;--travel-subtle:#f5f6f8;--travel-input:#8e9197;--travel-nav-space:88px;--travel-content:520px;--travel-action-shadow:0 -8px 20px #20212405;font-family:'Malgun Gothic','Segoe UI',sans-serif;color:var(--ink);background:var(--cream);--travel-space-section:24px;--travel-space-large:32px;--travel-type-micro:10px;--travel-type-meta:11px;--travel-type-medium:15px;--travel-type-subtitle:17px;--travel-radius-nav-item:18px;--travel-radius-nav:24px;--travel-target-control:48px;--travel-target-input:50px;--travel-bar-height:64px;--travel-selected:#fafbff;--travel-selected-line:#cbd3fa}
+:root{--ink:#202124;--muted:#62656d;--green:#3651e8;--green-dark:#293fc0;--cream:#eceef1;--line:#dfe2e9;--mint:#eef1fd;--white:#fff;--danger:#a62b25;--radius:20px;--travel-subtle:#f5f6f8;--travel-input:#8e9197;--travel-nav-space:88px;--travel-content:520px;--travel-action-shadow:0 -8px 20px #20212405;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic','Segoe UI',sans-serif;color:var(--ink);background:var(--cream);--travel-space-section:24px;--travel-space-large:32px;--travel-type-micro:10px;--travel-type-meta:11px;--travel-type-medium:15px;--travel-type-subtitle:17px;--travel-radius-nav-item:18px;--travel-radius-nav:24px;--travel-target-control:48px;--travel-target-input:50px;--travel-bar-height:64px;--travel-selected:#fafbff;--travel-selected-line:#cbd3fa}
 body{background:var(--cream);color:var(--ink)}
 button,input,select{font-family:inherit}
 button,a,input,select,summary{-webkit-tap-highlight-color:transparent}
@@ -256,3 +256,540 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .course-station-art[hidden]{display:none}
 .app-frame .overview-cell dd{font-variant-numeric:tabular-nums}
 @media(max-width:359px){.app-frame .destination-row{grid-template-columns:20px minmax(0,1fr) 48px;gap:var(--refine-space-8)}.app-frame .destination-art{width:48px;height:48px}.app-frame .home-benefits-entry{align-items:flex-start}.app-frame .home-benefits-entry .button{padding-inline:var(--refine-space-12)}}
+/* D26: field reports on the place detail */
+.app-frame .field-reports{margin-top:var(--refine-space-20);padding-top:var(--refine-space-20);border-top:1px solid var(--line)}
+.app-frame .field-reports-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--refine-space-12)}
+.app-frame .contribution-score{font-size:var(--refine-type-caption);font-weight:700;color:var(--green);white-space:nowrap}
+.app-frame .report-list{list-style:none;margin:var(--refine-space-12) 0;padding:0;display:grid;gap:var(--refine-space-12)}
+.app-frame .report-item{padding:var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white)}
+.app-frame .report-item.report-outdated{background:var(--travel-subtle)}
+.app-frame .report-item.report-outdated .report-text{color:var(--muted);text-decoration:line-through}
+.app-frame .report-head{display:flex;flex-wrap:wrap;align-items:center;gap:var(--refine-space-8)}
+.app-frame .report-status{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .report-confirmed .report-status{color:var(--green)}
+.app-frame .report-text{margin:var(--refine-space-8) 0 var(--refine-space-4);line-height:1.7;word-break:keep-all;overflow-wrap:anywhere}
+.app-frame .report-meta{font-size:var(--travel-type-meta);color:var(--muted);line-height:1.6}
+.app-frame .report-votes{display:flex;gap:var(--refine-space-8);margin-top:var(--refine-space-8)}
+.app-frame .vote-button{flex:1;min-height:var(--refine-target-min);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);font-size:var(--refine-type-caption);font-weight:600;cursor:pointer}
+.app-frame .vote-button[aria-pressed=true]{border-color:var(--green);background:var(--mint);color:var(--green-dark)}
+.app-frame .vote-button:disabled{opacity:.5;cursor:default}
+.app-frame .report-empty{margin:var(--refine-space-12) 0;padding:var(--refine-space-12);border-radius:var(--radius-box);background:var(--travel-subtle);color:var(--muted);font-size:var(--refine-type-caption)}
+.app-frame .report-form-details>summary{min-height:var(--refine-target-min);display:flex;align-items:center;font-weight:700;color:var(--green);cursor:pointer}
+.app-frame .report-form{display:grid;gap:var(--refine-space-8);margin-top:var(--refine-space-8)}
+.app-frame .report-form textarea{width:100%;padding:var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);font:inherit;resize:vertical}
+/* D26: AI recommendation conditions */
+.app-frame:is([data-screen=pet],[data-screen=ai],[data-screen=ai-results],[data-screen=arrival],[data-screen=dex],[data-screen=map]) .shell{padding-bottom:calc(240px + env(safe-area-inset-bottom,0px))}
+.app-frame .ai-choice-options{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+.app-frame .ai-choice-options .interest-option span{text-align:center;height:100%;word-break:keep-all;padding-inline:var(--refine-space-4);flex-direction:column;gap:2px;line-height:1.3}
+.app-frame .ai-choice-options .interest-option small{font-size:var(--travel-type-meta);color:var(--muted);font-weight:400}
+.app-frame .home-ai-entry{background:var(--mint);border-radius:var(--radius-box);padding:var(--refine-space-16);margin:var(--travel-space-section) 0}
+.app-frame #ai-summary:not(:empty){padding:var(--refine-space-12);background:var(--mint);border-radius:var(--radius-box);color:var(--ink)}
+/* D26: AI recommendation results */
+.app-frame .ai-source-note{margin:var(--refine-space-12) 0;padding:var(--refine-space-12);border-radius:var(--radius-box);background:var(--travel-subtle);font-size:var(--refine-type-caption);color:var(--muted);line-height:1.7}
+.app-frame .ai-source-note[data-source=ai]{background:var(--mint);color:var(--green-dark)}
+.app-frame .ai-result-list{list-style:none;margin:var(--refine-space-16) 0;padding:0;display:grid;gap:var(--refine-space-16)}
+.app-frame .ai-result-card{padding:var(--refine-space-16);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white)}
+.app-frame .ai-result-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--refine-space-8)}
+.app-frame .ai-result-head h3{margin:0}
+.app-frame .ai-result-rank{font-size:var(--travel-type-meta);font-weight:700;color:var(--green)}
+.app-frame .ai-result-tags{display:flex;flex-wrap:wrap;gap:var(--refine-space-4);margin:var(--refine-space-8) 0}
+.app-frame .ai-result-body{display:grid;grid-template-columns:76px minmax(0,1fr);gap:var(--refine-space-8) var(--refine-space-12);margin:var(--refine-space-12) 0;font-size:var(--refine-type-caption);line-height:1.7}
+.app-frame .ai-result-body dt{color:var(--muted);font-weight:600}
+.app-frame .ai-result-body dd{margin:0;word-break:keep-all;overflow-wrap:anywhere}
+.app-frame .ai-result-report{padding:var(--refine-space-4) var(--refine-space-8);border-radius:var(--radius-box);background:var(--travel-subtle)}
+.app-frame .ai-result-actions{display:flex;align-items:center;justify-content:space-between;gap:var(--refine-space-12)}
+.app-frame .ai-result-actions .button{flex:1}
+/* D27 pet flow: drawn pet faces, home pet row, pet picker, location card and the pet's voice on result cards. */
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.pet-face{display:block;width:48px;height:48px;flex-shrink:0;overflow:visible}
+.app-frame .home-pets{margin:var(--refine-space-8) 0 var(--travel-space-section)}
+.app-frame .home-pet-list{list-style:none;margin:var(--refine-space-12) 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .home-pet{width:100%;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:var(--refine-space-8) 2px;border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink)}
+.app-frame .home-pet:hover{border-color:var(--travel-selected-line);background:var(--travel-selected)}
+.app-frame .home-pet b{font-size:var(--refine-type-label)}
+.app-frame .home-pet small{font-size:var(--travel-type-micro);color:var(--muted);word-break:keep-all;text-align:center;line-height:1.3}
+.app-frame .pet-fieldset{border:0;margin:var(--refine-space-16) 0 0;padding:0;min-width:0}
+.app-frame .pet-options{display:grid;gap:var(--refine-space-8)}
+.app-frame .pet-option{display:block;position:relative}
+.app-frame .pet-option input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.app-frame .pet-card{display:flex;align-items:center;gap:var(--refine-space-12);min-height:72px;padding:var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white)}
+.app-frame .pet-card .pet-face{width:52px;height:52px}
+.app-frame .pet-card-text{display:grid;gap:2px;min-width:0}
+.app-frame .pet-card-text b{font-size:var(--travel-type-medium)}
+.app-frame .pet-card-intro{font-size:var(--refine-type-caption);color:var(--ink)}
+.app-frame .pet-card-text small{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .pet-option input:checked+.pet-card{background:var(--mint);border-color:var(--travel-selected-line);box-shadow:inset 0 0 0 1px var(--green)}
+.app-frame .pet-option input:focus-visible+.pet-card{outline:3px solid var(--green);outline-offset:3px}
+.app-frame .location-card{margin-top:var(--travel-space-section);padding:var(--refine-space-16);border-radius:var(--radius-box);background:var(--travel-subtle);display:grid;gap:var(--refine-space-8);justify-items:start}
+.app-frame .location-card h3{font-size:var(--travel-type-medium)}
+.app-frame .location-card h3 small{color:var(--muted);font-weight:400}
+.app-frame .ai-result-voice{display:flex;align-items:flex-start;gap:var(--refine-space-8);margin:var(--refine-space-12) 0 var(--refine-space-4)}
+.app-frame .ai-result-voice .pet-face{width:36px;height:36px}
+.app-frame .ai-result-voice p{flex:1;padding:var(--refine-space-8) var(--refine-space-12);border-radius:4px var(--radius-box) var(--radius-box) var(--radius-box);background:var(--mint);font-size:var(--refine-type-caption);line-height:1.7;word-break:keep-all;overflow-wrap:anywhere}
+.app-frame .ai-friend-hint{color:var(--green-dark)}
+@media(max-width:359px){.app-frame .home-pet-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Stage 5: district arrival, the friend's question and the 도감. Friends are silhouettes until drawn (명세 5). */
+.friend-art{display:block;width:44px;height:44px;flex-shrink:0}
+.friend-art .friend-body{fill:#3a3c42}
+.friend-art .friend-mark{fill:#fff;font-size:13px;font-weight:700;font-family:inherit}
+.friend-art.met .friend-body{fill:var(--region,var(--green))}
+:is(.friend-art,.gu,.burst).region-dosim{--region:#3651e8}:is(.friend-art,.gu,.burst).region-seobuk{--region:#1f7a5c}:is(.friend-art,.gu,.burst).region-dongbuk{--region:#9a4c12}:is(.friend-art,.gu,.burst).region-seonam{--region:#6b3fb0}:is(.friend-art,.gu,.burst).region-dongnam{--region:#b0274a}
+.app-frame .friend-entry{border-top:1px solid var(--line);padding:var(--refine-space-20) 0 0;margin-top:var(--travel-space-section);display:grid;gap:var(--refine-space-8);justify-items:start}
+.app-frame .friend-entry .section-heading{width:100%}
+.app-frame .friend-entry.compact{margin-top:var(--refine-space-16)}
+.app-frame .arrival-status:empty{display:none}
+.arrival-banner{position:fixed;top:calc(var(--travel-bar-height) + 8px);left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:calc(var(--travel-content) - 32px);z-index:30;display:flex;align-items:center;gap:var(--refine-space-8);padding:var(--refine-space-12);border-radius:var(--radius-box);background:var(--ink);color:var(--white);box-shadow:0 8px 24px #20212433}
+.arrival-banner[hidden]{display:none}
+.arrival-banner p{flex:1;font-size:var(--refine-type-caption);line-height:1.6;word-break:keep-all}
+.arrival-banner .icon-button{background:transparent;color:var(--white);border-color:#ffffff55}
+.app-frame .friend-hero{display:flex;align-items:center;gap:var(--refine-space-12);margin-top:var(--refine-space-8)}
+.app-frame .friend-hero .friend-art{width:64px;height:64px}
+.app-frame .friend-hero h2{margin:0}
+.app-frame .friend-greeting{margin-top:var(--refine-space-12);padding:var(--refine-space-10) var(--refine-space-14);border-radius:4px var(--radius-box) var(--radius-box) var(--radius-box);background:var(--mint);font-size:var(--refine-type-label);line-height:1.7;word-break:keep-all}
+.app-frame .friend-question{margin-top:var(--travel-space-section);padding:var(--refine-space-16);border:1px solid var(--travel-selected-line);border-radius:var(--radius-box);background:var(--travel-selected);display:grid;gap:var(--refine-space-10)}
+.app-frame .friend-question h3,.app-frame .arrival-section h3,.app-frame .dex-region h3{font-size:var(--travel-type-medium)}
+.app-frame .friend-says{font-size:var(--refine-type-label);line-height:1.7;word-break:keep-all}
+.app-frame .friend-answers{display:grid;gap:var(--refine-space-6)}
+.app-frame .arrival-section{margin-top:var(--travel-space-section)}
+.app-frame .arrival-list,.app-frame .arrival-report-list{list-style:none;margin:var(--refine-space-8) 0 0;padding:0;display:grid;gap:var(--refine-space-8)}
+.app-frame .arrival-place{padding:var(--refine-space-12) var(--refine-space-14);border:1px solid var(--line);border-radius:var(--radius-box);display:grid;gap:var(--refine-space-4);justify-items:start}
+.app-frame .arrival-place-head{display:flex;justify-content:space-between;gap:var(--refine-space-8);width:100%}
+.app-frame .arrival-place-tags{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .arrival-report{font-size:var(--refine-type-caption);line-height:1.7;padding:var(--refine-space-8) 0;border-bottom:1px solid var(--line);word-break:keep-all;overflow-wrap:anywhere}
+.app-frame .dex-regions{display:grid;gap:var(--travel-space-section);margin-top:var(--travel-space-section)}
+.app-frame .dex-grid{list-style:none;margin:var(--refine-space-8) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .dex-slot{width:100%;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:var(--refine-space-8) var(--refine-space-4);border:1px dashed var(--line);border-radius:var(--radius-box);background:var(--travel-subtle);color:var(--muted);text-align:center}
+.app-frame .dex-slot.met{border-style:solid;background:var(--white);color:var(--ink);cursor:pointer}
+.app-frame .dex-slot.preview{color:var(--ink);cursor:pointer}
+.app-frame .dex-slot.preview .friend-art{opacity:.7}
+.app-frame .dex-slot b{font-size:var(--refine-type-caption)}
+.app-frame .dex-slot small{font-size:var(--travel-type-micro)}
+#evidence-content>.friend-art{width:64px;height:64px;margin:var(--refine-space-8) 0}
+/* Stage 6: the living map. live = valid report bubble, fading = expired bubble, sleeping = waiting to be woken. */
+.app-frame .living-map{height:min(52vh,420px);margin-top:var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);overflow:hidden;background:var(--travel-subtle)}
+.app-frame .living-map[hidden]{display:none}
+/* The pin's box is the dot only: Kakao anchors an overlay by its size when first drawn, so the bubble sits outside it. */
+.map-pin{position:relative;display:inline-block;vertical-align:top;cursor:pointer}
+.app-frame .map-zoom{display:flex;justify-content:flex-end;gap:var(--refine-space-6);margin-top:var(--refine-space-6)}
+.app-frame .map-zoom[hidden]{display:none}
+.map-dot{min-width:24px;min-height:24px;padding:0 6px;border-radius:12px;border:2px solid var(--white);background:var(--green);color:var(--white);font:700 12px/20px 'Malgun Gothic','Segoe UI',sans-serif;box-shadow:0 2px 6px #2021244d;cursor:pointer}
+.map-pin.state-fading .map-dot{background:#8e9197}
+.map-pin.state-sleeping .map-dot{background:var(--white);color:var(--green-dark);border:2px dashed var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 20%,transparent)}
+.map-pin.ranked .map-dot{background:var(--ink);min-width:28px;min-height:28px;font-size:13px;line-height:24px}
+.map-bubble{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);max-width:160px;padding:4px 8px;border-radius:10px;background:var(--white);color:var(--ink);font:12px/1.4 'Malgun Gothic','Segoe UI',sans-serif;box-shadow:0 2px 8px #2021243d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.show-bubbles .map-bubble,.map-pin.ranked .map-bubble{display:block}
+.map-pin.state-fading .map-bubble{opacity:.45}
+.map-pin.just-woke .map-dot{animation:map-wake 1.2s ease-out 3}
+@keyframes map-wake{0%{box-shadow:0 0 0 0 #3651e8aa}100%{box-shadow:0 0 0 14px #3651e800}}
+@media(prefers-reduced-motion:reduce){.map-pin.just-woke .map-dot{animation:none}}
+.map-me{display:block;padding:2px 6px;border-radius:10px;background:#b0274a;color:var(--white);font:700 11px/1.4 'Malgun Gothic','Segoe UI',sans-serif;border:2px solid var(--white)}
+.app-frame .map-legend{list-style:none;margin:var(--refine-space-8) 0 0;padding:0;display:flex;flex-wrap:wrap;gap:var(--refine-space-6) var(--refine-space-14);font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .map-legend li{display:flex;align-items:center;gap:var(--refine-space-4)}
+.map-legend-mark{display:inline-block;width:12px;height:12px;border-radius:6px;background:var(--green)}
+.map-legend-mark.fading{background:#8e9197}
+.map-legend-mark.sleeping{background:var(--white);border:2px dashed var(--green)}
+.app-frame .map-news:empty{display:none}
+.app-frame .map-news{margin-top:var(--refine-space-8);padding:var(--refine-space-8) var(--refine-space-12);border-radius:var(--radius-box);background:var(--mint);color:var(--green-dark);font-size:var(--refine-type-caption);font-weight:700}
+.app-frame .map-item.state-fading .field-help{opacity:.7}
+.app-frame .map-item.state-sleeping{border-style:dashed;border-color:var(--travel-selected-line)}
+@media(max-width:359px){.app-frame .dex-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* D32/P45 motion: short and tied to a state change; the colours stay graphite and cobalt. The global
+   prefers-reduced-motion rule above switches all of it off. Screens fade only (no transform), so the fixed
+   action bars inside them never move. */
+@keyframes gt-fade{from{opacity:0}to{opacity:1}}
+@keyframes gt-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes gt-pop{0%{opacity:0;transform:scale(.7)}70%{opacity:1;transform:scale(1.05)}100%{transform:none}}
+@keyframes gt-spring{0%{opacity:0;transform:translateY(26px) scale(.6)}60%{opacity:1;transform:translateY(-4px) scale(1.08)}100%{transform:none}}
+@keyframes gt-breathe{0%,100%{transform:none}50%{transform:translateY(-1.5px) scale(1.03)}}
+@keyframes gt-ear{0%,86%,100%{transform:none}90%{transform:rotate(-12deg)}95%{transform:rotate(8deg)}}
+@keyframes gt-blink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}
+@keyframes gt-hop{0%{transform:none}35%{transform:translateY(-9px) scale(1.06)}65%{transform:translateY(0) scale(.97,1.03)}100%{transform:none}}
+@keyframes gt-walk{0%{left:-48px}100%{left:100%}}
+@keyframes gt-step{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-4px) rotate(4deg)}}
+@keyframes gt-drop{0%{opacity:0;transform:translate(-50%,-24px)}70%{opacity:1;transform:translate(-50%,4px)}100%{transform:translate(-50%,0)}}
+@keyframes gt-reveal{from{fill:#3a3c42}to{fill:var(--region,var(--green))}}
+@keyframes gt-stamp{0%{opacity:0;transform:scale(2.2) rotate(-18deg)}60%{opacity:1;transform:scale(.92) rotate(-8deg)}100%{transform:scale(1) rotate(-8deg)}}
+@keyframes gt-doze{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes gt-float-up{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
+.app-frame .app-screen:not([hidden]){animation:gt-fade .24s ease-out both}
+.app-frame .button:not(:disabled){transition:transform .08s ease-out}
+.app-frame .button:active:not(:disabled){transform:scale(.97)}
+.app-frame .ai-result-card{animation:gt-rise .42s cubic-bezier(.2,.8,.2,1) both}
+.app-frame .ai-result-card:nth-child(2){animation-delay:.09s}
+.app-frame .ai-result-card:nth-child(3){animation-delay:.18s}
+.app-frame .ai-result-voice p{transform-origin:0 0;animation:gt-pop .36s cubic-bezier(.3,1.5,.5,1) .28s both}
+.app-frame .ai-result-card:nth-child(2) .ai-result-voice p{animation-delay:.37s}
+.app-frame .ai-result-card:nth-child(3) .ai-result-voice p{animation-delay:.46s}
+.app-frame .pet-walk{position:relative;height:52px;margin-top:var(--refine-space-12);overflow:hidden;border-bottom:2px dotted var(--travel-selected-line)}
+.app-frame .pet-walk[hidden]{display:none}
+.app-frame .pet-walk .pet-face{position:absolute;bottom:2px;width:40px;height:40px;animation:gt-walk 3.2s linear infinite,gt-step .4s ease-in-out infinite}
+.arrival-banner:not([hidden]){animation:gt-drop .45s cubic-bezier(.3,1.4,.5,1) both}
+.app-frame .friend-hero .friend-art{animation:gt-spring .6s cubic-bezier(.3,1.5,.5,1) .1s both}
+.friend-art.revealing .friend-body{animation:gt-reveal .9s ease-out both}
+.app-frame .stamp{display:inline-block;justify-self:start;padding:var(--refine-space-4) var(--refine-space-12);border:2px solid var(--green);border-radius:6px;color:var(--green);font-weight:700;letter-spacing:.02em;animation:gt-stamp .5s cubic-bezier(.2,1.4,.4,1) both}
+.app-frame .dex-slot.just-met{animation:gt-spring .6s cubic-bezier(.3,1.5,.5,1) .15s both}
+.map-pin.state-sleeping .map-dot{animation:gt-doze 3s ease-in-out infinite}
+/* Bubbles are centred with translateX(-50%), so their pop keeps that offset. */
+@keyframes gt-bubble{0%{opacity:0;transform:translateX(-50%) scale(.7)}70%{opacity:1;transform:translateX(-50%) scale(1.05)}100%{transform:translateX(-50%)}}
+.show-bubbles .map-bubble{animation:gt-bubble .3s cubic-bezier(.3,1.5,.5,1) both}
+.map-pin.just-woke .map-bubble{display:block;animation:gt-bubble .6s cubic-bezier(.3,1.6,.5,1) both}
+.app-frame .field-reports-head{position:relative}
+.app-frame .score-pop{position:absolute;right:0;top:-6px;font-size:var(--refine-type-caption);font-weight:700;color:var(--green);pointer-events:none;animation:gt-float-up 1.3s ease-out forwards}
+/* P47 screen changes run as View Transitions (screen-navigation.mjs sets data-nav). The header, the bottom menu
+   and the visible screen's action bar are captured on their own, so they stay put while the content slides. */
+.app-frame .site-header{view-transition-name:gt-header}
+.app-frame .site-header .brand{view-transition-name:gt-brand}
+.app-frame .site-header .screen-caption{view-transition-name:gt-caption}
+.app-frame .bottom-nav{view-transition-name:gt-nav}
+.app-frame .app-screen:not([hidden]) .primary-action-bar{view-transition-name:gt-actions}
+::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation-duration:.3s;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
+@keyframes gt-in-right{from{opacity:0;transform:translateX(40px)}}
+@keyframes gt-out-left{to{opacity:0;transform:translateX(-24px)}}
+@keyframes gt-in-left{from{opacity:0;transform:translateX(-40px)}}
+@keyframes gt-out-right{to{opacity:0;transform:translateX(24px)}}
+:root[data-nav=forward]::view-transition-old(root){animation-name:gt-out-left}
+:root[data-nav=forward]::view-transition-new(root){animation-name:gt-in-right}
+:root[data-nav=back]::view-transition-old(root){animation-name:gt-out-right}
+:root[data-nav=back]::view-transition-new(root){animation-name:gt-in-left}
+:root[data-nav] .app-frame .app-screen:not([hidden]){animation:none}
+/* D34/P48 2.5D: buttons and cards have a solid edge underneath, like game pieces, and sink into it when pressed.
+   The edges come from the theme tokens, so every design draft follows. */
+.app-frame{--edge-card:color-mix(in srgb,var(--line) 72%,var(--ink) 16%)}
+.app-frame .button.primary,.app-frame .button.subtle,.app-frame .home-pet,.app-frame .pet-card,.app-frame .dex-slot.met,.app-frame .bottom-nav .nav-button{transition:transform .09s ease-out,box-shadow .09s ease-out}
+.app-frame .button.primary{box-shadow:0 4px 0 var(--green-dark)}
+.app-frame .button.primary:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--green-dark)}
+.app-frame .button.subtle{box-shadow:0 3px 0 var(--edge-card)}
+.app-frame .button.subtle:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .primary-action-bar>.button.subtle,.app-frame .button:disabled{box-shadow:none}
+.app-frame .home-pet,.app-frame .pet-card,.app-frame .ai-result-card,.app-frame .dex-slot.met,.app-frame .arrival-place{box-shadow:0 4px 0 var(--edge-card)}
+.app-frame .home-pet:active,.app-frame .pet-option:active .pet-card,.app-frame .dex-slot.met:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .pet-option input:checked+.pet-card{transform:translateY(-2px);box-shadow:inset 0 0 0 1px var(--green),0 5px 0 var(--green)}
+.app-frame .bottom-nav .nav-button.active{box-shadow:0 3px 0 color-mix(in srgb,var(--green) 30%,transparent);transform:translateY(-1px)}
+/* The friend met just now: pieces in the district colour burst out once. */
+.app-frame .friend-hero{position:relative}
+.app-frame .burst{position:absolute;left:32px;top:32px;width:0;height:0;pointer-events:none}
+.app-frame .burst i{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:2px;background:var(--region,var(--green));animation:gt-burst .9s cubic-bezier(.2,.7,.3,1) .15s both}
+.app-frame .burst i:nth-child(3n){border-radius:50%;background:var(--green)}
+.app-frame .burst i:nth-child(4n){width:6px;height:10px;background:color-mix(in srgb,var(--region,var(--green)) 55%,#fff)}
+.app-frame .burst i:nth-child(1){--dx:-58px;--dy:-30px;--r:140deg}.app-frame .burst i:nth-child(2){--dx:-40px;--dy:-62px;--r:-90deg}
+.app-frame .burst i:nth-child(3){--dx:-6px;--dy:-74px;--r:200deg}.app-frame .burst i:nth-child(4){--dx:30px;--dy:-64px;--r:-160deg}
+.app-frame .burst i:nth-child(5){--dx:62px;--dy:-34px;--r:90deg}.app-frame .burst i:nth-child(6){--dx:74px;--dy:4px;--r:-220deg}
+.app-frame .burst i:nth-child(7){--dx:58px;--dy:40px;--r:160deg}.app-frame .burst i:nth-child(8){--dx:20px;--dy:60px;--r:-120deg}
+.app-frame .burst i:nth-child(9){--dx:-24px;--dy:58px;--r:110deg}.app-frame .burst i:nth-child(10){--dx:-62px;--dy:34px;--r:-200deg}
+.app-frame .burst i:nth-child(11){--dx:-76px;--dy:2px;--r:180deg}.app-frame .burst i:nth-child(12){--dx:96px;--dy:-14px;--r:-60deg}
+@keyframes gt-burst{0%{opacity:0;transform:translate(0,0) scale(.4)}12%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r)) scale(1)}}
+/* D34/P48 the 3D Seoul board (seoul-board.mjs). Unmet districts are pale blocks, met ones stand tall in their
+   region colour with the friend's initial on top; walls get lighter or darker by the way they face. */
+.app-frame .seoul-board{margin:var(--refine-space-16) 0 var(--refine-space-8);padding:var(--refine-space-12) var(--refine-space-4) var(--refine-space-12);border-radius:24px;background:radial-gradient(110% 80% at 50% 8%,var(--white),var(--mint) 55%,var(--travel-subtle))}
+.app-frame .seoul-board[hidden]{display:none}
+.app-frame .seoul-board figcaption{margin-top:var(--refine-space-4);text-align:center;font-size:var(--travel-type-meta);color:var(--muted)}
+.board-stage{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.board-svg{display:block;width:100%;height:auto;overflow:visible;cursor:grab}
+.board-svg.turning{cursor:grabbing}
+.board-shadow{fill:color-mix(in srgb,var(--ink) 9%,transparent)}
+.gu{--region:#8d929b}
+.gu .gu-top{fill:color-mix(in srgb,var(--white) 82%,var(--line));stroke:color-mix(in srgb,var(--line) 70%,var(--ink) 10%);stroke-width:.8;stroke-linejoin:round}
+.gu .wall{stroke-width:.4;stroke-linejoin:round}
+.gu .wall-l{fill:color-mix(in srgb,var(--line) 85%,var(--ink) 6%);stroke:color-mix(in srgb,var(--line) 85%,var(--ink) 6%)}
+.gu .wall-m{fill:color-mix(in srgb,var(--line) 75%,var(--ink) 18%);stroke:color-mix(in srgb,var(--line) 75%,var(--ink) 18%)}
+.gu .wall-r{fill:color-mix(in srgb,var(--line) 62%,var(--ink) 30%);stroke:color-mix(in srgb,var(--line) 62%,var(--ink) 30%)}
+.gu.met{cursor:pointer}
+.gu.met .gu-top{fill:color-mix(in srgb,var(--region) 72%,#fff);stroke:color-mix(in srgb,var(--region) 60%,#fff)}
+.gu.met .wall-l{fill:var(--region);stroke:var(--region)}
+.gu.met .wall-m{fill:color-mix(in srgb,var(--region) 78%,#000);stroke:color-mix(in srgb,var(--region) 78%,#000)}
+.gu.met .wall-r{fill:color-mix(in srgb,var(--region) 60%,#000);stroke:color-mix(in srgb,var(--region) 60%,#000)}
+.gu-token circle{fill:#fff;stroke:var(--region);stroke-width:2}
+.gu-token text{fill:var(--region);font-size:10px;font-weight:800}
+.gu.rising .gu-token{transform-box:fill-box;transform-origin:50% 100%;animation:gt-pop .45s cubic-bezier(.3,1.6,.5,1) .55s both}
+.board-pet{animation:gt-doze 2.4s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.app-frame .burst{display:none}}
+
+/* D35/P51 the pets (pet-art.mjs): breathing squash, head tilts, blinks, ear twitches and tail wags, each breed out of
+   step with the others. A picked pet jumps and smiles. All of it stops with reduced motion (global rule). */
+.pet-defs{position:absolute;width:0;height:0;overflow:hidden}
+.pet3d .pet-shadow{fill:#2a1d1724;transform-box:fill-box;transform-origin:center;animation:pet-shadow 3s ease-in-out infinite}
+.pet3d .pet-rig{transform-box:view-box;transform-origin:24px 45px;animation:pet-breathe 3s ease-in-out infinite}
+.pet3d .pet-head{transform-box:view-box;transform-origin:24px 31px;animation:pet-look 7s ease-in-out infinite}
+.pet3d .pet-tail{transform-box:view-box;transform-origin:32px 40px;animation:pet-wag 3.2s ease-in-out infinite}
+.pet-shiba .pet-tail,.pet-baekgu .pet-tail{transform-origin:32px 38.5px}.pet-bichon .pet-tail{transform-origin:33px 37px}
+.pet3d .pet-eye{transform-box:fill-box;transform-origin:center;animation:gt-blink 4.6s infinite}
+.pet3d .ear-up{transform-box:fill-box;transform-origin:50% 100%;animation:gt-ear 5.2s ease-in-out infinite}
+.pet3d .ear-down{transform-box:fill-box;transform-origin:50% 0;animation:pet-flop 3s ease-in-out infinite}
+.pet3d .pet-ear+.pet-ear{animation-delay:.14s}
+.pet3d .pet-blush{fill:#ff8b8b;opacity:.38}.pet3d .pet-sheen{fill:#fff;opacity:.5}
+.pet3d .pet-mouth,.pet3d .pet-happy{fill:none;stroke:#2a211e;stroke-width:.85;stroke-linecap:round;stroke-linejoin:round}.pet3d .pet-happy{stroke-width:1.3}
+.pet3d .pet-tongue{fill:#ff7f8f;display:none}.pet3d .pet-happy{display:none}
+.pet-golden .pet-tongue,.pet-corgi .pet-tongue{display:inline}
+.pet-shiba :is(.pet-rig,.pet-shadow){animation-delay:-.8s}.pet-corgi :is(.pet-rig,.pet-shadow){animation-delay:-1.6s}.pet-bichon :is(.pet-rig,.pet-shadow){animation-delay:-2.2s}.pet-baekgu :is(.pet-rig,.pet-shadow){animation-delay:-.4s}
+.pet-shiba .pet-head{animation-delay:-2.5s}.pet-corgi .pet-head{animation-delay:-4.6s}.pet-bichon .pet-head{animation-delay:-1.2s}.pet-baekgu .pet-head{animation-delay:-5.8s}
+.pet-shiba .pet-tail{animation-delay:-1.1s}.pet-corgi .pet-tail{animation-delay:-2.3s;animation-duration:2.2s}.pet-bichon .pet-tail{animation-delay:-.5s}.pet-baekgu .pet-tail{animation-delay:-1.9s}
+.app-frame .home-pet .pet-face{width:54px;height:54px}.app-frame .pet-card .pet-face{width:62px;height:62px}
+.app-frame .pet-option input:checked+.pet-card .pet3d .pet-rig{animation:pet-jump .75s cubic-bezier(.3,1.3,.5,1) both,pet-breathe 3s ease-in-out .75s infinite}
+.app-frame .pet-option input:checked+.pet-card .pet3d .pet-tail{animation:pet-wag-fast .32s ease-in-out infinite alternate}
+.app-frame .pet-option input:checked+.pet-card .pet3d .pet-eyes,.app-frame .ai-result-voice .pet3d .pet-eyes{display:none}
+.app-frame .pet-option input:checked+.pet-card .pet3d :is(.pet-happy,.pet-tongue),.app-frame .ai-result-voice .pet3d :is(.pet-happy,.pet-tongue){display:inline}
+.app-frame .pet-walk .pet3d .pet-rig{animation:pet-trot .4s ease-in-out infinite}.app-frame .pet-walk .pet3d .pet-tail{animation:pet-wag-fast .2s ease-in-out infinite alternate}
+@keyframes pet-breathe{0%,100%{transform:none}50%{transform:scale(1.03,.965)}}
+@keyframes pet-shadow{0%,100%{transform:none}50%{transform:scaleX(1.06)}}
+@keyframes pet-look{0%,38%,100%{transform:none}44%,58%{transform:rotate(-8deg)}64%,76%{transform:rotate(5deg)}82%{transform:none}}
+@keyframes pet-wag{0%,50%,100%{transform:none}55%{transform:rotate(18deg)}60%{transform:rotate(-10deg)}65%{transform:rotate(18deg)}70%{transform:rotate(-10deg)}75%{transform:rotate(12deg)}82%{transform:none}}
+@keyframes pet-wag-fast{from{transform:rotate(-12deg)}to{transform:rotate(18deg)}}
+@keyframes pet-flop{0%,100%{transform:none}50%{transform:rotate(5deg)}}
+@keyframes pet-jump{0%{transform:none}18%{transform:scale(1.12,.84)}45%{transform:translateY(-9px) scale(.92,1.1)}72%{transform:scale(1.08,.9)}100%{transform:none}}
+@keyframes pet-trot{0%,100%{transform:none}50%{transform:translateY(-2.5px) scale(.98,1.03)}}
+/* D37/P53 home: one action (pick a pet), a three-step strip in the hero, and three equal tiles for the 도감, the
+   map and benefits. Long explanations and the location switch live on the screens that use them. */
+.app-frame .hero-steps{list-style:none;margin:var(--refine-space-14) 0 0;padding:0;display:flex;flex-wrap:wrap;gap:var(--refine-space-6)}
+.app-frame .hero-steps li{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 5px;border-radius:999px;background:var(--travel-subtle);color:var(--ink);font-size:var(--refine-type-caption);font-weight:700}
+.app-frame .hero-steps b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:11.5px}
+:root[data-season]:not([data-theme]) .app-frame .hero-steps li{background:#ffffffd9;box-shadow:0 2px 0 #0000000f}
+.app-frame .home-pets{margin-bottom:var(--refine-space-16)}
+.app-frame .home-entries{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--refine-space-8);margin:0 0 var(--refine-space-16)}
+.app-frame .home-entry{display:grid;align-content:start;justify-items:start;gap:2px;min-height:88px;padding:var(--refine-space-10);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);text-align:left;font:inherit;cursor:pointer;box-shadow:0 4px 0 var(--edge-card);transition:transform .09s ease-out,box-shadow .09s ease-out}
+.app-frame .home-entry:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .home-entry:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.app-frame .home-entry-icon{width:24px;height:24px;margin-bottom:2px;fill:none;stroke:var(--green);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.app-frame .home-entry b{font-size:var(--refine-type-label);line-height:1.3;word-break:keep-all}
+.app-frame .home-entry small{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .dex-progress{display:block;width:100%;height:5px;margin-top:4px;border-radius:3px;background:var(--line);overflow:hidden}
+.app-frame .dex-progress span{display:block;width:var(--progress,0%);min-width:5px;height:100%;border-radius:inherit;background:var(--green)}
+@media(max-width:359px){.app-frame .home-entries{grid-template-columns:1fr}.app-frame .home-entry{min-height:0;grid-template-columns:auto 1fr;align-items:center;column-gap:10px}.app-frame .home-entry-icon{grid-row:span 2;margin:0}}
+/* D38/P54 ranked map pins that overlap at the current zoom are fanned out to the right (living-map.mjs spreadRanked);
+   a short line points back to the place's true spot. */
+.map-pin.spread{transform:translateX(var(--spread))}
+.map-pin.spread::before{content:"";position:absolute;top:50%;right:calc(100% - 14px);width:var(--spread);height:2px;margin-top:-1px;border-radius:1px;background:var(--ink);opacity:.55;pointer-events:none}
+.map-pin.spread .map-dot{position:relative}
+@media(max-height:860px){.app-frame .hero-steps{margin-top:var(--refine-space-10)}.app-frame .home-pet{min-height:84px}.app-frame .home-pet .pet-face{width:46px;height:46px}}
+@media(max-height:760px){.app-frame .home-pets{margin-bottom:var(--refine-space-10)}.app-frame .hero-steps li{padding-block:3px;font-size:12px}.app-frame .home-pet .pet-face{width:40px;height:40px}.app-frame .home-entry{min-height:0;padding:var(--refine-space-8) var(--refine-space-10)}.app-frame .home-entry-icon{width:20px;height:20px}}
+/* D39/P55 conditions: a typed departure with its search results, and a typed time. */
+.app-frame .departure-field legend small{font-weight:500;color:var(--muted)}
+.app-frame .departure-search{display:flex;gap:var(--refine-space-8);margin-top:var(--refine-space-8)}
+.app-frame .departure-search input{flex:1;min-width:0}
+.app-frame .departure-search .button{flex:none;min-height:var(--travel-target-input);padding-inline:var(--refine-space-16)}
+.app-frame .departure-results{list-style:none;margin:var(--refine-space-8) 0 0;padding:0;display:grid;gap:var(--refine-space-6)}
+.app-frame .departure-results[hidden]{display:none}
+.app-frame .departure-result{display:grid;gap:2px;width:100%;padding:var(--refine-space-10) var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);text-align:left;font:inherit;cursor:pointer;box-shadow:0 3px 0 var(--edge-card)}
+.app-frame .departure-result:active{transform:translateY(2px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .departure-result b{font-size:var(--refine-type-label)}
+.app-frame .departure-result small{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .departure-list-label{margin-top:var(--refine-space-12);font-size:var(--refine-type-caption);color:var(--muted)}
+.app-frame .hours-custom{display:flex;flex-wrap:wrap;align-items:center;gap:var(--refine-space-6);margin-top:var(--refine-space-8)}
+.app-frame .hours-custom[hidden]{display:none}
+.app-frame .hours-custom input{width:72px}
+.app-frame .hours-custom small{flex-basis:100%;font-size:var(--travel-type-meta);color:var(--muted)}
+/* D41/P57 "지금 이 구에서 뜨는 곳" on the arrival screen: hashtag tabs that scroll sideways, then a short list. */
+.app-frame .trending-tabs{display:flex;gap:var(--refine-space-6);margin:var(--refine-space-8) calc(var(--refine-space-20) * -1) 0;padding:2px var(--refine-space-20) 6px;overflow-x:auto;scrollbar-width:none}
+.app-frame .trending-tabs::-webkit-scrollbar{display:none}
+.app-frame .trending-tab{flex:none;min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--white);color:var(--ink);font:inherit;font-size:var(--refine-type-caption);font-weight:700;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 var(--edge-card)}
+.app-frame .trending-tab.quiet{color:var(--muted);font-weight:600}
+.app-frame .trending-tab[aria-pressed=true]{border-color:var(--green);background:var(--mint);color:var(--green);box-shadow:0 2px 0 var(--green)}
+.app-frame .trending-tab:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.app-frame .trending-list{list-style:none;margin:var(--refine-space-10) 0 0;padding:0;display:grid;gap:var(--refine-space-8)}
+.app-frame .trending-row{display:grid;gap:var(--refine-space-4);justify-items:start;padding:var(--refine-space-10) var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);box-shadow:0 3px 0 var(--edge-card)}
+.app-frame .trending-row.here{border-color:var(--green);background:var(--mint);font-weight:700}
+.app-frame .trending-row-head{display:flex;justify-content:space-between;gap:var(--refine-space-8);width:100%}
+.app-frame .trending-row .button{min-height:var(--refine-target-min);padding:var(--refine-space-6) var(--refine-space-14);font-size:var(--refine-type-caption)}
+
+/* D42/P58 conditions one question at a time (Toss-like). The pet asks each question in its own tone, the bar fills,
+   answered questions become pills, and tiles pop, stamp and spin when chosen. Only the step content moves; the action
+   bar sits outside it so its fixed position is not tied to a moving box. Reduced motion stops all of it (global rule). */
+@property --ring{syntax:'<angle>';inherits:false;initial-value:0deg}
+.app-frame .cond-top{display:flex;align-items:center;gap:var(--refine-space-12)}
+.app-frame .cond-top .eyebrow{margin:0;flex:none}
+.app-frame .cond-progress{flex:1;height:8px;border-radius:99px;background:var(--travel-subtle);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.app-frame .cond-progress i{display:block;width:var(--progress,25%);height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--green),color-mix(in srgb,var(--green) 55%,#8fd3ff));transition:width .55s cubic-bezier(.3,1.35,.5,1)}
+.app-frame .cond-pet{display:flex;align-items:flex-end;gap:var(--refine-space-8);margin-top:var(--refine-space-16)}
+.app-frame .cond-pet-face{flex:none;display:block;width:60px;height:60px}
+.app-frame .cond-pet-face .pet-face{width:100%;height:100%}
+.app-frame .cond-pet-face.hop .pet3d .pet-rig{animation:pet-jump .7s cubic-bezier(.3,1.3,.5,1) both,pet-breathe 3s ease-in-out .7s infinite}
+.app-frame .cond-pet-face.hop .pet3d .pet-tail{animation:pet-wag-fast .26s ease-in-out 6 alternate,pet-wag 3.2s ease-in-out 1.6s infinite}
+.app-frame .cond-pet-face.hop .pet3d .pet-eyes{display:none}
+.app-frame .cond-pet-face.hop .pet3d :is(.pet-happy,.pet-tongue){display:inline}
+.app-frame .cond-pet-face.tilt .pet3d .pet-head{animation:cond-tilt .7s ease-in-out both}
+.app-frame .cond-bubble{position:relative;flex:1;margin:0 0 12px;padding:var(--refine-space-10) var(--refine-space-14);border-radius:var(--radius-box) var(--radius-box) var(--radius-box) 4px;background:var(--mint);color:var(--green-dark);font-size:var(--refine-type-caption);font-weight:600;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere;transform-origin:0 100%}
+.app-frame .cond-bubble.speak{animation:gt-pop .38s cubic-bezier(.3,1.5,.5,1) both}
+.app-frame .cond-question{margin:var(--refine-space-16) 0 var(--refine-space-4);font-size:clamp(24px,6.6vw,28px);font-weight:800;letter-spacing:-.8px;line-height:1.32;word-break:keep-all}
+.app-frame .cond-question:focus{outline:none}
+.app-frame .cond-question.swap{animation:cond-heading .42s cubic-bezier(.2,.8,.2,1) both}
+.app-frame .cond-hint{margin:0;color:var(--muted);font-size:var(--refine-type-caption);line-height:1.6;word-break:keep-all}
+.app-frame .cond-answers{list-style:none;display:flex;flex-wrap:wrap;gap:var(--refine-space-6);margin:var(--refine-space-12) 0 0;padding:0}
+.app-frame .cond-answers[hidden]{display:none}
+.app-frame .cond-answers li.fresh{animation:gt-spring .5s cubic-bezier(.3,1.5,.5,1) .1s both}
+.app-frame .cond-pill{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px 4px 9px;border:1px solid var(--travel-selected-line);border-radius:99px;background:var(--mint);color:var(--green-dark);font-size:var(--refine-type-caption);font-weight:700;box-shadow:0 2px 0 color-mix(in srgb,var(--green) 28%,transparent);transition:transform .09s ease-out,box-shadow .09s ease-out}
+.app-frame .cond-pill:active{transform:translateY(2px);box-shadow:none}
+.app-frame .cond-pill .cond-art{width:16px;height:16px;color:var(--green)}
+.app-frame .cond-art{display:inline-block;flex:none}
+.app-frame .cond-art svg{display:block;width:100%;height:100%}
+.app-frame .art-pin .pin-body{fill:var(--green)}.app-frame .art-pin .pin-dot{fill:#fff}
+/* The steps slide in from the side they come from; their tiles rise one after another. A failed check shakes. */
+/* The slide-in briefly sticks out sideways; clipping on the frame (not the panel) keeps focus rings whole. */
+.app-frame[data-screen=ai]{overflow-x:clip}
+.app-frame .ai-step{margin-top:var(--refine-space-16)}
+.app-frame .ai-step[hidden]{display:none}
+.app-frame .ai-step.entering[data-dir=forward]{animation:cond-in-right .42s cubic-bezier(.2,.8,.2,1) both}
+.app-frame .ai-step.entering[data-dir=back]{animation:cond-in-left .42s cubic-bezier(.2,.8,.2,1) both}
+.app-frame .ai-step.entering :is(.cond-tile,.cond-chip,.departure-here,.departure-search,.party-stepper,.cond-review-row){animation:gt-rise .4s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(min(var(--i,0),9) * 30ms + 70ms)}
+.app-frame .ai-step.entering .departure-search{--i:1}.app-frame .ai-step.entering .party-stepper{--i:0}
+.app-frame .ai-step.shake{animation:cond-shake .42s ease-in-out}
+.app-frame .ai-step fieldset{border:0;margin:0;padding:0;min-width:0}
+.app-frame .cond-label{display:block;margin:0 0 var(--refine-space-8);font-size:var(--refine-type-label);font-weight:700;color:var(--ink)}
+.app-frame legend.cond-label{margin:var(--refine-space-20) 0 var(--refine-space-8);padding:0}
+.app-frame .cond-label small{font-size:var(--travel-type-meta);font-weight:400;color:var(--muted)}
+/* Tiles and chips: the radio covers the face (like the pet cards), so a tap anywhere picks it. */
+.app-frame :is(.cond-tile,.cond-chip){position:relative;display:block}
+.app-frame :is(.cond-tile,.cond-chip) input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1}
+.app-frame .cond-tile-face{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:100%;min-height:var(--refine-target-min);padding:var(--refine-space-10) var(--refine-space-6);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);text-align:center;word-break:keep-all;box-shadow:0 3px 0 var(--edge-card);transition:transform .09s ease-out,box-shadow .09s ease-out,background-color .2s,border-color .2s}
+.app-frame .cond-tile-face b{font-size:var(--refine-type-label);line-height:1.3}
+.app-frame .cond-tile-face small{font-size:var(--travel-type-meta);color:var(--muted);line-height:1.3}
+.app-frame :is(.cond-tile,.cond-chip):active .cond-tile-face{transform:translateY(2px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame :is(.cond-tile,.cond-chip) input:checked+.cond-tile-face{background:var(--mint);border-color:var(--travel-selected-line);color:var(--green-dark);box-shadow:inset 0 0 0 1px var(--green),0 3px 0 var(--green);animation:cond-choose .4s cubic-bezier(.3,1.6,.5,1)}
+.app-frame :is(.cond-tile,.cond-chip) input:focus-visible+.cond-tile-face{outline:3px solid var(--green);outline-offset:3px}
+.app-frame .cond-tile .cond-tile-face::before,.app-frame .cond-tile .cond-tile-face::after{content:'';position:absolute;opacity:0;transition:opacity .2s,transform .32s cubic-bezier(.3,1.6,.5,1)}
+.app-frame .cond-tile .cond-tile-face::before{top:7px;right:7px;width:18px;height:18px;border-radius:50%;background:var(--green);transform:scale(.3)}
+.app-frame .cond-tile .cond-tile-face::after{top:10px;right:13.5px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) scale(.3)}
+.app-frame .cond-tile input:checked+.cond-tile-face::before{opacity:1;transform:none}
+.app-frame .cond-tile input:checked+.cond-tile-face::after{opacity:1;transform:rotate(45deg)}
+/* Step 1 출발 위치 */
+.app-frame .departure-here{display:flex;align-items:center;gap:var(--refine-space-12);width:100%;min-height:68px;padding:var(--refine-space-12) var(--refine-space-16);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);text-align:left;box-shadow:0 4px 0 var(--edge-card);transition:transform .09s ease-out,box-shadow .09s ease-out,background-color .2s}
+.app-frame .departure-here:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .departure-here[aria-pressed=true]{background:var(--mint);border-color:var(--travel-selected-line);box-shadow:inset 0 0 0 1px var(--green),0 4px 0 var(--green)}
+.app-frame .departure-here:disabled{cursor:progress}
+.app-frame .departure-here-text{display:grid;gap:2px;min-width:0}
+.app-frame .departure-here-text b{font-size:var(--refine-type-item)}
+.app-frame .departure-here-text small{font-size:var(--travel-type-meta);color:var(--muted);word-break:keep-all}
+.app-frame .departure-pin{position:relative;flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--mint)}
+.app-frame .departure-pin::before{content:'';position:absolute;inset:0;border:2px solid var(--green);border-radius:50%;opacity:0;animation:cond-ping 2.4s ease-out infinite}
+.app-frame .departure-pin .cond-art{width:22px;height:22px}
+.app-frame .departure-here.locating .departure-pin .cond-art{animation:cond-bounce .6s ease-in-out infinite}
+.app-frame .departure-here+.field-help:empty{display:none}
+.app-frame .ai-step .departure-search{margin-top:var(--refine-space-12)}
+.app-frame .departure-result{grid-template-columns:auto minmax(0,1fr);column-gap:var(--refine-space-10);animation:gt-rise .32s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 40ms)}
+.app-frame .departure-result .cond-art{grid-row:span 2;align-self:center;width:18px;height:18px}
+.app-frame .departure-result[aria-pressed=true]{background:var(--mint);border-color:var(--travel-selected-line);box-shadow:inset 0 0 0 1px var(--green),0 3px 0 var(--green)}
+.app-frame .station-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--refine-space-6);margin-top:var(--refine-space-6)}
+.app-frame .cond-chip .cond-tile-face{min-height:44px;padding:var(--refine-space-8) var(--refine-space-4);border-radius:var(--refine-radius-pill);box-shadow:0 2px 0 var(--edge-card)}
+.app-frame .cond-chip .cond-tile-face b{font-size:var(--refine-type-caption);font-weight:600}
+.app-frame .cond-chip input:checked+.cond-tile-face{box-shadow:inset 0 0 0 1px var(--green),0 2px 0 var(--green)}
+/* Step 2 시간: a ring filled to the tile's share of 12 hours, drawn in as the step opens. */
+.app-frame .hours-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .hours-tiles .cond-tile-face{min-height:96px;padding-top:var(--refine-space-14)}
+.app-frame .hours-ring{--ring:var(--fill,0deg);display:block;width:30px;height:30px;border-radius:50%;background:conic-gradient(var(--green) var(--ring),color-mix(in srgb,var(--green) 14%,var(--white)) 0);-webkit-mask:radial-gradient(farthest-side,transparent 52%,#000 56%);mask:radial-gradient(farthest-side,transparent 52%,#000 56%)}
+.app-frame .ai-step.entering .hours-ring{animation:cond-ring .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 30ms + 160ms)}
+.app-frame .cond-tile input:checked+.cond-tile-face .hours-ring{animation:cond-ring .7s cubic-bezier(.2,.8,.2,1) both,cond-bump .4s cubic-bezier(.3,1.6,.5,1)}
+.app-frame .hours-ring.custom{display:grid;place-items:center;background:none;-webkit-mask:none;mask:none;border:2px dashed var(--travel-selected-line)}
+.app-frame .hours-ring.custom::after{content:'+';color:var(--green);font-size:18px;font-weight:800;line-height:1}
+.app-frame .hours-custom:not([hidden]){margin-top:var(--refine-space-12);padding:var(--refine-space-12);border-radius:var(--radius-box);background:var(--travel-subtle);animation:gt-rise .3s cubic-bezier(.2,.8,.2,1) both}
+/* Step 3 인원·걷기 */
+.app-frame .party-stepper{display:flex;align-items:center;justify-content:space-between;gap:var(--refine-space-12);padding:var(--refine-space-8);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--travel-subtle)}
+.app-frame .party-stepper:has(input[aria-invalid=true]){border-color:var(--danger);background:#fdf4f2}
+.app-frame .stepper-button{flex:none;display:grid;place-items:center;width:52px;height:52px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--white);color:var(--green);font-size:26px;font-weight:700;line-height:1;box-shadow:0 3px 0 var(--edge-card);transition:transform .09s ease-out,box-shadow .09s ease-out}
+.app-frame .stepper-button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .stepper-button:disabled{color:var(--line);box-shadow:none;cursor:default}
+.app-frame .party-value{display:flex;align-items:baseline;justify-content:center;gap:2px;flex:1;min-width:0}
+.app-frame .party-value input#ai-party{width:48px;min-height:0;padding:0;border:0;background:transparent;color:var(--ink);text-align:center;font-size:36px;font-weight:800;letter-spacing:-1px;line-height:1.2;-moz-appearance:textfield;appearance:textfield}
+.app-frame .party-value input#ai-party::-webkit-outer-spin-button,.app-frame .party-value input#ai-party::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.app-frame .party-value>span{font-size:var(--refine-type-item);font-weight:700;color:var(--muted)}
+.app-frame .party-value.bump input{animation:cond-bump .34s cubic-bezier(.3,1.6,.5,1)}
+.app-frame .party-people{display:flex;justify-content:center;align-items:flex-end;gap:6px;min-height:34px;margin-top:var(--refine-space-10)}
+.app-frame .party-people .cond-art{width:22px;height:30px;fill:color-mix(in srgb,var(--green) 40%,var(--white));animation:gt-spring .45s cubic-bezier(.3,1.5,.5,1) both}
+.app-frame .party-people .cond-art.me{fill:var(--green)}
+.app-frame .walk-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .walk-tiles .cond-tile-face{min-height:104px;padding-top:var(--refine-space-14)}
+.app-frame .walk-paws{display:flex;align-items:flex-end;gap:2px;height:24px}
+.app-frame .walk-paws .cond-art{width:18px;height:18px;fill:color-mix(in srgb,var(--green) 30%,var(--line));rotate:-12deg}
+.app-frame .walk-paws .cond-art:nth-child(2){translate:0 -6px;rotate:10deg}
+.app-frame .walk-paws .cond-art:nth-child(3){rotate:-6deg}
+.app-frame .cond-tile input:checked+.cond-tile-face .walk-paws .cond-art{fill:var(--green);animation:cond-stamp .42s cubic-bezier(.3,1.6,.5,1) both}
+.app-frame .cond-tile input:checked+.cond-tile-face .walk-paws .cond-art:nth-child(2){animation-delay:.13s}
+.app-frame .cond-tile input:checked+.cond-tile-face .walk-paws .cond-art:nth-child(3){animation-delay:.26s}
+/* Step 4 출발 시간대 and the review */
+.app-frame .time-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--refine-space-10)}
+.app-frame .time-tiles .cond-tile-face{min-height:128px;gap:6px}
+.app-frame .time-tiles .cond-tile-face>.cond-art{width:54px;height:54px}
+.app-frame .time-tiles input:checked+.cond-tile-face>.cond-art{animation:cond-float 2.8s ease-in-out infinite}
+.app-frame .art-sun .sun-core{fill:#ffb938}
+.app-frame .art-sun .sun-rays{fill:#ffcf6b;transform-box:view-box;transform-origin:24px 24px}
+.app-frame .cond-tile input:checked+.cond-tile-face .sun-rays{animation:cond-spin 10s linear infinite}
+.app-frame .art-moon .moon-body{fill:#7e8cf0}
+.app-frame .art-moon .star{fill:#ffcf6b;transform-box:fill-box;transform-origin:center}
+.app-frame .cond-tile input:checked+.cond-tile-face .star{animation:cond-twinkle 1.7s ease-in-out infinite}
+.app-frame .cond-tile input:checked+.cond-tile-face .star.s2{animation-delay:.55s}
+.app-frame .cond-tile input:checked+.cond-tile-face .star.s3{animation-delay:1.1s}
+.app-frame .cond-review{margin-top:var(--refine-space-20);padding:var(--refine-space-14) var(--refine-space-16);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);box-shadow:0 4px 0 var(--edge-card)}
+.app-frame .cond-review h3{margin:0 0 var(--refine-space-4);font-size:var(--refine-type-label)}
+.app-frame .cond-review dl{display:grid;margin:0}
+.app-frame .cond-review-row{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:center;gap:var(--refine-space-8);padding:var(--refine-space-4) 0;border-top:1px dashed var(--line)}
+.app-frame .cond-review-row:first-child{border-top:0}
+.app-frame .cond-review dt{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .cond-review dd{display:flex;align-items:center;justify-content:space-between;gap:var(--refine-space-8);margin:0;font-size:var(--refine-type-caption);font-weight:700;word-break:keep-all}
+.app-frame .cond-review dd .text-button{flex:none;min-height:36px;padding:4px 6px;font-size:var(--travel-type-meta)}
+/* D43: the row just changed with 바꾸기 lights up once on the way back to the review. */
+.app-frame .cond-review-row.just-changed dd{border-radius:8px;animation:cond-changed 1.6s ease-out .3s both}
+.app-frame .cond-review-row.just-changed dd>span{transform-origin:0 50%;animation:gt-pop .45s cubic-bezier(.3,1.6,.5,1) .3s both}
+@keyframes cond-changed{0%{background:color-mix(in srgb,var(--green) 20%,transparent);box-shadow:0 0 0 6px color-mix(in srgb,var(--green) 20%,transparent)}100%{background:transparent;box-shadow:0 0 0 6px transparent}}
+@keyframes cond-heading{from{opacity:0;transform:translateY(10px)}}
+@keyframes cond-in-right{from{opacity:0;transform:translateX(48px)}}
+@keyframes cond-in-left{from{opacity:0;transform:translateX(-48px)}}
+@keyframes cond-shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+@keyframes cond-choose{0%{transform:scale(.93)}55%{transform:scale(1.05)}100%{transform:none}}
+@keyframes cond-ring{from{--ring:0deg}}
+@keyframes cond-bump{0%{transform:scale(.8)}60%{transform:scale(1.16)}100%{transform:none}}
+@keyframes cond-stamp{0%{opacity:0;scale:1.9}100%{opacity:1;scale:1}}
+@keyframes cond-float{0%,100%{transform:none}50%{transform:translateY(-4px)}}
+@keyframes cond-spin{to{transform:rotate(360deg)}}
+@keyframes cond-twinkle{0%,100%{opacity:1;transform:none}50%{opacity:.25;transform:scale(.5)}}
+@keyframes cond-tilt{25%{transform:rotate(-14deg)}55%{transform:rotate(10deg)}80%{transform:rotate(-4deg)}}
+@keyframes cond-ping{0%{opacity:.7;transform:scale(.7)}80%,100%{opacity:0;transform:scale(1.5)}}
+@keyframes cond-bounce{0%,100%{transform:none}50%{transform:translateY(-5px)}}
+@media(max-width:359px){.app-frame .hours-tiles{gap:var(--refine-space-6)}.app-frame .hours-tiles .cond-tile-face{min-height:88px;padding-inline:2px}.app-frame .hours-tiles .cond-tile-face b{font-size:var(--refine-type-caption)}}
+
+/* D44/P60 places found around the chosen point: where they were found, 한국관광공사 photos, today's events nearby,
+   and the map's "이 근처에서 추천 받기" with a cross at the centre. */
+.app-frame .results-where{display:inline-flex;align-items:center;gap:6px;margin:var(--refine-space-8) 0 0;padding:6px 14px 6px 10px;border:1px solid var(--travel-selected-line);border-radius:99px;background:var(--mint);color:var(--green-dark);font-size:var(--refine-type-caption);font-weight:700;box-shadow:0 2px 0 color-mix(in srgb,var(--green) 28%,transparent);animation:gt-spring .5s cubic-bezier(.3,1.5,.5,1) .1s both}
+.app-frame .results-where[hidden]{display:none}
+.app-frame .results-where .cond-art{width:16px;height:16px}
+.app-frame .place-photo{position:relative;margin:calc(-1 * var(--refine-space-16)) calc(-1 * var(--refine-space-16)) var(--refine-space-12);aspect-ratio:16/9;overflow:hidden;border-radius:var(--radius-box) var(--radius-box) 0 0;background:var(--travel-subtle)}
+.app-frame .place-photo img{display:block;width:100%;height:100%;object-fit:cover;animation:gt-fade .5s ease-out both}
+.app-frame .place-photo figcaption{position:absolute;right:8px;bottom:6px;padding:2px 8px;border-radius:99px;background:#0008;color:#fff;font-size:var(--travel-type-micro)}
+.app-frame #evidence-content .place-photo{margin:0 0 var(--refine-space-12);border-radius:var(--radius-box)}
+.app-frame .ai-result-card{overflow:hidden}
+.app-frame .ai-result-source{color:var(--green-dark)}
+.app-frame .ai-events h3{display:flex;align-items:center;gap:6px}
+.app-frame .ai-events h3::before{content:'';width:8px;height:8px;border-radius:50%;background:#ff5a5f;box-shadow:0 0 0 0 #ff5a5f80;animation:cond-live 1.6s ease-out infinite}
+.app-frame .ai-event-list{list-style:none;display:grid;gap:var(--refine-space-8);margin:var(--refine-space-8) 0;padding:0}
+.app-frame .ai-event{display:flex;align-items:center;gap:var(--refine-space-10);padding:var(--refine-space-10) var(--refine-space-12);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);box-shadow:0 3px 0 var(--edge-card);animation:gt-rise .4s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 60ms)}
+.app-frame .ai-event-photo{flex:none;width:52px;height:52px;border-radius:10px;object-fit:cover}
+.app-frame .ai-event-text{display:grid;gap:2px;flex:1;min-width:0}
+.app-frame .ai-event-text b{font-size:var(--refine-type-label);word-break:keep-all}
+.app-frame .ai-event-text .muted{font-size:var(--travel-type-meta);overflow-wrap:anywhere}
+.app-frame .ai-event .text-button{flex:none}
+.app-frame .map-stage{position:relative}
+.app-frame .map-crosshair{position:absolute;left:50%;top:calc(50% + var(--refine-space-6));width:34px;height:34px;transform:translate(-50%,-50%);border:3px solid var(--green);border-radius:50%;background:color-mix(in srgb,var(--green) 14%,transparent);box-shadow:0 0 0 3px #fffd,0 4px 10px #0003;pointer-events:none;z-index:5}
+.app-frame .map-crosshair::after{content:'';position:absolute;left:50%;top:50%;width:8px;height:8px;transform:translate(-50%,-50%);border-radius:50%;background:var(--green)}
+.app-frame .map-crosshair[hidden]{display:none}
+.app-frame .map-here{position:absolute;left:50%;top:calc(var(--refine-space-12) + var(--refine-space-12));transform:translateX(-50%);z-index:6;min-height:40px;padding:6px 16px;font-size:var(--refine-type-caption);white-space:nowrap;box-shadow:0 3px 0 var(--green-dark),0 6px 14px #0003;animation:gt-drop .45s cubic-bezier(.3,1.4,.5,1) both}
+.app-frame .map-here:active:not(:disabled){transform:translate(-50%,3px)}
+.app-frame .map-here[hidden]{display:none}
+@keyframes cond-live{0%{box-shadow:0 0 0 0 #ff5a5f80}100%{box-shadow:0 0 0 8px #ff5a5f00}}
+
+/* Q16 서울시 실시간 혼잡도 on a pick: 여유 green, 보통 grey-blue, 약간 붐빔 amber, 붐빔 red, with a live dot. */
+.app-frame .crowd-chip{display:inline-flex;align-items:center;gap:6px;margin:var(--refine-space-6) 0 0;padding:3px 10px 3px 8px;border-radius:99px;font-size:var(--travel-type-meta);font-weight:700;background:var(--crowd-bg);color:var(--crowd-ink);animation:gt-pop .4s cubic-bezier(.3,1.5,.5,1) .35s both}
+.app-frame .crowd-chip::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--crowd-ink);animation:cond-live 1.8s ease-out infinite;box-shadow:0 0 0 0 var(--crowd-ink)}
+.app-frame .crowd-0{--crowd-bg:#e3f6e8;--crowd-ink:#1c7a3d}
+.app-frame .crowd-1{--crowd-bg:#e8eef8;--crowd-ink:#3c5a8c}
+.app-frame .crowd-2{--crowd-bg:#fff1d6;--crowd-ink:#9a5a00}
+.app-frame .crowd-3{--crowd-bg:#fde4e2;--crowd-ink:#b3261e}
+
+/* P62 small photos (Kakao thumbnails, or any photo in a list) sit as a square beside the text, never stretched. */
+.app-frame .place-photo figcaption a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+.app-frame .place-photo.small{flex:none;width:76px;height:76px;aspect-ratio:1;margin:0;border-radius:14px;box-shadow:0 3px 0 var(--edge-card)}
+.app-frame .place-photo.small figcaption{left:0;right:0;bottom:0;border-radius:0 0 14px 14px;padding:1px 4px;font-size:9px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-frame .ai-result-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--refine-space-10)}
+.app-frame .more-place{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--refine-space-12);align-items:start}
+.app-frame .more-place>:not(.place-photo){grid-column:2}
+.app-frame .more-place>.place-photo{grid-row:1 / span 5;animation:gt-pop .4s cubic-bezier(.3,1.5,.5,1) both}
+.app-frame .more-place:not(:has(.place-photo))>*{grid-column:1 / -1}
+.app-frame #evidence-content .place-photo.small{width:96px;height:96px;margin-bottom:var(--refine-space-12)}
+.app-frame .more-place .arrival-place-head{flex-direction:column;align-items:flex-start;gap:2px}
+.app-frame .more-place .arrival-place-head b{word-break:keep-all}
+.app-frame .ai-result-card .place-photo:not(.small)+.ai-result-head .place-photo.small{display:none}

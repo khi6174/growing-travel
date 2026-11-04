@@ -1,0 +1,1506 @@
+{
+  "ranAt": "2026-11-02T01:19:30.794Z",
+  "ai": {
+    "name": "none",
+    "configured": false,
+    "model": null
+  },
+  "fieldReports": "none",
+  "rows": [
+    {
+      "index": 1,
+      "conditions": {
+        "pet": "golden",
+        "departure": "hongik",
+        "location": null,
+        "hours": 4,
+        "partySize": 2,
+        "walkLevel": 3,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "골든과 함께 · 홍대입구역 출발 · 4시간 · 2명 · 많이 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 46,
+      "items": [
+        {
+          "place_id": "seoul-yeonnam-forest-road",
+          "reason": "우와, 연남동 경의선숲길! 산책로·공원 코스라 몸 풀기 딱이야. 신나게 같이 걸어 보자!",
+          "route_summary": "홍대입구역 (2호선·공항철도·경의중앙선) 3번 출구 바로 앞",
+          "live_note": "",
+          "friend_hint": "마포구에 가면 동네 친구 ‘음표등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 10,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seoul-yeonnam-forest-road",
+            "name": "연남동 경의선숲길",
+            "gu": "mapo",
+            "guName": "마포구",
+            "lat": 37.561696,
+            "lng": 126.923056,
+            "tags": [
+              "산책로",
+              "공원",
+              "조용한 카페"
+            ],
+            "nearest_station": "홍대입구역 (2호선·공항철도·경의중앙선)",
+            "access_summary": "3번 출구 바로 앞",
+            "walk_level": 2,
+            "summary": "옛 철길 위 공원을 따라 카페 골목을 걸어요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 마포구 연남동"
+          },
+          "friend": {
+            "id": "eumpyodeung",
+            "name": "음표등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "mapo-haneul-park",
+          "reason": "우와, 하늘공원! 전망 산책·공원 코스라 몸 풀기 딱이야. 신나게 같이 걸어 보자!",
+          "route_summary": "홍대입구역에서 월드컵경기장역 (6호선)까지 대중교통 약 15분(추정), 1번 출구에서 도보 약 20분, 계단 또는 맹꽁이차",
+          "live_note": "",
+          "friend_hint": "마포구에 가면 동네 친구 ‘음표등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "mapo-haneul-park",
+            "name": "하늘공원",
+            "gu": "mapo",
+            "guName": "마포구",
+            "lat": 37.569098,
+            "lng": 126.886344,
+            "tags": [
+              "전망 산책",
+              "공원",
+              "사진 명소"
+            ],
+            "nearest_station": "월드컵경기장역 (6호선)",
+            "access_summary": "1번 출구에서 도보 약 20분, 계단 또는 맹꽁이차",
+            "walk_level": 3,
+            "summary": "언덕 위 억새 들판이에요. 가을에 특히 인기가 많아요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 마포구 하늘공원로 95"
+          },
+          "friend": {
+            "id": "eumpyodeung",
+            "name": "음표등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "mapo-mangwon-hangang",
+          "reason": "우와, 망원한강공원! 한강·공원 코스라 몸 풀기 딱이야. 신나게 같이 걸어 보자!",
+          "route_summary": "홍대입구역에서 망원역 (6호선)까지 대중교통 약 15분(추정), 1번 출구에서 도보 약 15분",
+          "live_note": "",
+          "friend_hint": "마포구에 가면 동네 친구 ‘음표등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "mapo-mangwon-hangang",
+            "name": "망원한강공원",
+            "gu": "mapo",
+            "guName": "마포구",
+            "lat": 37.5514,
+            "lng": 126.9005,
+            "tags": [
+              "한강",
+              "공원",
+              "야경"
+            ],
+            "nearest_station": "망원역 (6호선)",
+            "access_summary": "1번 출구에서 도보 약 15분",
+            "walk_level": 2,
+            "summary": "강변 잔디와 자전거길이 있어요. 노을 무렵 사람이 많아요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 마포구 마포나루길 467"
+          },
+          "friend": {
+            "id": "eumpyodeung",
+            "name": "음표등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 2,
+      "conditions": {
+        "pet": "golden",
+        "departure": "gangnam",
+        "location": null,
+        "hours": 3,
+        "partySize": 1,
+        "walkLevel": 2,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "골든과 함께 · 강남역 출발 · 3시간 · 혼자 · 적당히 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 9,
+      "items": [
+        {
+          "place_id": "gangnam-yangjaecheon",
+          "reason": "우와, 양재천 산책로! 산책로·공원 코스라 몸 풀기 딱이야. 신나게 같이 걸어 보자!",
+          "route_summary": "강남역에서 매봉역 (3호선)까지 대중교통 약 15분(추정), 도보 약 10분",
+          "live_note": "",
+          "friend_hint": "강남구에 가면 동네 친구 ‘유리빛’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "gangnam-yangjaecheon",
+            "name": "양재천 산책로",
+            "gu": "gangnam",
+            "guName": "강남구",
+            "lat": 37.4845,
+            "lng": 127.052,
+            "tags": [
+              "산책로",
+              "공원"
+            ],
+            "nearest_station": "매봉역 (3호선)",
+            "access_summary": "도보 약 10분",
+            "walk_level": 2,
+            "summary": "하천 양옆으로 산책로와 카페길이 이어져요.",
+            "needs_check": true,
+            "coords_source": "draft",
+            "address": null
+          },
+          "friend": {
+            "id": "yuribit",
+            "name": "유리빛",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seocho-banpo-hangang",
+          "reason": "우와, 반포한강공원! 한강·공원 코스라 몸 풀기 딱이야. 신나게 같이 걸어 보자!",
+          "route_summary": "강남역에서 고속터미널역 (3·7·9호선)까지 대중교통 약 15분(추정), 8-1번 출구에서 도보 약 15분",
+          "live_note": "",
+          "friend_hint": "서초구에 가면 동네 친구 ‘선율지’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seocho-banpo-hangang",
+            "name": "반포한강공원",
+            "gu": "seocho",
+            "guName": "서초구",
+            "lat": 37.507686,
+            "lng": 126.992751,
+            "tags": [
+              "한강",
+              "야경",
+              "공원"
+            ],
+            "nearest_station": "고속터미널역 (3·7·9호선)",
+            "access_summary": "8-1번 출구에서 도보 약 15분",
+            "walk_level": 2,
+            "summary": "달빛무지개분수와 세빛섬이 있어요. 분수 운영 시간을 확인해 주세요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 서초구 신반포로11길 40 (반포동)"
+          },
+          "friend": {
+            "id": "seonyulji",
+            "name": "선율지",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seocho-montmartre",
+          "reason": "우와, 서리풀공원 몽마르뜨공원! 공원·전망 산책 코스라 몸 풀기 딱이야. 신나게 같이 걸어 보자!",
+          "route_summary": "강남역에서 고속터미널역 (3·7·9호선)까지 대중교통 약 15분(추정), 5번 출구에서 도보 약 15분",
+          "live_note": "",
+          "friend_hint": "서초구에 가면 동네 친구 ‘선율지’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seocho-montmartre",
+            "name": "서리풀공원 몽마르뜨공원",
+            "gu": "seocho",
+            "guName": "서초구",
+            "lat": 37.497682,
+            "lng": 127.004548,
+            "tags": [
+              "공원",
+              "전망 산책"
+            ],
+            "nearest_station": "고속터미널역 (3·7·9호선)",
+            "access_summary": "5번 출구에서 도보 약 15분",
+            "walk_level": 2,
+            "summary": "언덕 위 숲 공원이에요. 서래마을과 이어 걷기 좋아요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 서초구 반포대로 201 (반포동)"
+          },
+          "friend": {
+            "id": "seonyulji",
+            "name": "선율지",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 3,
+      "conditions": {
+        "pet": "shiba",
+        "departure": "sinchon",
+        "location": null,
+        "hours": 3,
+        "partySize": 2,
+        "walkLevel": 1,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "시바와 함께 · 신촌역 출발 · 3시간 · 2명 · 조금만 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 6,
+      "items": [
+        {
+          "place_id": "seocho-national-library",
+          "reason": "국립중앙도서관, 어때요? 서점·책 공간·한적한 곳 분위기라 느긋하게 쉬기 좋아요. 천천히 가요.",
+          "route_summary": "신촌역에서 고속터미널역 (3·7·9호선)까지 대중교통 약 30분(추정), 도보 약 15분",
+          "live_note": "",
+          "friend_hint": "서초구에 가면 동네 친구 ‘선율지’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 30,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seocho-national-library",
+            "name": "국립중앙도서관",
+            "gu": "seocho",
+            "guName": "서초구",
+            "lat": 37.497925,
+            "lng": 127.002821,
+            "tags": [
+              "서점·책 공간",
+              "한적한 곳"
+            ],
+            "nearest_station": "고속터미널역 (3·7·9호선)",
+            "access_summary": "도보 약 15분",
+            "walk_level": 1,
+            "summary": "이용 규칙을 확인하고 조용히 책을 볼 수 있는 국가 도서관이에요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 서초구 반포대로 201"
+          },
+          "friend": {
+            "id": "seonyulji",
+            "name": "선율지",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seocho-citizens-forest",
+          "reason": "양재시민의숲, 어때요? 정원·숲·한적한 곳 분위기라 느긋하게 쉬기 좋아요. 천천히 가요.",
+          "route_summary": "신촌역에서 양재시민의숲역 (신분당선)까지 대중교통 약 40분(추정), 5번 출구에서 도보 약 3분",
+          "live_note": "",
+          "friend_hint": "서초구에 가면 동네 친구 ‘선율지’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 40,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seocho-citizens-forest",
+            "name": "양재시민의숲",
+            "gu": "seocho",
+            "guName": "서초구",
+            "lat": 37.47,
+            "lng": 127.0355,
+            "tags": [
+              "공원",
+              "정원·숲",
+              "한적한 곳"
+            ],
+            "nearest_station": "양재시민의숲역 (신분당선)",
+            "access_summary": "5번 출구에서 도보 약 3분",
+            "walk_level": 1,
+            "summary": "키 큰 나무 사이 평지 산책로가 있는 숲이에요.",
+            "needs_check": true,
+            "coords_source": "draft",
+            "address": null
+          },
+          "friend": {
+            "id": "seonyulji",
+            "name": "선율지",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seodaemun-independence-park",
+          "reason": "독립공원·독립문, 어때요? 한적한 곳 분위기라 느긋하게 쉬기 좋아요. 천천히 가요.",
+          "route_summary": "신촌역에서 독립문역 (3호선)까지 대중교통 약 15분(추정), 4번 출구 바로 앞",
+          "live_note": "",
+          "friend_hint": "서대문구에 가면 동네 친구 ‘기억돌’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seodaemun-independence-park",
+            "name": "독립공원·독립문",
+            "gu": "seodaemun",
+            "guName": "서대문구",
+            "lat": 37.5724,
+            "lng": 126.9595,
+            "tags": [
+              "공원",
+              "한적한 곳"
+            ],
+            "nearest_station": "독립문역 (3호선)",
+            "access_summary": "4번 출구 바로 앞",
+            "walk_level": 1,
+            "summary": "독립문과 넓은 광장이 있는 공원이에요. 역사관과 함께 둘러보기 좋아요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 서대문구 현저동"
+          },
+          "friend": {
+            "id": "gieokdol",
+            "name": "기억돌",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 4,
+      "conditions": {
+        "pet": "shiba",
+        "departure": "jamsil",
+        "location": null,
+        "hours": 2,
+        "partySize": 1,
+        "walkLevel": 1,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "시바와 함께 · 잠실역 출발 · 2시간 · 혼자 · 조금만 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 6,
+      "items": [
+        {
+          "place_id": "gangdong-gildong-eco",
+          "reason": "길동생태공원, 어때요? 정원·숲·한적한 곳 분위기라 느긋하게 쉬기 좋아요. 천천히 가요.",
+          "route_summary": "잠실역에서 길동역 (5호선)까지 대중교통 약 25분(추정), 3번 출구에서 도보 약 10분",
+          "live_note": "",
+          "friend_hint": "강동구에 가면 동네 친구 ‘빗살무늬’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 25,
+          "minutesEstimated": true,
+          "place": {
+            "id": "gangdong-gildong-eco",
+            "name": "길동생태공원",
+            "gu": "gangdong",
+            "guName": "강동구",
+            "lat": 37.541264,
+            "lng": 127.156821,
+            "tags": [
+              "정원·숲",
+              "공원",
+              "한적한 곳"
+            ],
+            "nearest_station": "길동역 (5호선)",
+            "access_summary": "3번 출구에서 도보 약 10분",
+            "walk_level": 1,
+            "summary": "습지와 숲을 관찰하는 생태공원이에요. 예약·입장 방식을 확인해 주세요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 강동구 천호대로 1291"
+          },
+          "friend": {
+            "id": "bitsalmunui",
+            "name": "빗살무늬",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seocho-citizens-forest",
+          "reason": "양재시민의숲, 어때요? 정원·숲·한적한 곳 분위기라 느긋하게 쉬기 좋아요. 천천히 가요.",
+          "route_summary": "잠실역에서 양재시민의숲역 (신분당선)까지 대중교통 약 25분(추정), 5번 출구에서 도보 약 3분",
+          "live_note": "",
+          "friend_hint": "서초구에 가면 동네 친구 ‘선율지’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 25,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seocho-citizens-forest",
+            "name": "양재시민의숲",
+            "gu": "seocho",
+            "guName": "서초구",
+            "lat": 37.47,
+            "lng": 127.0355,
+            "tags": [
+              "공원",
+              "정원·숲",
+              "한적한 곳"
+            ],
+            "nearest_station": "양재시민의숲역 (신분당선)",
+            "access_summary": "5번 출구에서 도보 약 3분",
+            "walk_level": 1,
+            "summary": "키 큰 나무 사이 평지 산책로가 있는 숲이에요.",
+            "needs_check": true,
+            "coords_source": "draft",
+            "address": null
+          },
+          "friend": {
+            "id": "seonyulji",
+            "name": "선율지",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seocho-national-library",
+          "reason": "국립중앙도서관, 어때요? 서점·책 공간·한적한 곳 분위기라 느긋하게 쉬기 좋아요. 천천히 가요.",
+          "route_summary": "잠실역에서 고속터미널역 (3·7·9호선)까지 대중교통 약 30분(추정), 도보 약 15분",
+          "live_note": "",
+          "friend_hint": "서초구에 가면 동네 친구 ‘선율지’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 30,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seocho-national-library",
+            "name": "국립중앙도서관",
+            "gu": "seocho",
+            "guName": "서초구",
+            "lat": 37.497925,
+            "lng": 127.002821,
+            "tags": [
+              "서점·책 공간",
+              "한적한 곳"
+            ],
+            "nearest_station": "고속터미널역 (3·7·9호선)",
+            "access_summary": "도보 약 15분",
+            "walk_level": 1,
+            "summary": "이용 규칙을 확인하고 조용히 책을 볼 수 있는 국가 도서관이에요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 서초구 반포대로 201"
+          },
+          "friend": {
+            "id": "seonyulji",
+            "name": "선율지",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 5,
+      "conditions": {
+        "pet": "corgi",
+        "departure": "seoul",
+        "location": null,
+        "hours": 3,
+        "partySize": 3,
+        "walkLevel": 2,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "코기와 함께 · 서울역 출발 · 3시간 · 3명 · 적당히 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 6,
+      "items": [
+        {
+          "place_id": "seoul-gwangjang-market",
+          "reason": "광장시장! 시장·노포·먹자골목 냄새가 벌써 나는 것 같아. 배고프면 바로 출발하자!",
+          "route_summary": "서울역에서 종로5가역 (1호선)까지 대중교통 약 15분(추정), 7·8번 출구 바로 앞",
+          "live_note": "",
+          "friend_hint": "종로구에 가면 동네 친구 ‘기와단’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seoul-gwangjang-market",
+            "name": "광장시장",
+            "gu": "jongno",
+            "guName": "종로구",
+            "lat": 37.57012,
+            "lng": 126.999799,
+            "tags": [
+              "시장",
+              "노포",
+              "먹자골목"
+            ],
+            "nearest_station": "종로5가역 (1호선)",
+            "access_summary": "7·8번 출구 바로 앞",
+            "walk_level": 1,
+            "summary": "빈대떡·육회 등 먹거리 골목이 있는 오래된 전통시장이에요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 종로구 창경궁로 88 (예지동)"
+          },
+          "friend": {
+            "id": "giwadan",
+            "name": "기와단",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "jung-myeongdong",
+          "reason": "명동 거리! 먹자골목·디저트 냄새가 벌써 나는 것 같아. 배고프면 바로 출발하자!",
+          "route_summary": "서울역에서 명동역 (4호선)까지 대중교통 약 10분(추정), 6번 출구 바로 앞",
+          "live_note": "",
+          "friend_hint": "중구에 가면 동네 친구 ‘봉수등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 10,
+          "minutesEstimated": true,
+          "place": {
+            "id": "jung-myeongdong",
+            "name": "명동 거리",
+            "gu": "jung",
+            "guName": "중구",
+            "lat": 37.5636,
+            "lng": 126.985,
+            "tags": [
+              "먹자골목",
+              "디저트"
+            ],
+            "nearest_station": "명동역 (4호선)",
+            "access_summary": "6번 출구 바로 앞",
+            "walk_level": 1,
+            "summary": "길거리 간식과 디저트 가게가 모인 거리예요. 저녁에 노점이 늘어요.",
+            "needs_check": true,
+            "coords_source": "draft",
+            "address": null
+          },
+          "friend": {
+            "id": "bongsudeung",
+            "name": "봉수등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "jung-namdaemun-market",
+          "reason": "남대문시장! 시장·노포 냄새가 벌써 나는 것 같아. 배고프면 바로 출발하자!",
+          "route_summary": "서울역에서 회현역 (4호선)까지 대중교통 약 10분(추정), 5번 출구 바로 앞",
+          "live_note": "",
+          "friend_hint": "중구에 가면 동네 친구 ‘봉수등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 10,
+          "minutesEstimated": true,
+          "place": {
+            "id": "jung-namdaemun-market",
+            "name": "남대문시장",
+            "gu": "jung",
+            "guName": "중구",
+            "lat": 37.559186,
+            "lng": 126.977654,
+            "tags": [
+              "시장",
+              "노포"
+            ],
+            "nearest_station": "회현역 (4호선)",
+            "access_summary": "5번 출구 바로 앞",
+            "walk_level": 1,
+            "summary": "갈치조림 골목과 호떡 등 먹거리가 있는 큰 전통시장이에요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 중구 남대문시장4길 21 (남창동)"
+          },
+          "friend": {
+            "id": "bongsudeung",
+            "name": "봉수등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 6,
+      "conditions": {
+        "pet": "corgi",
+        "departure": "konkuk",
+        "location": null,
+        "hours": 2,
+        "partySize": 2,
+        "walkLevel": 1,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "코기와 함께 · 건대입구역 출발 · 2시간 · 2명 · 조금만 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 4,
+      "items": [
+        {
+          "place_id": "seoul-gwangjang-market",
+          "reason": "광장시장! 시장·노포·먹자골목 냄새가 벌써 나는 것 같아. 배고프면 바로 출발하자!",
+          "route_summary": "건대입구역에서 종로5가역 (1호선)까지 대중교통 약 25분(추정), 7·8번 출구 바로 앞",
+          "live_note": "",
+          "friend_hint": "종로구에 가면 동네 친구 ‘기와단’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 25,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seoul-gwangjang-market",
+            "name": "광장시장",
+            "gu": "jongno",
+            "guName": "종로구",
+            "lat": 37.57012,
+            "lng": 126.999799,
+            "tags": [
+              "시장",
+              "노포",
+              "먹자골목"
+            ],
+            "nearest_station": "종로5가역 (1호선)",
+            "access_summary": "7·8번 출구 바로 앞",
+            "walk_level": 1,
+            "summary": "빈대떡·육회 등 먹거리 골목이 있는 오래된 전통시장이에요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 종로구 창경궁로 88 (예지동)"
+          },
+          "friend": {
+            "id": "giwadan",
+            "name": "기와단",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "gwangjin-kondae-food",
+          "reason": "건대 맛의거리! 먹자골목·디저트 냄새가 벌써 나는 것 같아. 배고프면 바로 출발하자!",
+          "route_summary": "건대입구역 (2·7호선) 5번 출구에서 도보 약 3분",
+          "live_note": "",
+          "friend_hint": "광진구에 가면 동네 친구 ‘물결띠’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 10,
+          "minutesEstimated": true,
+          "place": {
+            "id": "gwangjin-kondae-food",
+            "name": "건대 맛의거리",
+            "gu": "gwangjin",
+            "guName": "광진구",
+            "lat": 37.541,
+            "lng": 127.07,
+            "tags": [
+              "먹자골목",
+              "디저트"
+            ],
+            "nearest_station": "건대입구역 (2·7호선)",
+            "access_summary": "5번 출구에서 도보 약 3분",
+            "walk_level": 1,
+            "summary": "양꼬치·분식·디저트 가게가 모인 대학가 골목이에요.",
+            "needs_check": true,
+            "coords_source": "draft",
+            "address": null
+          },
+          "friend": {
+            "id": "mulgyeolddi",
+            "name": "물결띠",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "dongdaemun-gyeongdong-market",
+          "reason": "경동시장·서울약령시! 시장·노포 냄새가 벌써 나는 것 같아. 배고프면 바로 출발하자!",
+          "route_summary": "건대입구역에서 제기동역 (1호선)까지 대중교통 약 20분(추정), 2번 출구 바로 앞",
+          "live_note": "",
+          "friend_hint": "동대문구에 가면 동네 친구 ‘약초봉투’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 20,
+          "minutesEstimated": true,
+          "place": {
+            "id": "dongdaemun-gyeongdong-market",
+            "name": "경동시장·서울약령시",
+            "gu": "dongdaemun",
+            "guName": "동대문구",
+            "lat": 37.579038,
+            "lng": 127.039143,
+            "tags": [
+              "시장",
+              "노포"
+            ],
+            "nearest_station": "제기동역 (1호선)",
+            "access_summary": "2번 출구 바로 앞",
+            "walk_level": 1,
+            "summary": "약재와 농산물, 오래된 식당이 모인 큰 시장이에요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 동대문구 고산자로36길 3 (제기동)"
+          },
+          "friend": {
+            "id": "yakchobongtu",
+            "name": "약초봉투",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 7,
+      "conditions": {
+        "pet": "bichon",
+        "departure": "seongsu",
+        "location": null,
+        "hours": 3,
+        "partySize": 2,
+        "walkLevel": 2,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "비숑과 함께 · 성수역 출발 · 3시간 · 2명 · 적당히 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 7,
+      "items": [
+        {
+          "place_id": "gwangjin-common-ground",
+          "reason": "커먼그라운드, 같이 갈래요? 사진 명소·감성 골목 분위기라 사진이 예쁘게 나와요. 오늘을 남겨 봐요.",
+          "route_summary": "성수역에서 건대입구역 (2·7호선)까지 대중교통 약 10분(추정), 6번 출구에서 도보 약 3분",
+          "live_note": "",
+          "friend_hint": "광진구에 가면 동네 친구 ‘물결띠’를 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 10,
+          "minutesEstimated": true,
+          "place": {
+            "id": "gwangjin-common-ground",
+            "name": "커먼그라운드",
+            "gu": "gwangjin",
+            "guName": "광진구",
+            "lat": 37.541,
+            "lng": 127.0658,
+            "tags": [
+              "사진 명소",
+              "감성 골목"
+            ],
+            "nearest_station": "건대입구역 (2·7호선)",
+            "access_summary": "6번 출구에서 도보 약 3분",
+            "walk_level": 1,
+            "summary": "파란 컨테이너로 지은 쇼핑·문화 공간이에요. 사진 찍기 좋아요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 광진구 아차산로 200"
+          },
+          "friend": {
+            "id": "mulgyeolddi",
+            "name": "물결띠",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seoul-seongsu",
+          "reason": "성수동 카페거리, 같이 갈래요? 감성 골목·사진 명소 분위기라 사진이 예쁘게 나와요. 오늘을 남겨 봐요.",
+          "route_summary": "성수역 (2호선) 3번 출구에서 도보 약 5분",
+          "live_note": "",
+          "friend_hint": "성동구에 가면 동네 친구 ‘벽돌공’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 10,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seoul-seongsu",
+            "name": "성수동 카페거리",
+            "gu": "seongdong",
+            "guName": "성동구",
+            "lat": 37.543198,
+            "lng": 127.056598,
+            "tags": [
+              "감성 골목",
+              "디저트",
+              "사진 명소"
+            ],
+            "nearest_station": "성수역 (2호선)",
+            "access_summary": "3번 출구에서 도보 약 5분",
+            "walk_level": 2,
+            "summary": "공장 건물을 고친 카페와 팝업 매장이 모인 동네예요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 성동구 성수동2가"
+          },
+          "friend": {
+            "id": "byeokdolgong",
+            "name": "벽돌공",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seoul-ddp",
+          "reason": "동대문디자인플라자(DDP), 같이 갈래요? 야경·사진 명소 분위기라 사진이 예쁘게 나와요. 오늘을 남겨 봐요.",
+          "route_summary": "성수역에서 동대문역사문화공원역 (2·4·5호선)까지 대중교통 약 20분(추정), 1번 출구 바로 연결",
+          "live_note": "",
+          "friend_hint": "중구에 가면 동네 친구 ‘봉수등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 20,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seoul-ddp",
+            "name": "동대문디자인플라자(DDP)",
+            "gu": "jung",
+            "guName": "중구",
+            "lat": 37.566108,
+            "lng": 127.009571,
+            "tags": [
+              "전시",
+              "야경",
+              "사진 명소"
+            ],
+            "nearest_station": "동대문역사문화공원역 (2·4·5호선)",
+            "access_summary": "1번 출구 바로 연결",
+            "walk_level": 1,
+            "summary": "곡선 건축물과 전시 공간이에요. 밤 조명이 볼 만해요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 중구 을지로 281 (을지로7가)"
+          },
+          "friend": {
+            "id": "bongsudeung",
+            "name": "봉수등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 8,
+      "conditions": {
+        "pet": "bichon",
+        "departure": "yeouido",
+        "location": null,
+        "hours": 2,
+        "partySize": 2,
+        "walkLevel": 2,
+        "timeOfDay": "evening",
+        "metFriends": []
+      },
+      "conditionsText": "비숑과 함께 · 여의도역 출발 · 2시간 · 2명 · 적당히 걷기 · 저녁",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 6,
+      "items": [
+        {
+          "place_id": "ydp-seonyudo",
+          "reason": "선유도공원, 같이 갈래요? 사진 명소·야경 분위기라 사진이 예쁘게 나와요. 오늘을 남겨 봐요.",
+          "route_summary": "여의도역에서 선유도역 (9호선)까지 대중교통 약 15분(추정), 2번 출구에서 도보 약 15분",
+          "live_note": "",
+          "friend_hint": "영등포구에 가면 동네 친구 ‘여의등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "ydp-seonyudo",
+            "name": "선유도공원",
+            "gu": "yeongdeungpo",
+            "guName": "영등포구",
+            "lat": 37.542238,
+            "lng": 126.902428,
+            "tags": [
+              "공원",
+              "정원·숲",
+              "사진 명소",
+              "야경"
+            ],
+            "nearest_station": "선유도역 (9호선)",
+            "access_summary": "2번 출구에서 도보 약 15분",
+            "walk_level": 2,
+            "summary": "옛 정수장을 고친 섬 공원이에요. 선유교 야경이 예뻐요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 영등포구 선유로 343 (당산동)"
+          },
+          "friend": {
+            "id": "yeouideung",
+            "name": "여의등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "mapo-hongdae-street",
+          "reason": "홍대 걷고싶은거리, 같이 갈래요? 감성 골목·야경 분위기라 사진이 예쁘게 나와요. 오늘을 남겨 봐요.",
+          "route_summary": "여의도역에서 홍대입구역 (2호선·공항철도·경의중앙선)까지 대중교통 약 20분(추정), 9번 출구에서 도보 약 5분",
+          "live_note": "",
+          "friend_hint": "마포구에 가면 동네 친구 ‘음표등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 20,
+          "minutesEstimated": true,
+          "place": {
+            "id": "mapo-hongdae-street",
+            "name": "홍대 걷고싶은거리",
+            "gu": "mapo",
+            "guName": "마포구",
+            "lat": 37.555999,
+            "lng": 126.924307,
+            "tags": [
+              "감성 골목",
+              "야경",
+              "먹자골목"
+            ],
+            "nearest_station": "홍대입구역 (2호선·공항철도·경의중앙선)",
+            "access_summary": "9번 출구에서 도보 약 5분",
+            "walk_level": 1,
+            "summary": "버스킹과 작은 가게가 많은 거리예요. 저녁에 활기가 커요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 마포구 서교동"
+          },
+          "friend": {
+            "id": "eumpyodeung",
+            "name": "음표등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seoul-ddp",
+          "reason": "동대문디자인플라자(DDP), 같이 갈래요? 야경·사진 명소 분위기라 사진이 예쁘게 나와요. 오늘을 남겨 봐요.",
+          "route_summary": "여의도역에서 동대문역사문화공원역 (2·4·5호선)까지 대중교통 약 30분(추정), 1번 출구 바로 연결",
+          "live_note": "",
+          "friend_hint": "중구에 가면 동네 친구 ‘봉수등’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 30,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seoul-ddp",
+            "name": "동대문디자인플라자(DDP)",
+            "gu": "jung",
+            "guName": "중구",
+            "lat": 37.566108,
+            "lng": 127.009571,
+            "tags": [
+              "전시",
+              "야경",
+              "사진 명소"
+            ],
+            "nearest_station": "동대문역사문화공원역 (2·4·5호선)",
+            "access_summary": "1번 출구 바로 연결",
+            "walk_level": 1,
+            "summary": "곡선 건축물과 전시 공간이에요. 밤 조명이 볼 만해요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 중구 을지로 281 (을지로7가)"
+          },
+          "friend": {
+            "id": "bongsudeung",
+            "name": "봉수등",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 9,
+      "conditions": {
+        "pet": "baekgu",
+        "departure": "gyeongbokgung",
+        "location": null,
+        "hours": 4,
+        "partySize": 2,
+        "walkLevel": 2,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "백구와 함께 · 경복궁역 출발 · 4시간 · 2명 · 적당히 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 6,
+      "items": [
+        {
+          "place_id": "seongbuk-choi-sunu-house",
+          "reason": "최순우옛집 어떠신지요. 한옥·전통 건축·박물관 이야기가 깃든 곳입니다. 차근차근 둘러보시지요.",
+          "route_summary": "경복궁역에서 한성대입구역 (4호선)까지 대중교통 약 15분(추정), 6번 출구에서 도보 약 10분",
+          "live_note": "",
+          "friend_hint": "성북구에 가면 동네 친구 ‘성곽돌담’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seongbuk-choi-sunu-house",
+            "name": "최순우옛집",
+            "gu": "seongbuk",
+            "guName": "성북구",
+            "lat": 37.593065,
+            "lng": 127.00036,
+            "tags": [
+              "한옥·전통 건축",
+              "박물관",
+              "한적한 곳"
+            ],
+            "nearest_station": "한성대입구역 (4호선)",
+            "access_summary": "6번 출구에서 도보 약 10분",
+            "walk_level": 1,
+            "summary": "근대 한옥과 작은 마당이 있는 시민문화유산이에요. 개방 기간을 확인해 주세요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 성북구 성북로15길 9 (성북동)"
+          },
+          "friend": {
+            "id": "seonggwakdoldam",
+            "name": "성곽돌담",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seongbuk-kansong",
+          "reason": "간송미술관 어떠신지요. 전시·박물관 이야기가 깃든 곳입니다. 차근차근 둘러보시지요.",
+          "route_summary": "경복궁역에서 한성대입구역 (4호선)까지 대중교통 약 15분(추정), 6번 출구에서 도보 약 20분",
+          "live_note": "",
+          "friend_hint": "성북구에 가면 동네 친구 ‘성곽돌담’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seongbuk-kansong",
+            "name": "간송미술관",
+            "gu": "seongbuk",
+            "guName": "성북구",
+            "lat": 37.593623,
+            "lng": 126.997364,
+            "tags": [
+              "전시",
+              "박물관"
+            ],
+            "nearest_station": "한성대입구역 (4호선)",
+            "access_summary": "6번 출구에서 도보 약 20분",
+            "walk_level": 2,
+            "summary": "우리 문화재를 지킨 간송 전형필의 미술관이에요. 관람 일정은 확인해 주세요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 성북구 성북로 102-11 (성북동)"
+          },
+          "friend": {
+            "id": "seonggwakdoldam",
+            "name": "성곽돌담",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seoul-national-museum",
+          "reason": "국립중앙박물관 어떠신지요. 박물관·전시 이야기가 깃든 곳입니다. 차근차근 둘러보시지요.",
+          "route_summary": "경복궁역에서 이촌역 (4호선·경의중앙선)까지 대중교통 약 25분(추정), 2번 출구에서 지하 보도로 도보 약 5분",
+          "live_note": "",
+          "friend_hint": "용산구에 가면 동네 친구 ‘철교바람’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 25,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seoul-national-museum",
+            "name": "국립중앙박물관",
+            "gu": "yongsan",
+            "guName": "용산구",
+            "lat": 37.521117,
+            "lng": 126.979112,
+            "tags": [
+              "박물관",
+              "전시"
+            ],
+            "nearest_station": "이촌역 (4호선·경의중앙선)",
+            "access_summary": "2번 출구에서 지하 보도로 도보 약 5분",
+            "walk_level": 2,
+            "summary": "상설 전시는 무료예요. 비 오는 날에도 하루를 보낼 수 있어요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 용산구 서빙고로 137 (용산동6가)"
+          },
+          "friend": {
+            "id": "cheolgyobaram",
+            "name": "철교바람",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    },
+    {
+      "index": 10,
+      "conditions": {
+        "pet": "baekgu",
+        "departure": "dongnimmun",
+        "location": null,
+        "hours": 2,
+        "partySize": 1,
+        "walkLevel": 1,
+        "timeOfDay": "day",
+        "metFriends": []
+      },
+      "conditionsText": "백구와 함께 · 독립문역 출발 · 2시간 · 혼자 · 조금만 걷기 · 낮",
+      "source": "rules",
+      "fallbackReason": "not_configured",
+      "dropped": 0,
+      "elapsedMs": 5,
+      "items": [
+        {
+          "place_id": "seongbuk-choi-sunu-house",
+          "reason": "최순우옛집 어떠신지요. 한옥·전통 건축·박물관 이야기가 깃든 곳입니다. 차근차근 둘러보시지요.",
+          "route_summary": "독립문역에서 한성대입구역 (4호선)까지 대중교통 약 20분(추정), 6번 출구에서 도보 약 10분",
+          "live_note": "",
+          "friend_hint": "성북구에 가면 동네 친구 ‘성곽돌담’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 20,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seongbuk-choi-sunu-house",
+            "name": "최순우옛집",
+            "gu": "seongbuk",
+            "guName": "성북구",
+            "lat": 37.593065,
+            "lng": 127.00036,
+            "tags": [
+              "한옥·전통 건축",
+              "박물관",
+              "한적한 곳"
+            ],
+            "nearest_station": "한성대입구역 (4호선)",
+            "access_summary": "6번 출구에서 도보 약 10분",
+            "walk_level": 1,
+            "summary": "근대 한옥과 작은 마당이 있는 시민문화유산이에요. 개방 기간을 확인해 주세요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 성북구 성북로15길 9 (성북동)"
+          },
+          "friend": {
+            "id": "seonggwakdoldam",
+            "name": "성곽돌담",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "seodaemun-prison-history",
+          "reason": "서대문형무소역사관 어떠신지요. 박물관 이야기가 깃든 곳입니다. 차근차근 둘러보시지요.",
+          "route_summary": "독립문역 (3호선) 5번 출구에서 도보 약 3분",
+          "live_note": "",
+          "friend_hint": "서대문구에 가면 동네 친구 ‘기억돌’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 10,
+          "minutesEstimated": true,
+          "place": {
+            "id": "seodaemun-prison-history",
+            "name": "서대문형무소역사관",
+            "gu": "seodaemun",
+            "guName": "서대문구",
+            "lat": 37.574304,
+            "lng": 126.955535,
+            "tags": [
+              "박물관"
+            ],
+            "nearest_station": "독립문역 (3호선)",
+            "access_summary": "5번 출구에서 도보 약 3분",
+            "walk_level": 1,
+            "summary": "독립운동가들이 갇혔던 옛 형무소를 보존한 역사관이에요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 서대문구 통일로 251"
+          },
+          "friend": {
+            "id": "gieokdol",
+            "name": "기억돌",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        },
+        {
+          "place_id": "jongno-mmca-seoul",
+          "reason": "국립현대미술관 서울관 어떠신지요. 전시 이야기가 깃든 곳입니다. 차근차근 둘러보시지요.",
+          "route_summary": "독립문역에서 안국역 (3호선)까지 대중교통 약 15분(추정), 1번 출구에서 도보 약 10분",
+          "live_note": "",
+          "friend_hint": "종로구에 가면 동네 친구 ‘기와단’을 만날 수 있어요.",
+          "source": "rules",
+          "minutes": 15,
+          "minutesEstimated": true,
+          "place": {
+            "id": "jongno-mmca-seoul",
+            "name": "국립현대미술관 서울관",
+            "gu": "jongno",
+            "guName": "종로구",
+            "lat": 37.57865,
+            "lng": 126.980004,
+            "tags": [
+              "전시"
+            ],
+            "nearest_station": "안국역 (3호선)",
+            "access_summary": "1번 출구에서 도보 약 10분",
+            "walk_level": 1,
+            "summary": "경복궁 옆 현대미술관이에요. 마당과 전시실을 천천히 돌아볼 수 있어요.",
+            "needs_check": true,
+            "coords_source": "tourapi",
+            "address": "서울특별시 종로구 삼청로 30"
+          },
+          "friend": {
+            "id": "giwadan",
+            "name": "기와단",
+            "met": false
+          },
+          "latest_report": null,
+          "checks": {
+            "purpose": true,
+            "within60": true,
+            "candidate": true,
+            "reason": true
+          },
+          "pass": true
+        }
+      ],
+      "three": true,
+      "pass": true
+    }
+  ]
+}

@@ -49,3 +49,13 @@ test('legacy profile route stays the travel preference step while settings has i
   assert.equal(navigationTab('saved'),'saved');
   assert.equal(navigationTab('benefits'),'benefits');
 });
+
+test('P47: deeper screens slide forward, going back slides back, and same-level tabs cross-fade', async () => {
+  const { navigationDirection } = await import('../dist/screen-navigation.mjs');
+  assert.equal(navigationDirection('home','pet'),'forward');
+  assert.equal(navigationDirection('pet','ai'),'forward');
+  assert.equal(navigationDirection('ai-results','ai'),'back');
+  assert.equal(navigationDirection('ai-results','home'),'back');
+  assert.equal(navigationDirection('saved','benefits'),'fade');
+  assert.equal(navigationDirection('map','dex'),'fade');
+});
