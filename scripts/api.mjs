@@ -10,6 +10,7 @@ import { normalizeConditions, departurePoint, insideSeoul } from '../dist/ai-con
 import { createNearby, NEARBY_TAG_LABELS } from './nearby.mjs';
 import { createPlaceRegistry, NEARBY_ID } from './place-registry.mjs';
 import { createCongestion } from './congestion.mjs';
+import { createPhotos } from './photos.mjs';
 import { createPlaceSearch } from './place-search.mjs';
 import { createTransit } from './transit.mjs';
 import { createStatsStore } from './stats.mjs';
@@ -78,6 +79,11 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
   const congestion = createCongestion({ seoulKey, kakaoKey: kakaoRestKey, fetchImpl: searchFetch, areas: async () => {
     try { return JSON.parse(await fs.readFile(path.join(dataDir, 'seoul_hotspots.json'), 'utf8')).areas ?? []; } catch { return []; }
   } });
+  // P62: a photo for each shown place (한국관광공사 first, then Kakao image search with its source).
+  const photos = createPhotos({ tourKey, kakaoKey: kakaoRestKey, fetchImpl: searchFetch });
+  async function placeById(id, catalog) {
+    return catalog.places.find((place) => place.id === id) ?? (NEARBY_ID.test(id) ? await registry.get(id) : null);
+  }
   // Looking ~120 names up takes a few seconds, so it starts with the server instead of the first recommendation.
   if (congestion.configured) congestion.points().catch(() => {});
   const known = async (id) => (await catalogIds()).has(id) || (NEARBY_ID.test(id) && (await registry.has(id)));
@@ -142,6 +148,10 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         const pool = found?.places?.length ? found.places : catalog.places;
         const reportSummaries = await reports.recentSummaries(pool.map((place) => place.id));
         const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit, nearby: found, crowd: congestion.configured ? (places) => congestion.forPlaces(places) : null });
+        if (photos.configured) {
+          const found = await photos.forPlaces(result.items.map((item) => item.place), new Map(catalog.districts.map((district) => [district.id, district.name])));
+          for (const item of result.items) Object.assign(item.place, found.get(item.place.id) ?? {});
+        }
         const counted = [];
         for (const item of result.items) if (await isPublic(item.place_id)) counted.push(item.place_id);
         await stats.recordPicks(conditions.pet, counted);
@@ -177,6 +187,15 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
       if (pathname === '/api/weather' && req.method === 'GET') return send(res, 200, await weather());
       // The typed departure travels in the body (it may be a home address), never in the URL.
       if (pathname === '/api/places/search' && req.method === 'POST') return send(res, 200, await placeSearch((await readJson(req))?.query));
+      // P62: photos for places the screen lists later ("더 보기"), up to 10 known places per call.
+      if (pathname === '/api/places/photos' && req.method === 'POST') {
+        const ids = (await readJson(req))?.ids;
+        if (!Array.isArray(ids) || ids.length > 10 || ids.some((id) => typeof id !== 'string' || id.length > 64)) return send(res, 400, { error: { code: 'INVALID_IDS', message: '장소를 10곳까지 보내 주세요.' } });
+        const catalog = await loadCatalog(dataDir);
+        const places = (await Promise.all(ids.map((id) => placeById(id, catalog)))).filter(Boolean);
+        const found = photos.configured ? await photos.forPlaces(places, new Map(catalog.districts.map((district) => [district.id, district.name]))) : new Map();
+        return send(res, 200, { photos: Object.fromEntries(found) });
+      }
       // D44: the 행정동 of a point picked on the map ("○○동 근처"); the point travels in the body, never the URL.
       if (pathname === '/api/places/region' && req.method === 'POST') {
         const body = await readJson(req);

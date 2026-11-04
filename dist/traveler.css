@@ -777,3 +777,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .crowd-1{--crowd-bg:#e8eef8;--crowd-ink:#3c5a8c}
 .app-frame .crowd-2{--crowd-bg:#fff1d6;--crowd-ink:#9a5a00}
 .app-frame .crowd-3{--crowd-bg:#fde4e2;--crowd-ink:#b3261e}
+
+/* P62 small photos (Kakao thumbnails, or any photo in a list) sit as a square beside the text, never stretched. */
+.app-frame .place-photo figcaption a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+.app-frame .place-photo.small{flex:none;width:76px;height:76px;aspect-ratio:1;margin:0;border-radius:14px;box-shadow:0 3px 0 var(--edge-card)}
+.app-frame .place-photo.small figcaption{left:0;right:0;bottom:0;border-radius:0 0 14px 14px;padding:1px 4px;font-size:9px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-frame .ai-result-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--refine-space-10)}
+.app-frame .more-place{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--refine-space-12);align-items:start}
+.app-frame .more-place>:not(.place-photo){grid-column:2}
+.app-frame .more-place>.place-photo{grid-row:1 / span 5;animation:gt-pop .4s cubic-bezier(.3,1.5,.5,1) both}
+.app-frame .more-place:not(:has(.place-photo))>*{grid-column:1 / -1}
+.app-frame #evidence-content .place-photo.small{width:96px;height:96px;margin-bottom:var(--refine-space-12)}
+.app-frame .more-place .arrival-place-head{flex-direction:column;align-items:flex-start;gap:2px}
+.app-frame .more-place .arrival-place-head b{word-break:keep-all}
+.app-frame .ai-result-card .place-photo:not(.small)+.ai-result-head .place-photo.small{display:none}

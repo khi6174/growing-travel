@@ -38,9 +38,10 @@ export const seoulKeyFrom = (value) => (/^[0-9A-Za-z]{20,64}$/.test(value ?? '')
 // 2026-11-02) and draws tiles from daumcdn.net/kakaocdn.net. Those hosts are allowed only when a key is configured;
 // host sources without a scheme follow the page's own http/https.
 // D44: with a TourAPI key, nearby places may show 한국관광공사 photos, served from tong.visitkorea.or.kr over HTTPS.
-export function contentSecurityPolicy(kakaoJsKey = null, { photos = false } = {}) {
+// P62: with the Kakao REST key, photos found by Kakao image search come from Kakao/Daum's own image servers.
+export function contentSecurityPolicy(kakaoJsKey = null, { photos = false, webPhotos = false } = {}) {
   const map = kakaoJsKey ? ' dapi.kakao.com *.kakaocdn.net *.daumcdn.net' : '';
-  const photo = photos ? ' https://tong.visitkorea.or.kr' : '';
+  const photo = (photos ? ' https://tong.visitkorea.or.kr' : '') + (webPhotos ? ' https://*.kakaocdn.net https://*.daumcdn.net' : '');
   return `default-src 'self'; script-src 'self'${map}; style-src 'self'; img-src 'self' data:${map}${photo}; connect-src 'self'${map}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`;
 }
 
@@ -49,7 +50,7 @@ export function contentSecurityPolicy(kakaoJsKey = null, { photos = false } = {}
 export function createServer({ dataDir = defaultDataDir, aiProvider = providerFromEnv(), aiTimeoutMs = Number(process.env.AI_TIMEOUT_MS) || 10000, tls = null, hosts = LOCAL_HOSTS, accessCode = null, kakaoJsKey = kakaoKeyFrom(process.env.KAKAO_JS_KEY), weather = createWeather({ key: weatherKeyFrom(process.env) }), kakaoRestKey = kakaoKeyFrom(process.env.KAKAO_REST_KEY), tourKey = process.env.TOURAPI_KEY || null, seoulKey = seoulKeyFrom(process.env.SEOUL_DATA_KEY), searchFetch = fetch } = {}) {
   const api = createApi({ dataDir, aiProvider, aiTimeoutMs, kakaoJsKey, weather, kakaoRestKey, tourKey, seoulKey, searchFetch });
   const allowed = new Set(hosts);
-  const policy = contentSecurityPolicy(kakaoJsKey, { photos: Boolean(tourKey) });
+  const policy = contentSecurityPolicy(kakaoJsKey, { photos: Boolean(tourKey), webPhotos: Boolean(kakaoRestKey) });
   // Kakao checks the requesting site against the key's registered domains, so map mode sends the origin (never the
   // path) to other sites; without a key nothing is sent.
   const referrer = kakaoJsKey ? 'strict-origin-when-cross-origin' : 'no-referrer';

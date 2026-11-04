@@ -101,11 +101,25 @@ function tile(container, { name, value, label, hint, checked, figure, className 
   return wrapper;
 }
 // A 한국관광공사 photo of a real place (never a generated one); it disappears quietly if it fails to load.
-function photoFigure(place) {
-  const figure = node('figure', 'place-photo');
+// P62: or a picture Kakao image search found on a news site or blog, credited to that site and linked to its page
+// (it belongs to whoever posted it). A small one (Kakao's thumbnail only) is shown as a square, not stretched.
+export const photoCredit = (place) => `사진: ${place.photo_credit || '한국관광공사'}`;
+function photoFigure(place, { compact = false } = {}) {
+  const small = compact || place.photo_large === false;
+  const figure = node('figure', small ? 'place-photo small' : 'place-photo');
   const img = node('img'); img.src = place.photo; img.alt = `${place.name} 사진`; img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer';
-  img.addEventListener('error', () => figure.remove());
-  figure.append(img, node('figcaption', '', '사진: 한국관광공사'));
+  // A large original that will not load falls back to Kakao's thumbnail (as a square); only then is the photo dropped.
+  img.addEventListener('error', () => {
+    if (place.photo_thumb && img.src !== place.photo_thumb) { img.src = place.photo_thumb; figure.classList.add('small'); return; }
+    figure.remove();
+  });
+  const caption = node('figcaption');
+  if (place.photo_link) {
+    const link = node('a', '', photoCredit(place)); link.href = place.photo_link; link.target = '_blank'; link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', `${photoCredit(place)} (새 창에서 원래 글 보기)`);
+    caption.append(link);
+  } else caption.textContent = photoCredit(place);
+  figure.append(img, caption);
   return figure;
 }
 // Restart a CSS animation by taking its class off and putting it back on the next layout.
@@ -437,6 +451,7 @@ export function setupAiFlow({ goScreen, showResults }) {
     const walk = WALK_CHOICES.find((choice) => choice.level === place.walk_level);
     // An arrival-screen place has a distance from here instead of travel minutes and no friend line.
     if (place.photo) content.append(photoFigure(place));
+    else if (!place.photo_checked) loadPhotos([place]).then(() => { if (place.photo && content.isConnected && !content.querySelector('.place-photo')) content.insertBefore(photoFigure(place), content.querySelector('.place-facts')); });
     const moving = item.minutes == null ? null : item.transit ? `${transitFacts(item.transit)} (카카오 대중교통 기준)`
       : item.walk ? `걸어서 약 ${item.walk.minutes}분, 직선 ${distanceLabel(item.walk.km).replace(' (직선)', '')}(추정)` : `${minutesLabel(item.minutes)}, 직선거리로 계산`;
     for (const [label, text] of [['추천 이유', item.reason], ['종류', place.kind], ['주소', place.address], ['가는 방법', place.nearest_station && `${place.nearest_station} ${place.access_summary}`], ['예상 이동', moving], ['지금 혼잡도', item.crowd && `${item.crowd.level}. ${item.crowd.message} (${item.crowd.area}${item.crowd.time ? `, ${item.crowd.time} 기준` : ''}, 서울시 실시간 도시데이터)`], ['여기서 거리', item.distanceKm != null && distanceLabel(item.distanceKm)], ['걷기', walk && `${walk.label} (${walk.hint})`], ['동네 친구', item.friend && (item.friend_hint || `${place.guName}의 동네 친구 ‘${item.friend.name}’는 이미 만났어요.`)]]) if (text) facts.append(node('dt', '', label), node('dd', '', text));
@@ -489,7 +504,8 @@ export function setupAiFlow({ goScreen, showResults }) {
       route.addEventListener('click', () => { fetch('/api/stats/route', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ placeId: item.place.id }) }).catch(() => {}); });
       actions.append(route);
     }
-    if (item.place.photo) card.append(photoFigure(item.place));
+    if (item.place.photo && item.place.photo_large !== false) card.append(photoFigure(item.place));
+    else if (item.place.photo) head.append(photoFigure(item.place, { compact: true }));
     card.append(head, voice, tags, body);
     if (item.transit?.tight) card.append(node('p', 'field-help ai-result-tight', '실제 대중교통으로는 오가는 시간이 길어 그곳에서 보낼 시간이 빠듯해요. 시간을 늘리거나 다른 곳도 살펴보세요.'));
     if (sourceCheckNote(item.place)) card.append(node('p', 'field-help ai-result-source', item.place.source === 'kakao' ? '카카오 장소 검색에서 지금 찾은 곳 · 팀 확인 전' : '한국관광공사 자료에서 지금 찾은 곳 · 팀 확인 전'));
@@ -529,11 +545,24 @@ export function setupAiFlow({ goScreen, showResults }) {
   // D31/P44 "더 보기": the other purpose places within reach in rule order, shown 10 at a time. No scores are shown.
   const MORE_STEP = 10;
   let moreShown = 0;
+  // P62: photos for listed places come a few at a time after the list shows, so the list never waits for them.
+  async function loadPhotos(places) {
+    const wanted = places.filter((place) => !place.photo && !place.photo_checked).slice(0, 10);
+    if (!wanted.length) return;
+    wanted.forEach((place) => { place.photo_checked = true; });
+    try {
+      const response = await fetch('/api/places/photos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: wanted.map((place) => place.id) }) });
+      const { photos = {} } = await response.json();
+      for (const place of wanted) Object.assign(place, photos[place.id] ?? {});
+    } catch { /* no photo is fine */ }
+  }
   function moreItem(entry) {
     const { place } = entry;
-    const item = node('li', 'arrival-place');
+    const item = node('li', 'arrival-place more-place');
     const head = node('div', 'arrival-place-head');
     head.append(node('b', '', place.name), node('span', 'muted', [place.guName, place.kind, travelLabel(entry)].filter(Boolean).join(' · ')));
+    item.dataset.placeId = place.id;
+    if (place.photo) item.append(photoFigure(place, { compact: true }));
     const open = node('button', 'button subtle', '상세·현장 소식'); open.type = 'button';
     open.setAttribute('aria-label', `${place.name} 상세와 현장 소식 보기`);
     open.addEventListener('click', () => openPlaceDetail({ place, minutes: entry.minutes, mode: entry.mode, reason: '' }, () => {}));
@@ -545,7 +574,14 @@ export function setupAiFlow({ goScreen, showResults }) {
   }
   function showMore() {
     const more = state.result?.more ?? [];
-    $('ai-more-list').append(...more.slice(moreShown, moreShown + MORE_STEP).map(moreItem));
+    const batch = more.slice(moreShown, moreShown + MORE_STEP);
+    $('ai-more-list').append(...batch.map(moreItem));
+    loadPhotos(batch.map((entry) => entry.place)).then(() => {
+      for (const entry of batch) {
+        const row = $('ai-more-list').querySelector(`[data-place-id="${CSS.escape(entry.place.id)}"]`);
+        if (entry.place.photo && row && !row.querySelector('.place-photo')) row.prepend(photoFigure(entry.place, { compact: true }));
+      }
+    });
     moreShown = Math.min(more.length, moreShown + MORE_STEP);
     const left = more.length - moreShown;
     $('ai-more-next').hidden = left <= 0;
