@@ -587,3 +587,152 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .trending-row.here{border-color:var(--green);background:var(--mint);font-weight:700}
 .app-frame .trending-row-head{display:flex;justify-content:space-between;gap:var(--refine-space-8);width:100%}
 .app-frame .trending-row .button{min-height:var(--refine-target-min);padding:var(--refine-space-6) var(--refine-space-14);font-size:var(--refine-type-caption)}
+
+/* D42/P58 conditions one question at a time (Toss-like). The pet asks each question in its own tone, the bar fills,
+   answered questions become pills, and tiles pop, stamp and spin when chosen. Only the step content moves; the action
+   bar sits outside it so its fixed position is not tied to a moving box. Reduced motion stops all of it (global rule). */
+@property --ring{syntax:'<angle>';inherits:false;initial-value:0deg}
+.app-frame .cond-top{display:flex;align-items:center;gap:var(--refine-space-12)}
+.app-frame .cond-top .eyebrow{margin:0;flex:none}
+.app-frame .cond-progress{flex:1;height:8px;border-radius:99px;background:var(--travel-subtle);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.app-frame .cond-progress i{display:block;width:var(--progress,25%);height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--green),color-mix(in srgb,var(--green) 55%,#8fd3ff));transition:width .55s cubic-bezier(.3,1.35,.5,1)}
+.app-frame .cond-pet{display:flex;align-items:flex-end;gap:var(--refine-space-8);margin-top:var(--refine-space-16)}
+.app-frame .cond-pet-face{flex:none;display:block;width:60px;height:60px}
+.app-frame .cond-pet-face .pet-face{width:100%;height:100%}
+.app-frame .cond-pet-face.hop .pet3d .pet-rig{animation:pet-jump .7s cubic-bezier(.3,1.3,.5,1) both,pet-breathe 3s ease-in-out .7s infinite}
+.app-frame .cond-pet-face.hop .pet3d .pet-tail{animation:pet-wag-fast .26s ease-in-out 6 alternate,pet-wag 3.2s ease-in-out 1.6s infinite}
+.app-frame .cond-pet-face.hop .pet3d .pet-eyes{display:none}
+.app-frame .cond-pet-face.hop .pet3d :is(.pet-happy,.pet-tongue){display:inline}
+.app-frame .cond-pet-face.tilt .pet3d .pet-head{animation:cond-tilt .7s ease-in-out both}
+.app-frame .cond-bubble{position:relative;flex:1;margin:0 0 12px;padding:var(--refine-space-10) var(--refine-space-14);border-radius:var(--radius-box) var(--radius-box) var(--radius-box) 4px;background:var(--mint);color:var(--green-dark);font-size:var(--refine-type-caption);font-weight:600;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere;transform-origin:0 100%}
+.app-frame .cond-bubble.speak{animation:gt-pop .38s cubic-bezier(.3,1.5,.5,1) both}
+.app-frame .cond-question{margin:var(--refine-space-16) 0 var(--refine-space-4);font-size:clamp(24px,6.6vw,28px);font-weight:800;letter-spacing:-.8px;line-height:1.32;word-break:keep-all}
+.app-frame .cond-question:focus{outline:none}
+.app-frame .cond-question.swap{animation:cond-heading .42s cubic-bezier(.2,.8,.2,1) both}
+.app-frame .cond-hint{margin:0;color:var(--muted);font-size:var(--refine-type-caption);line-height:1.6;word-break:keep-all}
+.app-frame .cond-answers{list-style:none;display:flex;flex-wrap:wrap;gap:var(--refine-space-6);margin:var(--refine-space-12) 0 0;padding:0}
+.app-frame .cond-answers[hidden]{display:none}
+.app-frame .cond-answers li.fresh{animation:gt-spring .5s cubic-bezier(.3,1.5,.5,1) .1s both}
+.app-frame .cond-pill{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px 4px 9px;border:1px solid var(--travel-selected-line);border-radius:99px;background:var(--mint);color:var(--green-dark);font-size:var(--refine-type-caption);font-weight:700;box-shadow:0 2px 0 color-mix(in srgb,var(--green) 28%,transparent);transition:transform .09s ease-out,box-shadow .09s ease-out}
+.app-frame .cond-pill:active{transform:translateY(2px);box-shadow:none}
+.app-frame .cond-pill .cond-art{width:16px;height:16px;color:var(--green)}
+.app-frame .cond-art{display:inline-block;flex:none}
+.app-frame .cond-art svg{display:block;width:100%;height:100%}
+.app-frame .art-pin .pin-body{fill:var(--green)}.app-frame .art-pin .pin-dot{fill:#fff}
+/* The steps slide in from the side they come from; their tiles rise one after another. A failed check shakes. */
+/* The slide-in briefly sticks out sideways; clipping on the frame (not the panel) keeps focus rings whole. */
+.app-frame[data-screen=ai]{overflow-x:clip}
+.app-frame .ai-step{margin-top:var(--refine-space-16)}
+.app-frame .ai-step[hidden]{display:none}
+.app-frame .ai-step.entering[data-dir=forward]{animation:cond-in-right .42s cubic-bezier(.2,.8,.2,1) both}
+.app-frame .ai-step.entering[data-dir=back]{animation:cond-in-left .42s cubic-bezier(.2,.8,.2,1) both}
+.app-frame .ai-step.entering :is(.cond-tile,.cond-chip,.departure-here,.departure-search,.party-stepper,.cond-review-row){animation:gt-rise .4s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(min(var(--i,0),9) * 30ms + 70ms)}
+.app-frame .ai-step.entering .departure-search{--i:1}.app-frame .ai-step.entering .party-stepper{--i:0}
+.app-frame .ai-step.shake{animation:cond-shake .42s ease-in-out}
+.app-frame .ai-step fieldset{border:0;margin:0;padding:0;min-width:0}
+.app-frame .cond-label{display:block;margin:0 0 var(--refine-space-8);font-size:var(--refine-type-label);font-weight:700;color:var(--ink)}
+.app-frame legend.cond-label{margin:var(--refine-space-20) 0 var(--refine-space-8);padding:0}
+.app-frame .cond-label small{font-size:var(--travel-type-meta);font-weight:400;color:var(--muted)}
+/* Tiles and chips: the radio covers the face (like the pet cards), so a tap anywhere picks it. */
+.app-frame :is(.cond-tile,.cond-chip){position:relative;display:block}
+.app-frame :is(.cond-tile,.cond-chip) input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1}
+.app-frame .cond-tile-face{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:100%;min-height:var(--refine-target-min);padding:var(--refine-space-10) var(--refine-space-6);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);text-align:center;word-break:keep-all;box-shadow:0 3px 0 var(--edge-card);transition:transform .09s ease-out,box-shadow .09s ease-out,background-color .2s,border-color .2s}
+.app-frame .cond-tile-face b{font-size:var(--refine-type-label);line-height:1.3}
+.app-frame .cond-tile-face small{font-size:var(--travel-type-meta);color:var(--muted);line-height:1.3}
+.app-frame :is(.cond-tile,.cond-chip):active .cond-tile-face{transform:translateY(2px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame :is(.cond-tile,.cond-chip) input:checked+.cond-tile-face{background:var(--mint);border-color:var(--travel-selected-line);color:var(--green-dark);box-shadow:inset 0 0 0 1px var(--green),0 3px 0 var(--green);animation:cond-choose .4s cubic-bezier(.3,1.6,.5,1)}
+.app-frame :is(.cond-tile,.cond-chip) input:focus-visible+.cond-tile-face{outline:3px solid var(--green);outline-offset:3px}
+.app-frame .cond-tile .cond-tile-face::before,.app-frame .cond-tile .cond-tile-face::after{content:'';position:absolute;opacity:0;transition:opacity .2s,transform .32s cubic-bezier(.3,1.6,.5,1)}
+.app-frame .cond-tile .cond-tile-face::before{top:7px;right:7px;width:18px;height:18px;border-radius:50%;background:var(--green);transform:scale(.3)}
+.app-frame .cond-tile .cond-tile-face::after{top:10px;right:13.5px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) scale(.3)}
+.app-frame .cond-tile input:checked+.cond-tile-face::before{opacity:1;transform:none}
+.app-frame .cond-tile input:checked+.cond-tile-face::after{opacity:1;transform:rotate(45deg)}
+/* Step 1 출발 위치 */
+.app-frame .departure-here{display:flex;align-items:center;gap:var(--refine-space-12);width:100%;min-height:68px;padding:var(--refine-space-12) var(--refine-space-16);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);text-align:left;box-shadow:0 4px 0 var(--edge-card);transition:transform .09s ease-out,box-shadow .09s ease-out,background-color .2s}
+.app-frame .departure-here:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .departure-here[aria-pressed=true]{background:var(--mint);border-color:var(--travel-selected-line);box-shadow:inset 0 0 0 1px var(--green),0 4px 0 var(--green)}
+.app-frame .departure-here:disabled{cursor:progress}
+.app-frame .departure-here-text{display:grid;gap:2px;min-width:0}
+.app-frame .departure-here-text b{font-size:var(--refine-type-item)}
+.app-frame .departure-here-text small{font-size:var(--travel-type-meta);color:var(--muted);word-break:keep-all}
+.app-frame .departure-pin{position:relative;flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--mint)}
+.app-frame .departure-pin::before{content:'';position:absolute;inset:0;border:2px solid var(--green);border-radius:50%;opacity:0;animation:cond-ping 2.4s ease-out infinite}
+.app-frame .departure-pin .cond-art{width:22px;height:22px}
+.app-frame .departure-here.locating .departure-pin .cond-art{animation:cond-bounce .6s ease-in-out infinite}
+.app-frame .departure-here+.field-help:empty{display:none}
+.app-frame .ai-step .departure-search{margin-top:var(--refine-space-12)}
+.app-frame .departure-result{grid-template-columns:auto minmax(0,1fr);column-gap:var(--refine-space-10);animation:gt-rise .32s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 40ms)}
+.app-frame .departure-result .cond-art{grid-row:span 2;align-self:center;width:18px;height:18px}
+.app-frame .departure-result[aria-pressed=true]{background:var(--mint);border-color:var(--travel-selected-line);box-shadow:inset 0 0 0 1px var(--green),0 3px 0 var(--green)}
+.app-frame .station-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--refine-space-6);margin-top:var(--refine-space-6)}
+.app-frame .cond-chip .cond-tile-face{min-height:44px;padding:var(--refine-space-8) var(--refine-space-4);border-radius:var(--refine-radius-pill);box-shadow:0 2px 0 var(--edge-card)}
+.app-frame .cond-chip .cond-tile-face b{font-size:var(--refine-type-caption);font-weight:600}
+.app-frame .cond-chip input:checked+.cond-tile-face{box-shadow:inset 0 0 0 1px var(--green),0 2px 0 var(--green)}
+/* Step 2 시간: a ring filled to the tile's share of 12 hours, drawn in as the step opens. */
+.app-frame .hours-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .hours-tiles .cond-tile-face{min-height:96px;padding-top:var(--refine-space-14)}
+.app-frame .hours-ring{--ring:var(--fill,0deg);display:block;width:30px;height:30px;border-radius:50%;background:conic-gradient(var(--green) var(--ring),color-mix(in srgb,var(--green) 14%,var(--white)) 0);-webkit-mask:radial-gradient(farthest-side,transparent 52%,#000 56%);mask:radial-gradient(farthest-side,transparent 52%,#000 56%)}
+.app-frame .ai-step.entering .hours-ring{animation:cond-ring .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 30ms + 160ms)}
+.app-frame .cond-tile input:checked+.cond-tile-face .hours-ring{animation:cond-ring .7s cubic-bezier(.2,.8,.2,1) both,cond-bump .4s cubic-bezier(.3,1.6,.5,1)}
+.app-frame .hours-ring.custom{display:grid;place-items:center;background:none;-webkit-mask:none;mask:none;border:2px dashed var(--travel-selected-line)}
+.app-frame .hours-ring.custom::after{content:'+';color:var(--green);font-size:18px;font-weight:800;line-height:1}
+.app-frame .hours-custom:not([hidden]){margin-top:var(--refine-space-12);padding:var(--refine-space-12);border-radius:var(--radius-box);background:var(--travel-subtle);animation:gt-rise .3s cubic-bezier(.2,.8,.2,1) both}
+/* Step 3 인원·걷기 */
+.app-frame .party-stepper{display:flex;align-items:center;justify-content:space-between;gap:var(--refine-space-12);padding:var(--refine-space-8);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--travel-subtle)}
+.app-frame .party-stepper:has(input[aria-invalid=true]){border-color:var(--danger);background:#fdf4f2}
+.app-frame .stepper-button{flex:none;display:grid;place-items:center;width:52px;height:52px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--white);color:var(--green);font-size:26px;font-weight:700;line-height:1;box-shadow:0 3px 0 var(--edge-card);transition:transform .09s ease-out,box-shadow .09s ease-out}
+.app-frame .stepper-button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--edge-card)}
+.app-frame .stepper-button:disabled{color:var(--line);box-shadow:none;cursor:default}
+.app-frame .party-value{display:flex;align-items:baseline;justify-content:center;gap:2px;flex:1;min-width:0}
+.app-frame .party-value input#ai-party{width:48px;min-height:0;padding:0;border:0;background:transparent;color:var(--ink);text-align:center;font-size:36px;font-weight:800;letter-spacing:-1px;line-height:1.2;-moz-appearance:textfield;appearance:textfield}
+.app-frame .party-value input#ai-party::-webkit-outer-spin-button,.app-frame .party-value input#ai-party::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.app-frame .party-value>span{font-size:var(--refine-type-item);font-weight:700;color:var(--muted)}
+.app-frame .party-value.bump input{animation:cond-bump .34s cubic-bezier(.3,1.6,.5,1)}
+.app-frame .party-people{display:flex;justify-content:center;align-items:flex-end;gap:6px;min-height:34px;margin-top:var(--refine-space-10)}
+.app-frame .party-people .cond-art{width:22px;height:30px;fill:color-mix(in srgb,var(--green) 40%,var(--white));animation:gt-spring .45s cubic-bezier(.3,1.5,.5,1) both}
+.app-frame .party-people .cond-art.me{fill:var(--green)}
+.app-frame .walk-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .walk-tiles .cond-tile-face{min-height:104px;padding-top:var(--refine-space-14)}
+.app-frame .walk-paws{display:flex;align-items:flex-end;gap:2px;height:24px}
+.app-frame .walk-paws .cond-art{width:18px;height:18px;fill:color-mix(in srgb,var(--green) 30%,var(--line));rotate:-12deg}
+.app-frame .walk-paws .cond-art:nth-child(2){translate:0 -6px;rotate:10deg}
+.app-frame .walk-paws .cond-art:nth-child(3){rotate:-6deg}
+.app-frame .cond-tile input:checked+.cond-tile-face .walk-paws .cond-art{fill:var(--green);animation:cond-stamp .42s cubic-bezier(.3,1.6,.5,1) both}
+.app-frame .cond-tile input:checked+.cond-tile-face .walk-paws .cond-art:nth-child(2){animation-delay:.13s}
+.app-frame .cond-tile input:checked+.cond-tile-face .walk-paws .cond-art:nth-child(3){animation-delay:.26s}
+/* Step 4 출발 시간대 and the review */
+.app-frame .time-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--refine-space-10)}
+.app-frame .time-tiles .cond-tile-face{min-height:128px;gap:6px}
+.app-frame .time-tiles .cond-tile-face>.cond-art{width:54px;height:54px}
+.app-frame .time-tiles input:checked+.cond-tile-face>.cond-art{animation:cond-float 2.8s ease-in-out infinite}
+.app-frame .art-sun .sun-core{fill:#ffb938}
+.app-frame .art-sun .sun-rays{fill:#ffcf6b;transform-box:view-box;transform-origin:24px 24px}
+.app-frame .cond-tile input:checked+.cond-tile-face .sun-rays{animation:cond-spin 10s linear infinite}
+.app-frame .art-moon .moon-body{fill:#7e8cf0}
+.app-frame .art-moon .star{fill:#ffcf6b;transform-box:fill-box;transform-origin:center}
+.app-frame .cond-tile input:checked+.cond-tile-face .star{animation:cond-twinkle 1.7s ease-in-out infinite}
+.app-frame .cond-tile input:checked+.cond-tile-face .star.s2{animation-delay:.55s}
+.app-frame .cond-tile input:checked+.cond-tile-face .star.s3{animation-delay:1.1s}
+.app-frame .cond-review{margin-top:var(--refine-space-20);padding:var(--refine-space-14) var(--refine-space-16);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);box-shadow:0 4px 0 var(--edge-card)}
+.app-frame .cond-review h3{margin:0 0 var(--refine-space-4);font-size:var(--refine-type-label)}
+.app-frame .cond-review dl{display:grid;margin:0}
+.app-frame .cond-review-row{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:center;gap:var(--refine-space-8);padding:var(--refine-space-4) 0;border-top:1px dashed var(--line)}
+.app-frame .cond-review-row:first-child{border-top:0}
+.app-frame .cond-review dt{font-size:var(--travel-type-meta);color:var(--muted)}
+.app-frame .cond-review dd{display:flex;align-items:center;justify-content:space-between;gap:var(--refine-space-8);margin:0;font-size:var(--refine-type-caption);font-weight:700;word-break:keep-all}
+.app-frame .cond-review dd .text-button{flex:none;min-height:36px;padding:4px 6px;font-size:var(--travel-type-meta)}
+@keyframes cond-heading{from{opacity:0;transform:translateY(10px)}}
+@keyframes cond-in-right{from{opacity:0;transform:translateX(48px)}}
+@keyframes cond-in-left{from{opacity:0;transform:translateX(-48px)}}
+@keyframes cond-shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+@keyframes cond-choose{0%{transform:scale(.93)}55%{transform:scale(1.05)}100%{transform:none}}
+@keyframes cond-ring{from{--ring:0deg}}
+@keyframes cond-bump{0%{transform:scale(.8)}60%{transform:scale(1.16)}100%{transform:none}}
+@keyframes cond-stamp{0%{opacity:0;scale:1.9}100%{opacity:1;scale:1}}
+@keyframes cond-float{0%,100%{transform:none}50%{transform:translateY(-4px)}}
+@keyframes cond-spin{to{transform:rotate(360deg)}}
+@keyframes cond-twinkle{0%,100%{opacity:1;transform:none}50%{opacity:.25;transform:scale(.5)}}
+@keyframes cond-tilt{25%{transform:rotate(-14deg)}55%{transform:rotate(10deg)}80%{transform:rotate(-4deg)}}
+@keyframes cond-ping{0%{opacity:.7;transform:scale(.7)}80%,100%{opacity:0;transform:scale(1.5)}}
+@keyframes cond-bounce{0%,100%{transform:none}50%{transform:translateY(-5px)}}
+@media(max-width:359px){.app-frame .hours-tiles{gap:var(--refine-space-6)}.app-frame .hours-tiles .cond-tile-face{min-height:88px;padding-inline:2px}.app-frame .hours-tiles .cond-tile-face b{font-size:var(--refine-type-caption)}}

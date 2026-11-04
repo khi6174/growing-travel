@@ -49,22 +49,46 @@
       <p class="panel-intro">펫마다 좋아하는 여행 목적이 달라요. 여행할 때마다 바꿀 수 있어요.</p>
       <fieldset class="pet-fieldset"><legend class="visually-hidden">함께 갈 펫</legend><div id="pet-options" class="pet-options" aria-describedby="pet-error"></div></fieldset>
       <p id="pet-error" class="field-error" role="alert"></p>
-      <section class="location-card" aria-labelledby="location-heading"><h3 id="location-heading">현재 위치 쓰기 <small>선택</small></h3><p id="location-status" class="field-help" role="status" aria-live="polite">현재 위치를 쓰면 가까운 곳부터 계산해요. 위치는 이번 추천 계산에만 쓰고 저장하지 않아요.</p><button id="use-location" type="button" class="button subtle">현재 위치 사용하기</button></section>
       <div class="primary-action-bar"><button id="pet-next" class="button primary full" type="button">조건 정하기</button></div>
     </section>
-    <section id="ai-panel" class="setup-panel app-screen" aria-labelledby="ai-heading" hidden>
-      <p class="eyebrow">펫 추천 2 / 3</p><h2 id="ai-heading">어떻게 다녀올까요?</h2>
-      <p id="ai-pet-line" class="panel-intro"></p>
+    <section id="ai-panel" class="setup-panel app-screen cond-screen" aria-labelledby="ai-heading" hidden>
+      <div class="cond-top"><p class="eyebrow">펫 추천 2 / 3</p><div id="cond-progress" class="cond-progress" role="progressbar" aria-label="조건 단계" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><i id="cond-progress-fill"></i></div></div>
+      <div class="cond-pet"><span id="cond-pet-face" class="cond-pet-face" aria-hidden="true"></span><p id="ai-pet-line" class="cond-bubble"></p></div>
+      <h2 id="ai-heading" class="cond-question">어디서 출발해요?</h2>
+      <p id="cond-hint" class="cond-hint"></p>
+      <ol id="cond-answers" class="cond-answers" aria-label="고른 조건, 누르면 그 질문으로 돌아가요" hidden></ol>
       <form id="ai-form" novalidate>
-        <fieldset class="departure-field"><legend>출발 위치 <small>주소·역·건물·가게 이름</small></legend><div class="departure-search"><input id="ai-departure-query" type="search" maxlength="60" enterkeyhint="search" autocomplete="off" placeholder="예: 합정역, 연남동 239-49, 스타벅스 신촌" aria-label="출발 위치 찾기" aria-describedby="ai-departure-status ai-departure-error"><button id="ai-departure-find" type="button" class="button subtle">찾기</button></div><p id="ai-departure-status" class="field-help" role="status" aria-live="polite"></p><ul id="ai-departure-results" class="departure-results" hidden></ul><label for="ai-departure" class="field-label departure-list-label">또는 목록에서 고르기</label><select id="ai-departure" name="ai-departure" aria-describedby="ai-departure-error" autocomplete="off"></select><p id="ai-departure-error" class="field-error"></p></fieldset>
-        <fieldset><legend>쓸 수 있는 시간 <small>오가는 시간 포함</small></legend><div id="ai-hours-options" class="interest-options ai-choice-options" aria-describedby="ai-hours-error"></div><div id="ai-hours-custom" class="hours-custom" hidden><input id="ai-hours-h" type="number" min="0" max="12" step="1" inputmode="numeric" autocomplete="off" aria-label="직접 입력한 시간" aria-describedby="ai-hours-error"><span aria-hidden="true">시간</span><input id="ai-hours-m" type="number" min="0" max="50" step="10" inputmode="numeric" autocomplete="off" aria-label="직접 입력한 분" aria-describedby="ai-hours-error"><span aria-hidden="true">분</span><small>30분~12시간, 10분 단위</small></div><p id="ai-hours-error" class="field-error"></p></fieldset>
-        <label for="ai-party" class="field-label">함께 가는 인원 <small>나 포함, 1~6명</small></label><input id="ai-party" type="number" min="1" max="6" step="1" value="1" inputmode="numeric" name="ai-party" aria-describedby="ai-partySize-error" autocomplete="off"><p id="ai-partySize-error" class="field-error"></p>
-        <fieldset><legend>걷기 정도</legend><div id="ai-walk-options" class="interest-options ai-choice-options" aria-describedby="ai-walkLevel-error"></div><p id="ai-walkLevel-error" class="field-error"></p></fieldset>
-        <fieldset><legend>출발 시간대 <small>지금 시각으로 골라 뒀어요</small></legend><div id="ai-time-options" class="interest-options ai-choice-options" aria-describedby="ai-timeOfDay-error"></div><p id="ai-timeOfDay-error" class="field-error"></p></fieldset>
+        <div class="ai-step" data-step="departure">
+          <fieldset class="departure-field"><legend class="visually-hidden">출발 위치</legend>
+            <button id="use-location" type="button" class="departure-here" aria-pressed="false" aria-describedby="location-status"><span class="departure-pin" aria-hidden="true"></span><span class="departure-here-text"><b>지금 있는 곳에서 출발</b><small>위치는 이번 추천 계산에만 쓰고 저장하지 않아요</small></span></button>
+            <p id="location-status" class="field-help" role="status" aria-live="polite"></p>
+            <div class="departure-search"><input id="ai-departure-query" type="search" maxlength="60" enterkeyhint="search" autocomplete="off" placeholder="예: 합정역, 연남동 239-49, 스타벅스 신촌" aria-label="출발 위치 찾기" aria-describedby="ai-departure-status ai-departure-error"><button id="ai-departure-find" type="button" class="button subtle">찾기</button></div>
+            <p id="ai-departure-error" class="field-error"></p>
+            <p id="ai-departure-status" class="field-help" role="status" aria-live="polite"></p>
+            <ul id="ai-departure-results" class="departure-results" hidden></ul>
+            <p class="departure-list-label" aria-hidden="true">역에서 바로 출발</p>
+            <div id="ai-departure-options" class="station-options" aria-describedby="ai-departure-error"></div>
+            <div hidden><input id="ai-departure-current" type="radio" name="ai-departure" value="current" autocomplete="off" tabindex="-1"><input id="ai-departure-place" type="radio" name="ai-departure" value="place" autocomplete="off" tabindex="-1"></div>
+          </fieldset>
+        </div>
+        <div class="ai-step" data-step="hours" hidden>
+          <fieldset><legend class="visually-hidden">쓸 수 있는 시간, 오가는 시간 포함</legend><div id="ai-hours-options" class="cond-tiles hours-tiles" aria-describedby="ai-hours-error"></div><div id="ai-hours-custom" class="hours-custom" hidden><input id="ai-hours-h" type="number" min="0" max="12" step="1" inputmode="numeric" enterkeyhint="next" autocomplete="off" aria-label="직접 입력한 시간" aria-describedby="ai-hours-error"><span aria-hidden="true">시간</span><input id="ai-hours-m" type="number" min="0" max="50" step="10" inputmode="numeric" enterkeyhint="next" autocomplete="off" aria-label="직접 입력한 분" aria-describedby="ai-hours-error"><span aria-hidden="true">분</span><small>30분~12시간, 10분 단위</small></div><p id="ai-hours-error" class="field-error"></p></fieldset>
+        </div>
+        <div class="ai-step" data-step="party" hidden>
+          <label for="ai-party" class="cond-label">함께 가는 인원 <small>나 포함, 1~6명</small></label>
+          <div class="party-stepper"><button id="ai-party-minus" type="button" class="stepper-button" aria-label="인원 한 명 줄이기"><span aria-hidden="true">−</span></button><span class="party-value"><input id="ai-party" type="number" min="1" max="6" step="1" value="1" inputmode="numeric" enterkeyhint="next" name="ai-party" aria-describedby="ai-partySize-error" autocomplete="off"><span aria-hidden="true">명</span></span><button id="ai-party-plus" type="button" class="stepper-button" aria-label="인원 한 명 늘리기"><span aria-hidden="true">+</span></button></div>
+          <div id="ai-party-people" class="party-people" aria-hidden="true"></div>
+          <p id="ai-partySize-error" class="field-error"></p>
+          <fieldset><legend class="cond-label">걷기 정도</legend><div id="ai-walk-options" class="cond-tiles walk-tiles" aria-describedby="ai-walkLevel-error"></div><p id="ai-walkLevel-error" class="field-error"></p></fieldset>
+        </div>
+        <div class="ai-step" data-step="time" hidden>
+          <fieldset><legend class="visually-hidden">출발 시간대</legend><div id="ai-time-options" class="cond-tiles time-tiles" aria-describedby="ai-timeOfDay-error"></div><p id="ai-timeOfDay-error" class="field-error"></p></fieldset>
+          <section class="cond-review" aria-labelledby="cond-review-heading"><h3 id="cond-review-heading">이렇게 찾아볼게요</h3><dl id="cond-review-list"></dl></section>
+        </div>
         <p id="ai-form-error" class="field-error" role="alert"></p>
         <div id="ai-loading" class="pet-walk" aria-hidden="true" hidden></div>
         <p id="ai-summary" class="field-help" role="status" aria-live="polite"></p>
-        <div class="primary-action-bar"><button id="ai-submit" class="button primary full" type="submit">추천 받기</button></div>
+        <div class="primary-action-bar"><button id="ai-submit" class="button primary full" type="submit">다음</button></div>
       </form>
     </section>
     <section id="ai-results-panel" class="app-screen" aria-labelledby="ai-results-heading" hidden>

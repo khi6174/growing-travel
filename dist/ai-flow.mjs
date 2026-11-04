@@ -1,4 +1,5 @@
-import { SEOUL_STATIONS, CURRENT_LOCATION, SEARCHED_PLACE, HOUR_CHOICES, WALK_CHOICES, TIME_OF_DAY, insideSeoul, defaultTimeOfDay, normalizeConditions, describeConditions, josa } from './ai-conditions.mjs';
+import { SEOUL_STATIONS, CURRENT_LOCATION, SEARCHED_PLACE, HOUR_CHOICES, WALK_CHOICES, TIME_OF_DAY, MAX_PARTY, insideSeoul, defaultTimeOfDay, normalizeConditions, describeConditions } from './ai-conditions.mjs';
+import { CONDITION_STEPS, LAST_STEP, clampStep, stepDirection, firstErrorStep, stepErrors, answerLabels, petLine } from './condition-steps.mjs';
 import { fieldReportsSection, fetchReports, reportAge } from './field-reports.mjs';
 import { readFriendLog } from './district-arrival.mjs';
 import { petFace } from './pet-art.mjs';
@@ -54,13 +55,31 @@ const node = (tag, className = '', text) => {
 function externalLink(url, label) {
   const link = node('a', 'text-button', `${label} (새 창)`); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer'; return link;
 }
-function chip(container, { type, name, value, label, hint, checked }) {
-  const wrapper = node('label', 'interest-option');
-  const input = node('input'); input.type = type; input.name = name; input.value = value; input.checked = checked; input.autocomplete = 'off';
-  const text = node('span', '', label);
-  if (hint) text.append(node('small', '', hint));
-  wrapper.append(input, text); $(container).append(wrapper);
+// D42/P58 tiles for the step-by-step conditions: a radio, a face with optional art, the label and a hint.
+// The SVG art is fixed markup written here (no user text), so building it from a string is safe.
+const ART = Object.freeze({
+  pin: '<svg viewBox="0 0 24 24"><path class="pin-body" d="M12 2.4c-3.9 0-7 3-7 6.9 0 5.1 7 12.3 7 12.3s7-7.2 7-12.3c0-3.9-3.1-6.9-7-6.9z"/><circle class="pin-dot" cx="12" cy="9.4" r="2.6"/></svg>',
+  clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.6V12l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  people: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4" fill="currentColor"/><path d="M2.6 20c0-4 2.9-6.6 6.4-6.6s6.4 2.6 6.4 6.6z" fill="currentColor"/><circle cx="16.6" cy="9" r="2.7" fill="currentColor" opacity=".55"/><path d="M15 13.8c3.4-.6 6.4 1.6 6.4 5.6h-4.6" fill="currentColor" opacity=".55"/></svg>',
+  paw: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="15.6" rx="4.7" ry="3.9"/><circle cx="6.1" cy="10.1" r="2.05"/><circle cx="9.8" cy="6.5" r="2.05"/><circle cx="14.2" cy="6.5" r="2.05"/><circle cx="17.9" cy="10.1" r="2.05"/></svg>',
+  sun: '<svg viewBox="0 0 48 48"><g class="sun-rays">' + Array.from({ length: 8 }, (_, i) => `<rect x="22.6" y="3" width="2.8" height="7" rx="1.4" transform="rotate(${i * 45} 24 24)"/>`).join('') + '</g><circle class="sun-core" cx="24" cy="24" r="9.5"/></svg>',
+  moon: '<svg viewBox="0 0 48 48"><path class="moon-body" d="M29.5 8.5a15.5 15.5 0 1 0 10 27.6A13 13 0 0 1 29.5 8.5z"/><circle class="star s1" cx="11" cy="12" r="1.8"/><circle class="star s2" cx="40" cy="12" r="1.3"/><circle class="star s3" cx="13" cy="37" r="1.1"/></svg>',
+  person: '<svg viewBox="0 0 20 28"><circle cx="10" cy="7" r="5"/><path d="M1.6 27.4c0-6.4 3.8-10.6 8.4-10.6s8.4 4.2 8.4 10.6z"/></svg>',
+});
+const art = (name, className = '') => { const span = node('span', `cond-art art-${name} ${className}`.trim()); span.setAttribute('aria-hidden', 'true'); span.innerHTML = ART[name]; return span; };
+function tile(container, { name, value, label, hint, checked, figure, className = 'cond-tile', index = 0 }) {
+  const wrapper = node('label', className);
+  wrapper.style.setProperty('--i', String(index));
+  const input = node('input'); input.type = 'radio'; input.name = name; input.value = value; input.checked = checked; input.autocomplete = 'off';
+  const face = node('span', 'cond-tile-face');
+  if (figure) face.append(figure);
+  face.append(node('b', '', label));
+  if (hint) face.append(node('small', '', hint));
+  wrapper.append(input, face); $(container).append(wrapper);
+  return wrapper;
 }
+// Restart a CSS animation by taking its class off and putting it back on the next layout.
+function replay(element, className) { element.classList.remove(className); void element.offsetWidth; element.classList.add(className); }
 
 // D35/P51: the pets are drawn in pet-art.mjs; re-exported here for the modules that already import them from this one.
 export { petFace };
@@ -69,13 +88,17 @@ export function setupAiFlow({ goScreen, showResults }) {
   const state = { catalog: null, petId: null, location: null, searched: null, result: null };
   const catalogWaiters = [];
   const pet = () => state.catalog?.pets.find((item) => item.id === state.petId) ?? null;
+  const steps = [...document.querySelectorAll('#ai-form .ai-step')];
+  let step = 0;
+  let busy = false;
+  let autoTimer = 0;
 
   function selectPet(id) {
     state.petId = id;
     document.querySelectorAll('#pet-options input').forEach((input) => { input.checked = input.value === id; });
     $('pet-error').textContent = '';
-    const chosen = pet();
-    $('ai-pet-line').textContent = chosen ? `${josa(chosen.name, '과', '와')} 함께하는 ${chosen.purpose} 여행이에요. ${chosen.intro}` : '';
+    $('cond-pet-face').replaceChildren(petFace(id));
+    say(CONDITION_STEPS[step].id, { animate: false });
   }
 
   function renderCatalog() {
@@ -115,53 +138,48 @@ export function setupAiFlow({ goScreen, showResults }) {
     }
   }
 
+  // --- Step 1 출발 위치: 현재 위치, a typed place found through the server, or one of the stations. ---
+  const checkedValue = (name) => document.querySelector(`#ai-form input[name="${name}"]:checked`)?.value;
+  function syncDeparture() {
+    const value = checkedValue('ai-departure');
+    $('use-location').setAttribute('aria-pressed', String(value === CURRENT_LOCATION));
+    document.querySelectorAll('#ai-departure-results .departure-result').forEach((button) => button.setAttribute('aria-pressed', String(value === SEARCHED_PLACE && button.dataset.label === state.searched?.label)));
+  }
   function setLocation(point) {
     state.location = point;
-    const current = $('ai-departure').querySelector(`option[value="${CURRENT_LOCATION}"]`);
-    current.disabled = !point;
-    if (point) $('ai-departure').value = CURRENT_LOCATION;
-    else if ($('ai-departure').value === CURRENT_LOCATION) $('ai-departure').value = '';
+    $('ai-departure-current').checked = Boolean(point);
+    syncDeparture();
   }
+  document.querySelector('#use-location .departure-pin').append(art('pin'));
+  SEOUL_STATIONS.forEach(({ id, label }, index) => tile('ai-departure-options', { name: 'ai-departure', value: id, label, checked: false, className: 'cond-chip', index }));
+  $('ai-departure-options').addEventListener('change', () => {
+    syncDeparture(); $('ai-departure-status').textContent = ''; $('location-status').textContent = '';
+  });
   $('use-location').addEventListener('click', () => {
-    if (!navigator.geolocation) { $('location-status').textContent = '이 브라우저에서는 위치를 쓸 수 없어요. 다음 화면에서 출발역을 골라 주세요.'; return; }
-    $('use-location').disabled = true; $('location-status').textContent = '현재 위치를 확인하는 중이에요.';
+    if (!navigator.geolocation) { $('location-status').textContent = '이 브라우저에서는 위치를 쓸 수 없어요. 출발 위치를 찾거나 역을 골라 주세요.'; return; }
+    $('use-location').disabled = true; $('use-location').classList.add('locating'); $('location-status').textContent = '현재 위치를 확인하는 중이에요.';
+    const done = () => { $('use-location').disabled = false; $('use-location').classList.remove('locating'); };
     navigator.geolocation.getCurrentPosition(({ coords }) => {
-      $('use-location').disabled = false;
+      done();
       const point = { lat: Math.round(coords.latitude * 1000) / 1000, lng: Math.round(coords.longitude * 1000) / 1000 };
-      if (!insideSeoul(point)) { setLocation(null); $('location-status').textContent = '현재 위치가 서울 밖이라 쓰지 않았어요. 다음 화면에서 출발역을 골라 주세요.'; return; }
-      setLocation(point); $('location-status').textContent = '현재 위치를 출발 위치로 쓸게요. 이번 추천 계산에만 쓰고 저장하지 않아요.';
+      if (!insideSeoul(point)) { setLocation(null); $('location-status').textContent = '현재 위치가 서울 밖이라 쓰지 않았어요. 출발 위치를 찾거나 역을 골라 주세요.'; return; }
+      setLocation(point); clearErrors();
+      $('location-status').textContent = '현재 위치에서 출발해요. 이번 추천 계산에만 쓰고 저장하지 않아요.';
+      autoNext(0);
     }, (error) => {
-      $('use-location').disabled = false; setLocation(null);
-      $('location-status').textContent = error.code === 1 ? '위치 권한이 꺼져 있어요. 다음 화면에서 출발역을 골라 주세요.' : '위치를 받지 못했어요. 다음 화면에서 출발역을 골라 주세요.';
+      done(); setLocation(null);
+      $('location-status').textContent = error.code === 1 ? '위치 권한이 꺼져 있어요. 출발 위치를 찾거나 역을 골라 주세요.' : '위치를 받지 못했어요. 출발 위치를 찾거나 역을 골라 주세요.';
     }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
   });
-  $('pet-next').addEventListener('click', () => {
-    if (state.petId) { goScreen('ai'); return; }
-    $('pet-error').textContent = state.catalog ? '함께 갈 펫을 골라 주세요.' : '펫 정보를 불러오지 못했어요. 홈에서 다시 불러와 주세요.';
-    document.querySelector('#pet-options input')?.focus();
-  });
-
-  const placeholder = node('option', '', '출발 위치를 골라 주세요'); placeholder.value = '';
-  const current = node('option', '', '현재 위치'); current.value = CURRENT_LOCATION; current.disabled = true;
-  const found = node('option', '', '찾은 곳'); found.value = SEARCHED_PLACE; found.hidden = true;
-  $('ai-departure').append(placeholder, current, found, ...SEOUL_STATIONS.map(({ id, label }) => { const option = node('option', '', label); option.value = id; return option; }));
-  HOUR_CHOICES.forEach(({ hours, label, hint }) => chip('ai-hours-options', { type: 'radio', name: 'ai-hours', value: String(hours), label, hint, checked: hours === 3 }));
-  chip('ai-hours-options', { type: 'radio', name: 'ai-hours', value: 'custom', label: '직접 입력', checked: false });
-  // D39: a typed time shows its two boxes only while 직접 입력 is picked.
-  $('ai-hours-options').addEventListener('change', () => {
-    const custom = document.querySelector('#ai-form input[name="ai-hours"]:checked')?.value === 'custom';
-    $('ai-hours-custom').hidden = !custom;
-    if (custom && !$('ai-hours-h').value && !$('ai-hours-m').value) $('ai-hours-h').focus();
-  });
-  const customHours = () => ($('ai-hours-h').value === '' && $('ai-hours-m').value === '' ? NaN : Number($('ai-hours-h').value || 0) + Number($('ai-hours-m').value || 0) / 60);
 
   // D39: a typed departure (주소·역·건물·가게 이름) found through the server; picking a result makes it the 출발 위치.
   function chooseDeparture(item) {
     state.searched = { label: item.label, lat: item.lat, lng: item.lng };
-    found.textContent = `찾은 곳: ${item.label}`; found.hidden = false; $('ai-departure').value = SEARCHED_PLACE;
-    $('ai-departure-results').hidden = true; $('ai-departure-query').value = item.label;
+    $('ai-departure-place').checked = true; syncDeparture(); clearErrors();
+    $('ai-departure-query').value = item.label;
     $('ai-departure-status').textContent = `‘${item.label}’에서 출발해요. 이번 추천 계산에만 쓰고 저장하지 않아요.`;
-    $('ai-departure-error').textContent = '';
+    $('location-status').textContent = '';
+    autoNext(0);
   }
   async function findDeparture() {
     const query = $('ai-departure-query').value.trim();
@@ -170,9 +188,10 @@ export function setupAiFlow({ goScreen, showResults }) {
     try {
       const response = await fetch('/api/places/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
       const { results = [], source, reason } = await response.json();
-      $('ai-departure-results').replaceChildren(...results.map((item) => {
-        const pick = node('button', 'departure-result'); pick.type = 'button';
-        pick.append(node('b', '', item.label), node('small', '', item.address));
+      $('ai-departure-results').replaceChildren(...results.map((item, index) => {
+        const pick = node('button', 'departure-result'); pick.type = 'button'; pick.dataset.label = item.label;
+        pick.setAttribute('aria-pressed', 'false'); pick.style.setProperty('--i', String(index));
+        pick.append(art('pin'), node('b', '', item.label), node('small', '', item.address));
         pick.addEventListener('click', () => chooseDeparture(item));
         const row = node('li'); row.append(pick); return row;
       }));
@@ -182,25 +201,73 @@ export function setupAiFlow({ goScreen, showResults }) {
       const from = !local ? '' : reason === 'NO_MATCH' ? '카카오에 없는 이름이라 앱 안의 역·후보지에서 ' : '카카오 검색을 쓸 수 없어 앱 안의 역·후보지에서 ';
       $('ai-departure-status').textContent = results.length
         ? `${from}${results.length}곳을 찾았어요. 출발할 곳을 골라 주세요.`
-        : reason === 'NO_MATCH' ? '찾지 못했어요. 가게·건물 이름이나 도로명 주소로 적어 보세요(예: 합정역, 양화로 55).' : '찾지 못했어요. 아래 목록에서 역을 골라 주세요.';
-    } catch { $('ai-departure-status').textContent = '찾지 못했어요. 아래 목록에서 역을 골라 주세요.'; }
+        : reason === 'NO_MATCH' ? '찾지 못했어요. 가게·건물 이름이나 도로명 주소로 적어 보세요(예: 합정역, 양화로 55).' : '찾지 못했어요. 아래에서 역을 골라 주세요.';
+    } catch { $('ai-departure-status').textContent = '찾지 못했어요. 아래에서 역을 골라 주세요.'; }
     finally { $('ai-departure-find').disabled = false; }
   }
   $('ai-departure-find').addEventListener('click', findDeparture);
   $('ai-departure-query').addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); findDeparture(); } });
-  WALK_CHOICES.forEach(({ level, label, hint }) => chip('ai-walk-options', { type: 'radio', name: 'ai-walk', value: String(level), label, hint, checked: level === 2 }));
+
+  // --- Step 2 쓸 수 있는 시간: the ring on each tile fills to its share of 12 hours. ---
+  HOUR_CHOICES.forEach(({ hours, label, hint }, index) => {
+    const ring = node('span', 'hours-ring'); ring.setAttribute('aria-hidden', 'true'); ring.style.setProperty('--fill', `${Math.round((hours / 12) * 360)}deg`);
+    tile('ai-hours-options', { name: 'ai-hours', value: String(hours), label, hint, checked: hours === 3, figure: ring, index });
+  });
+  const customRing = node('span', 'hours-ring custom'); customRing.setAttribute('aria-hidden', 'true');
+  tile('ai-hours-options', { name: 'ai-hours', value: 'custom', label: '직접 입력', checked: false, figure: customRing, index: HOUR_CHOICES.length });
+  // D39: a typed time shows its two boxes only while 직접 입력 is picked.
+  $('ai-hours-options').addEventListener('change', () => {
+    const custom = checkedValue('ai-hours') === 'custom';
+    $('ai-hours-custom').hidden = !custom;
+    if (custom && !$('ai-hours-h').value && !$('ai-hours-m').value) $('ai-hours-h').focus();
+  });
+  const customHours = () => ($('ai-hours-h').value === '' && $('ai-hours-m').value === '' ? NaN : Number($('ai-hours-h').value || 0) + Number($('ai-hours-m').value || 0) / 60);
+
+  // --- Step 3 인원·걷기: a −/+ stepper with one figure per person, and paw prints for how much walking. ---
+  function renderPeople() {
+    const value = Number($('ai-party').value);
+    const count = Number.isInteger(value) && value >= 1 && value <= MAX_PARTY ? value : 0;
+    const people = $('ai-party-people');
+    while (people.children.length > count) people.lastElementChild.remove();
+    while (people.children.length < count) people.append(art('person', people.children.length ? '' : 'me'));
+    $('ai-party-minus').disabled = !count || value <= 1;
+    $('ai-party-plus').disabled = count >= MAX_PARTY;
+  }
+  function stepParty(delta) {
+    const value = Number($('ai-party').value);
+    $('ai-party').value = String(Math.min(MAX_PARTY, Math.max(1, (Number.isInteger(value) ? value : 1) + delta)));
+    replay($('ai-party').parentElement, 'bump'); renderPeople(); clearErrors();
+  }
+  $('ai-party-minus').addEventListener('click', () => stepParty(-1));
+  $('ai-party-plus').addEventListener('click', () => stepParty(1));
+  $('ai-party').addEventListener('input', renderPeople);
+  renderPeople();
+  WALK_CHOICES.forEach(({ level, label, hint }, index) => {
+    const paws = node('span', 'walk-paws'); paws.setAttribute('aria-hidden', 'true');
+    for (let n = 0; n < level; n += 1) paws.append(art('paw'));
+    tile('ai-walk-options', { name: 'ai-walk', value: String(level), label, hint, checked: level === 2, figure: paws, index });
+  });
+
+  // --- Step 4 출발 시간대 and the review before 추천 받기. ---
   const slot = defaultTimeOfDay(seoulHour());
-  TIME_OF_DAY.forEach(({ id, label }) => chip('ai-time-options', { type: 'radio', name: 'ai-time', value: id, label, checked: id === slot }));
+  TIME_OF_DAY.forEach(({ id, label }, index) => tile('ai-time-options', { name: 'ai-time', value: id, label, hint: id === 'day' ? '해 있을 때' : '해 지고 나서', checked: id === slot, figure: art(id === 'day' ? 'sun' : 'moon'), index }));
+  $('ai-time-options').addEventListener('change', () => { renderReview(); say('ready'); });
 
   function rawConditions() {
-    const checked = (name) => document.querySelector(`#ai-form input[name="${name}"]:checked`)?.value;
+    const departure = checkedValue('ai-departure') ?? '';
     return {
-      pet: state.petId, departure: $('ai-departure').value,
-      location: $('ai-departure').value === SEARCHED_PLACE ? state.searched : state.location,
-      departureLabel: $('ai-departure').value === SEARCHED_PLACE ? state.searched?.label : undefined,
-      hours: checked('ai-hours') === 'custom' ? customHours() : Number(checked('ai-hours')), partySize: $('ai-party').value === '' ? NaN : Number($('ai-party').value),
-      walkLevel: Number(checked('ai-walk')), timeOfDay: checked('ai-time'), metFriends: metFriends(),
+      pet: state.petId, departure,
+      location: departure === SEARCHED_PLACE ? state.searched : state.location,
+      departureLabel: departure === SEARCHED_PLACE ? state.searched?.label : undefined,
+      hours: checkedValue('ai-hours') === 'custom' ? customHours() : Number(checkedValue('ai-hours')), partySize: $('ai-party').value === '' ? NaN : Number($('ai-party').value),
+      walkLevel: Number(checkedValue('ai-walk')), timeOfDay: checkedValue('ai-time'), metFriends: metFriends(),
     };
+  }
+  function labels() {
+    const raw = rawConditions();
+    const departure = raw.departure === CURRENT_LOCATION ? (state.location ? '현재 위치' : '')
+      : raw.departure === SEARCHED_PLACE ? state.searched?.label ?? '' : SEOUL_STATIONS.find((station) => station.id === raw.departure)?.label ?? '';
+    return answerLabels({ ...raw, departure });
   }
   function showErrors(fields = {}) {
     for (const [field, id] of Object.entries(FIELD_IDS)) {
@@ -211,6 +278,106 @@ export function setupAiFlow({ goScreen, showResults }) {
     const first = Object.keys(FIELD_IDS).find((field) => fields[field]);
     if (first) { const target = $(FIELD_IDS[first]); (target.matches('input,select') ? target : target.querySelector('input'))?.focus(); }
   }
+  function clearErrors() {
+    if (!document.querySelector('#ai-form [aria-invalid="true"]') && !$('ai-form-error').textContent) return;
+    showErrors(); $('ai-form-error').textContent = ''; say(CONDITION_STEPS[step].id);
+  }
+  $('ai-form').addEventListener('change', clearErrors);
+
+  // --- The steps: one question on screen, the pet asking it, a progress bar, and answered steps as pills. ---
+  function say(moment, { animate = true } = {}) {
+    $('ai-pet-line').textContent = petLine(state.petId, moment, labels());
+    if (!animate) return;
+    replay($('ai-pet-line'), 'speak');
+    $('cond-pet-face').classList.remove('hop', 'tilt');
+    replay($('cond-pet-face'), moment === 'oops' ? 'tilt' : 'hop');
+  }
+  const PILL_ART = { departure: 'pin', hours: 'clock', party: 'people' };
+  function renderAnswers(direction) {
+    const answers = labels();
+    const done = step === LAST_STEP ? [] : CONDITION_STEPS.slice(0, step).filter((info) => answers[info.id]);
+    $('cond-answers').hidden = !done.length;
+    $('cond-answers').replaceChildren(...done.map((info, index) => {
+      const button = node('button', 'cond-pill'); button.type = 'button';
+      button.setAttribute('aria-label', `${info.question} ${answers[info.id]}, 바꾸기`);
+      button.append(art(PILL_ART[info.id]), node('span', '', answers[info.id]));
+      button.addEventListener('click', () => showStep(CONDITION_STEPS.indexOf(info)));
+      const li = node('li', direction === 'forward' && index === done.length - 1 ? 'fresh' : ''); li.append(button); return li;
+    }));
+  }
+  function renderReview() {
+    const answers = labels(); const chosen = pet();
+    const rows = [['함께 갈 펫', chosen ? `${chosen.name} · ${chosen.purpose}` : '', () => goScreen('pet')], ['출발', answers.departure, () => showStep(0)], ['쓸 수 있는 시간', answers.hours, () => showStep(1)], ['인원·걷기', answers.party, () => showStep(2)]];
+    $('cond-review-list').replaceChildren(...rows.map(([label, value, edit], index) => {
+      const row = node('div', 'cond-review-row'); row.style.setProperty('--i', String(index));
+      const change = node('button', 'text-button', '바꾸기'); change.type = 'button';
+      change.setAttribute('aria-label', `${label} 바꾸기`); change.addEventListener('click', edit);
+      const answer = node('dd'); answer.append(node('span', '', value || '아직 안 골랐어요'), change);
+      row.append(node('dt', '', label), answer); return row;
+    }));
+  }
+  function showStep(index, { focus = true } = {}) {
+    if (busy) return;
+    clearTimeout(autoTimer);
+    const to = clampStep(index);
+    const visible = !$('ai-panel').hidden;
+    const direction = visible ? stepDirection(step, to) : 'none';
+    step = to;
+    steps.forEach((element, at) => { element.hidden = at !== to; });
+    const info = CONDITION_STEPS[to];
+    steps[to].classList.remove('shake'); steps[to].dataset.dir = direction; replay(steps[to], 'entering');
+    $('ai-heading').textContent = info.question; replay($('ai-heading'), 'swap');
+    $('cond-hint').textContent = info.hint;
+    $('cond-progress').setAttribute('aria-valuenow', String(to + 1));
+    $('cond-progress').setAttribute('aria-valuetext', `4단계 중 ${to + 1}단계, ${info.question}`);
+    $('cond-progress-fill').style.setProperty('--progress', `${((to + 1) / CONDITION_STEPS.length) * 100}%`);
+    $('ai-submit').textContent = to === LAST_STEP ? '추천 받기' : '다음';
+    showErrors(); $('ai-form-error').textContent = '';
+    renderAnswers(direction);
+    if (to === LAST_STEP) renderReview();
+    say(info.id, { animate: visible });
+    if (!visible) return;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    if (focus) { $('ai-heading').setAttribute('tabindex', '-1'); $('ai-heading').focus({ preventScroll: true }); }
+  }
+  function checkStep(index) {
+    try { normalizeConditions(rawConditions(), { petIds: state.catalog.pets.map((item) => item.id) }); return {}; }
+    catch (error) { if (error.name !== 'ConditionError') throw error; return stepErrors(error.fields, index); }
+  }
+  function oops(fields) {
+    showErrors(fields); say('oops'); steps[step].classList.remove('entering'); replay(steps[step], 'shake');
+  }
+  function goNext() {
+    const errors = checkStep(step);
+    if (Object.keys(errors).length) { oops(errors); return; }
+    showStep(step + 1);
+  }
+  // Steps 1·2 move on by themselves after a tap or a pick (not after keyboard moves between choices).
+  function autoNext(from) {
+    clearTimeout(autoTimer);
+    if (!CONDITION_STEPS[from].auto) return;
+    autoTimer = setTimeout(() => { if (step === from && !$('ai-panel').hidden && !busy) goNext(); }, 420);
+  }
+  for (const [container, from] of [['ai-departure-options', 0], ['ai-hours-options', 1]]) {
+    $(container).addEventListener('click', (event) => {
+      const label = event.target.closest('label');
+      // The radio covers its tile, so a tap lands on the input itself; keyboard picks arrive with detail 0.
+      if (!label || event.detail === 0 || label.querySelector('input').value === 'custom') return;
+      autoNext(from);
+    });
+  }
+  // The header's back button goes to the previous question first, then (from question 1) to the pet screen.
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest?.('#app-back') || $('ai-panel').hidden || step === 0 || busy) return;
+    event.preventDefault(); event.stopPropagation();
+    showStep(step - 1);
+  }, true);
+  $('pet-next').addEventListener('click', () => {
+    if (state.petId) { showStep(0, { focus: false }); goScreen('ai'); return; }
+    $('pet-error').textContent = state.catalog ? '함께 갈 펫을 골라 주세요.' : '펫 정보를 불러오지 못했어요. 홈에서 다시 불러와 주세요.';
+    document.querySelector('#pet-options input')?.focus();
+  });
+  showStep(0, { focus: false });
 
   function openPlaceDetail(item, onClose) {
     const { place } = item;
@@ -332,16 +499,25 @@ export function setupAiFlow({ goScreen, showResults }) {
     return body;
   }
 
-  let busy = false;
+  // A failed check (here or on the server) goes back to the earliest question with a problem and points at it.
+  function showFieldErrors(fields) {
+    const at = firstErrorStep(fields);
+    if (at >= 0 && at !== step) showStep(at, { focus: false });
+    oops(fields);
+  }
   $('ai-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     if (busy) return;
     if (!pet()) { goScreen('pet'); return; }
+    // Before the last question, 다음 (or Enter) checks only this question and moves on.
+    if (step < LAST_STEP) { goNext(); return; }
     let conditions;
     try { conditions = normalizeConditions(rawConditions(), { petIds: state.catalog.pets.map((item) => item.id) }); }
     catch (error) {
       if (error.name !== 'ConditionError') throw error;
-      showErrors(error.fields); $('ai-form-error').textContent = `${Object.keys(error.fields).length}개 항목을 확인해 주세요.`; return;
+      showFieldErrors(error.fields);
+      const count = Object.keys(error.fields).length;
+      $('ai-form-error').textContent = count > 1 ? `${count}개 항목을 확인해 주세요.` : ''; return;
     }
     showErrors(); $('ai-form-error').textContent = '';
     busy = true; $('ai-submit').disabled = true; $('ai-submit').textContent = '추천 고르는 중…';
@@ -354,10 +530,14 @@ export function setupAiFlow({ goScreen, showResults }) {
       showResults(result);
     } catch (error) {
       $('ai-summary').textContent = '';
-      $('ai-form-error').textContent = error.message;
+      busy = false;
       if (error.fields?.pet) goScreen('pet');
-      else if (error.fields) showErrors(error.fields);
-    } finally { busy = false; $('ai-submit').disabled = false; $('ai-submit').textContent = '추천 받기'; $('ai-loading').hidden = true; $('ai-loading').replaceChildren(); }
+      else if (error.fields) showFieldErrors(error.fields);
+      $('ai-form-error').textContent = error.message;
+    } finally {
+      busy = false; $('ai-submit').disabled = false; $('ai-submit').textContent = step === LAST_STEP ? '추천 받기' : '다음';
+      $('ai-loading').hidden = true; $('ai-loading').replaceChildren();
+    }
   });
 
   const catalogReady = () => (state.catalog ? Promise.resolve(state.catalog) : new Promise((resolve) => catalogWaiters.push(resolve)));
