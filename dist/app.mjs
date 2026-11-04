@@ -15,6 +15,9 @@ import { metaText } from './ui-copy.mjs';
 import { fieldReportsSection } from './field-reports.mjs';
 import { setupAiFlow } from './ai-flow.mjs';
 import { setupArrivalFlow } from './arrival-flow.mjs';
+import { setupStartFlow } from './start-flow.mjs';
+import { setupCourseView } from './course-view.mjs';
+import { setupFollowFlow } from './follow-flow.mjs';
 import { setupLivingMap } from './living-map.mjs';
 import { setupThemePicker } from './theme-picker.mjs';
 import { setupSky } from './sky.mjs';
@@ -62,10 +65,11 @@ function editBenefitInput() {
 const state = { run: null, context: null, ids: [], courseId: null, version: null, savedSnapshot: null, inputDirty: false, revision: 0, saveKey: null, saving: false, requesting: false, hasSavedCurrent: false, comparison: null, comparisonDirty: false, journey: null, pendingRegionId: null, screen:'home', lastTravelScreen:'profile', travelStarted:false, walkingCustomized:false };
 let petFlow = null;
 let arrivalFlow = null;
+let followFlow = null;
 function availability() {
   let profileValid = true;
   try { normalizeProfile(rawProfile()); } catch { profileValid = false; }
-  return { profileValid, comparisonReady: Boolean(state.comparison && !state.comparisonDirty), recommendationsReady: Boolean(state.run && !state.inputDirty), hasCourse: Boolean(state.context && state.ids.length), petChosen: Boolean(petFlow?.hasPet()), aiResultsReady: Boolean(state.aiResults), arrivalReady: Boolean(arrivalFlow?.hasArrival()) };
+  return { profileValid, comparisonReady: Boolean(state.comparison && !state.comparisonDirty), recommendationsReady: Boolean(state.run && !state.inputDirty), hasCourse: Boolean(state.context && state.ids.length), petChosen: Boolean(petFlow?.hasPet()), aiResultsReady: Boolean(state.aiResults), arrivalReady: Boolean(arrivalFlow?.hasArrival()), followReady: Boolean(followFlow?.active()) };
 }
 const { goScreen, updateNavigation } = createScreenNavigation({
   state, availability, refreshSaved, renderBenefits,
@@ -742,9 +746,19 @@ $('evidence-dialog').addEventListener('click', (event) => { if (event.target ===
 window.addEventListener('storage', (event) => { if (event.key === STORAGE_KEY) { refreshSaved(); if (state.courseId) saveMessage('다른 탭에서 저장 내용이 바뀌었을 수 있어요. 현재 초안은 유지됩니다. 최신본은 저장한 코스에서 확인하세요.'); } });
 renderRegions(); renderOfficialBenefits(); renderResults(); refreshSaved();
 // D27: pet recommendation flow (펫 → 조건 → 추천); choices and results live in memory for this visit only.
-petFlow = setupAiFlow({ goScreen, showResults: (result) => { state.aiResults = result; goScreen('ai-results'); } });
+// D49/P68: the results screen leads with 2~3 courses; "이 코스로 출발" opens the following screen (P69).
+const courseView = setupCourseView({ goScreen, onStart: (course, result) => followFlow?.start(course, result) });
+petFlow = setupAiFlow({ goScreen, showResults: (result) => { state.aiResults = result; courseView.render(result); goScreen('ai-results'); } });
 // Stage 5: district arrival → 동네 친구 → 현장 질문 → 도감 (the 도감 stays in this browser).
 arrivalFlow = setupArrivalFlow({ goScreen, pets: petFlow });
+// D49/P69: following a course (kept in this browser); home offers to go back to one left half way.
+followFlow = setupFollowFlow({ goScreen, arrival: arrivalFlow });
+const syncHomeFollow = () => { $('home-follow').hidden = !followFlow.active(); };
+new MutationObserver(syncHomeFollow).observe(document.querySelector('.app-frame'), { attributes: true, attributeFilter: ['data-screen'] });
+syncHomeFollow();
 // Stage 6: the living map (Kakao map when KAKAO_JS_KEY is set, lists otherwise).
 setupLivingMap({ goScreen, pets: petFlow, arrival: arrivalFlow });
-goScreen(location.hash.slice(1) || 'home', { replace:true, focus:false });
+// D50/P66: the first start (pet → who the traveller is). It opens once for a new visitor; benefit answers fill the profile.
+const startFlow = setupStartFlow({ goScreen, pets: petFlow, onProfile: (profile) => { fillProfile(profile); captureBenefitInput(true); capturePreferences(); renderBenefits(); } });
+const firstScreen = location.hash.slice(1) || 'home';
+goScreen(firstScreen === 'home' && startFlow.needed() ? 'start' : firstScreen, { replace:true, focus:false });

@@ -4,6 +4,7 @@ import { distanceKm } from '../dist/geo.mjs';
 import { CAUTION_CATEGORIES } from './field-reports.mjs';
 import { NEARBY_TAG_LABELS, PET_EXTRA_TAGS, walkMinutes } from './nearby.mjs';
 import { CROWD_LEVELS } from './congestion.mjs';
+import { buildCourses, REST_TAGS } from '../dist/course-plan.mjs';
 
 // D27 (명세 2-4): the app filters by purpose and a 60-minute reach, the AI picks 3 of the top 20 and explains
 // them in the pet's voice, and anything it returns is checked against those 20. Rule ranking (principles 1-3)
@@ -184,9 +185,29 @@ const reportNote = (report) => `최근 제보: ${report.categoryLabel} · ${repo
 export const walkUrl = (origin, place) => `https://map.kakao.com/link/by/walk/${encodeURIComponent(origin.label)},${origin.lat},${origin.lng}/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
 const GENERIC_TAGS = new Set(Object.keys(NEARBY_TAG_LABELS));
 
+// D49/P67: the courses as the app shows them. Tastes count only when they are the pet's own tags; a break comes from
+// the places around (cafés, meals) found for the course. Each stop says which friend lives in its district.
+function courseList({ conditions, catalog, ranked, origin, pet, rests, guName }) {
+  const own = new Set([...pet.tags, ...(PET_EXTRA_TAGS[pet.id] ?? [])]);
+  const tastes = (conditions.tastes ?? []).filter((tag) => own.has(tag));
+  const restPool = [...catalog.places.filter((place) => place.tags.some((tag) => REST_TAGS.includes(tag))), ...rests];
+  const met = new Set(conditions.metFriends);
+  const friendByGu = new Map(catalog.friends.map((friend) => [friend.gu, friend]));
+  const tagLabels = { ...catalog.tagLabels, ...NEARBY_TAG_LABELS };
+  return buildCourses({ origin, pool: ranked.slice(0, 30), rests: restPool, budgetMinutes: conditions.hours * 60, tastes, style: conditions.travelStyle ?? '' }).map((course) => ({
+    id: course.id, title: course.title, blurb: course.blurb, totalMinutes: course.totalMinutes, budgetMinutes: course.budgetMinutes, back: course.back,
+    origin: { label: origin.label, lat: origin.lat, lng: origin.lng },
+    stops: course.stops.map((stop) => {
+      const friend = friendByGu.get(stop.place.gu);
+      return { place: publicPlace(stop.place, { ...catalog, tagLabels }), stay: stop.stay, leg: stop.leg, rest: stop.rest, crowd: stop.crowd, purpose_tags: stop.matched.map((tag) => tagLabels[tag]).filter(Boolean),
+        taste: stop.place.tags.some((tag) => tastes.includes(tag)), guName: guName.get(stop.place.gu) ?? null, friend: friend ? { id: friend.id, name: friend.name, met: met.has(stop.place.gu) } : null };
+    }),
+  }));
+}
+
 // D44: with `nearby` (scripts/nearby.mjs found places around the point), the candidates are those places instead of
 // data/places.json; without them, or when the search found nothing, the catalog way below stays as the fallback.
-export async function recommendPlaces({ conditions, catalog: baseCatalog, reportSummaries = {}, provider, timeoutMs = 10000, now = Date.now(), transit = null, nearby = null, crowd = null }) {
+export async function recommendPlaces({ conditions, catalog: baseCatalog, reportSummaries = {}, provider, timeoutMs = 10000, now = Date.now(), transit = null, nearby = null, crowd = null, rests = [] }) {
   const useNearby = Boolean(nearby?.places?.length);
   const catalog = useNearby ? { ...baseCatalog, places: nearby.places, tagLabels: { ...baseCatalog.tagLabels, ...NEARBY_TAG_LABELS } } : baseCatalog;
   const pet = catalog.pets.find((item) => item.id === conditions.pet);
@@ -260,6 +281,8 @@ export async function recommendPlaces({ conditions, catalog: baseCatalog, report
       place_id: entry.place.id, minutes: entry.minutes, minutesEstimated: true, mode: entry.mode, place: publicPlace(entry.place, catalog),
       purpose_tags: entry.matched.map((tag) => catalog.tagLabels[tag]), latest_report: activeReport(entry),
     })),
+    // D49/P67: 2~3 courses from the same ranked places (rules; the AI picks above stay the place cards' own).
+    courses: courseList({ conditions, catalog, ranked, origin, pet, rests, guName }),
     // What the candidates came from: places found around the point right now, or data/places.json (fallback).
     nearby: { used: useNearby, label: origin.label, radiusKm: nearby?.radiusKm ?? null, region: nearby?.region ?? null, found: nearby?.places?.length ?? 0, reason: useNearby ? null : nearby?.reason ?? null },
     festivals: nearby?.festivals ?? [],

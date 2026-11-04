@@ -72,6 +72,7 @@ export function insideSeoul(point) {
 const round3 = (value) => Math.round(value * 1000) / 1000;
 
 // `petIds` comes from data/pets.json on the server and from /api/catalog in the browser.
+const TRAVEL_STYLE_IDS = Object.freeze(['slow', 'packed', 'spontaneous', 'planned']);
 export function normalizeConditions(raw, { petIds }) {
   const fields = {};
   const pet = String(raw?.pet ?? '');
@@ -102,7 +103,10 @@ export function normalizeConditions(raw, { petIds }) {
   const met = Array.isArray(raw?.metFriends) ? raw.metFriends : [];
   if (met.length > MAX_MET || met.some((id) => typeof id !== 'string' || !/^[a-z]{2,20}$/.test(id))) fields.metFriends = '만난 동네 친구 정보를 다시 불러와 주세요.';
   if (Object.keys(fields).length) throw new ConditionError(fields);
-  return { pet, departure, location, ...(departureLabel ? { departureLabel } : {}), hours, partySize, walkLevel, timeOfDay, metFriends: [...new Set(met)] };
+  // D50: hints from the first start shape the courses; anything unknown is dropped quietly (they are optional).
+  const tastes = Array.isArray(raw?.tastes) ? [...new Set(raw.tastes.filter((tag) => typeof tag === 'string' && /^[a-z][a-z_]{1,29}$/.test(tag)))].slice(0, 8) : [];
+  const travelStyle = TRAVEL_STYLE_IDS.includes(raw?.travelStyle) ? raw.travelStyle : '';
+  return { pet, departure, location, ...(departureLabel ? { departureLabel } : {}), hours, partySize, walkLevel, timeOfDay, metFriends: [...new Set(met)], ...(tastes.length ? { tastes } : {}), ...(travelStyle ? { travelStyle } : {}) };
 }
 
 export function departurePoint(conditions) {

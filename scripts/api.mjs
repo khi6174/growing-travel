@@ -3,11 +3,13 @@ import fs from 'node:fs/promises';
 import { REAL_PLACES } from '../dist/real-catalog.mjs';
 import { loadCatalog, loadPlaces, loadBoundaries } from './places.mjs';
 import { createReportStore, ReportError, REPORT_CATEGORIES } from './field-reports.mjs';
-import { recommendPlaces } from './recommend.mjs';
+import { recommendPlaces, publicPlace } from './recommend.mjs';
+import { legBetween, stayMinutes } from '../dist/course-plan.mjs';
+import { distanceKm } from '../dist/geo.mjs';
 import { arrivalInfo, normalizeArrival } from './arrival.mjs';
 import { livingMap } from './living-map.mjs';
 import { normalizeConditions, departurePoint, insideSeoul } from '../dist/ai-conditions.mjs';
-import { createNearby, NEARBY_TAG_LABELS } from './nearby.mjs';
+import { createNearby, NEARBY_TAG_LABELS, PET_EXTRA_TAGS } from './nearby.mjs';
 import { createPlaceRegistry, NEARBY_ID } from './place-registry.mjs';
 import { createCongestion } from './congestion.mjs';
 import { createPhotos } from './photos.mjs';
@@ -59,7 +61,7 @@ async function districtOutlines(dataDir, districts) {
 // What the browser needs to draw the pet and friend screens; places stay on the server until the map stage.
 function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
   return {
-    pets: pets.map(({ id, name, purpose, tags, intro }) => ({ id, name, purpose, intro, tags: tags.map((tag) => tagLabels[tag]) })),
+    pets: pets.map(({ id, name, purpose, tags, intro }) => ({ id, name, purpose, intro, tags: tags.map((tag) => tagLabels[tag]), tag_ids: tags })),
     regions, districts: districts.map(({ id, name, region }) => ({ id, name, region })),
     friends: friends.map(({ id, gu, name, concept, greeting, personality, catchphrase, look, pal }) => ({ id, gu, name, concept, greeting, personality, catchphrase, look, pal })),
   };
@@ -138,19 +140,26 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         let found = null;
         if (nearby.configured) {
           const point = departurePoint(conditions);
-          const [around, region, festivals] = await Promise.all([
+          const [around, region, festivals, rests] = await Promise.all([
             nearby.places({ point, hours: conditions.hours, pet: conditions.pet, pets: catalog.pets, districts: catalog.districts, catalogPlaces: catalog.places }),
             nearby.region(point), nearby.festivals(point),
+            // D49/P67: cafés and meals for a long course's break.
+            conditions.hours >= 3 ? nearby.rests({ point, hours: conditions.hours, districts: catalog.districts }) : [],
           ]);
-          found = { ...around, region, festivals };
+          found = { ...around, region, festivals, rests };
           registry.remember(around.places);
         }
         const pool = found?.places?.length ? found.places : catalog.places;
         const reportSummaries = await reports.recentSummaries(pool.map((place) => place.id));
-        const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit, nearby: found, crowd: congestion.configured ? (places) => congestion.forPlaces(places) : null });
+        const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit, rests: found?.rests ?? [], nearby: found, crowd: congestion.configured ? (places) => congestion.forPlaces(places) : null });
         if (photos.configured) {
           const found = await photos.forPlaces(result.items.map((item) => item.place), new Map(catalog.districts.map((district) => [district.id, district.name])));
           for (const item of result.items) Object.assign(item.place, found.get(item.place.id) ?? {});
+          // Every stop of every course gets a photo too (one lookup per place, remembered for a day).
+          const stops = result.courses.flatMap((course) => course.stops.map((stop) => stop.place));
+          const unique = [...new Map(stops.map((place) => [place.id, place])).values()].slice(0, 12);
+          const more = await photos.forPlaces(unique, new Map(catalog.districts.map((district) => [district.id, district.name])));
+          for (const place of stops) Object.assign(place, found.get(place.id) ?? more.get(place.id) ?? {});
         }
         const counted = [];
         for (const item of result.items) if (await isPublic(item.place_id)) counted.push(item.place_id);
@@ -195,6 +204,44 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         const places = (await Promise.all(ids.map((id) => placeById(id, catalog)))).filter(Boolean);
         const found = photos.configured ? await photos.forPlaces(places, new Map(catalog.districts.map((district) => [district.id, district.name]))) : new Map();
         return send(res, 200, { photos: Object.fromEntries(found) });
+      }
+      // D49/P69: live help while following a course, asked after each step. The next stop's crowding and latest field
+      // report, up to 4 places around the traveller (or the stop just left) that fit the pet and are not in the course,
+      // and events nearby. The point travels in the body, never the URL, and is not stored.
+      if (pathname === '/api/course/live' && req.method === 'POST') {
+        const body = await readJson(req);
+        const catalog = await loadCatalog(dataDir);
+        const point = { lat: Number(body?.point?.lat), lng: Number(body?.point?.lng) };
+        const pet = catalog.pets.find((item) => item.id === body?.pet);
+        const exclude = Array.isArray(body?.exclude) ? body.exclude.filter((id) => typeof id === 'string').slice(0, 20) : [];
+        const tastes = Array.isArray(body?.tastes) ? body.tastes.filter((tag) => typeof tag === 'string').slice(0, 8) : [];
+        if (!insideSeoul(point) || !pet) return send(res, 400, { error: { code: 'INVALID_LIVE', message: '위치와 펫을 다시 확인해 주세요.' } });
+        const tagLabels = { ...catalog.tagLabels, ...NEARBY_TAG_LABELS };
+        const guNames = new Map(catalog.districts.map((district) => [district.id, district.name]));
+        const nextPlace = typeof body?.next === 'string' ? await placeById(body.next, catalog) : null;
+        const [around, festivals, nextCrowd, nextReports] = await Promise.all([
+          nearby.configured ? nearby.places({ point, hours: 1, pet: pet.id, pets: catalog.pets, districts: catalog.districts, catalogPlaces: catalog.places }) : { places: catalog.places.filter((place) => place.purposes.includes(pet.id)) },
+          nearby.festivals(point, { withinKm: 1.5 }),
+          nextPlace && congestion.configured ? congestion.forPlaces([nextPlace]).catch(() => new Map()) : new Map(),
+          nextPlace ? reports.recentSummaries([nextPlace.id]) : {},
+        ]);
+        const own = new Set([...pet.tags, ...(PET_EXTRA_TAGS[pet.id] ?? [])]);
+        const liked = new Set(tastes);
+        const picks = (around.places ?? []).filter((place) => !exclude.includes(place.id) && distanceKm(point, place) >= 0.05)
+          .map((place) => {
+            const leg = legBetween(point, place);
+            const fit = place.tags.filter((tag) => own.has(tag)).length;
+            return { place, leg, value: (fit ? 10 : 8) + (place.tags.some((tag) => liked.has(tag)) ? 2.5 : 0) - leg.minutes / 4 - (place.chain ? 2 : 0) };
+          }).filter(({ leg }) => leg.minutes <= 25).sort((a, b) => b.value - a.value).slice(0, 4);
+        registry.remember(picks.map(({ place }) => place));
+        const crowds = congestion.configured && picks.length ? await congestion.forPlaces(picks.map(({ place }) => place)).catch(() => new Map()) : new Map();
+        const photoMap = photos.configured && picks.length ? await photos.forPlaces(picks.map(({ place }) => place), guNames) : new Map();
+        const latest = nextPlace ? (nextReports[nextPlace.id] ?? []).find((report) => report.active) ?? null : null;
+        return send(res, 200, {
+          next: nextPlace ? { id: nextPlace.id, crowd: nextCrowd.get(nextPlace.id) ?? null, latest_report: latest } : null,
+          suggestions: picks.map(({ place, leg }) => ({ place: { ...publicPlace(place, { ...catalog, tagLabels }), ...(photoMap.get(place.id) ?? {}) }, leg, stay: stayMinutes(place.tags), crowd: crowds.get(place.id) ?? null, taste: place.tags.some((tag) => liked.has(tag)), guName: guNames.get(place.gu) ?? null })),
+          festivals: festivals.slice(0, 2),
+        });
       }
       // D44: the 행정동 of a point picked on the map ("○○동 근처"); the point travels in the body, never the URL.
       if (pathname === '/api/places/region' && req.method === 'POST') {

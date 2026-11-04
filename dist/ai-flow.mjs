@@ -3,6 +3,7 @@ import { CONDITION_STEPS, LAST_STEP, clampStep, stepDirection, nextStep, actionL
 import { fieldReportsSection, fetchReports, reportAge } from './field-reports.mjs';
 import { readFriendLog } from './district-arrival.mjs';
 import { petFace } from './pet-art.mjs';
+import { loadStart, courseHints } from './onboarding.mjs';
 
 // D27: the pet recommendation flow (펫 → 조건 → 추천 → 상세·현장 제보). Choices, location and results stay in
 // memory for this visit only; the device location is never stored.
@@ -127,6 +128,10 @@ function replay(element, className) { element.classList.remove(className); void 
 
 // D35/P51: the pets are drawn in pet-art.mjs; re-exported here for the modules that already import them from this one.
 export { petFace };
+function startHints(petId) {
+  const hints = courseHints(loadStart());
+  return { ...(hints.pet === petId && hints.tastes.length ? { tastes: hints.tastes } : {}), ...(hints.style ? { travelStyle: hints.style } : {}) };
+}
 
 export function setupAiFlow({ goScreen, showResults }) {
   const state = { catalog: null, petId: null, location: null, searched: null, result: null };
@@ -309,6 +314,8 @@ export function setupAiFlow({ goScreen, showResults }) {
       departureLabel: departure === SEARCHED_PLACE ? state.searched?.label : undefined,
       hours: checkedValue('ai-hours') === 'custom' ? customHours() : Number(checkedValue('ai-hours')), partySize: $('ai-party').value === '' ? NaN : Number($('ai-party').value),
       walkLevel: Number(checkedValue('ai-walk')), timeOfDay: checkedValue('ai-time'), metFriends: metFriends(),
+      // D50: the first start's tastes (when they are this pet's) and usual way of travelling shape the courses.
+      ...startHints(state.petId),
     };
   }
   function labels() {
@@ -672,5 +679,5 @@ export function setupAiFlow({ goScreen, showResults }) {
   const catalogReady = () => (state.catalog ? Promise.resolve(state.catalog) : new Promise((resolve) => catalogWaiters.push(resolve)));
   loadCatalog();
   // Stage 5 reads the chosen pet and catalog, and opens its places in the same detail view.
-  return { hasPet: () => Boolean(pet()), petId: () => state.petId, catalogReady, openPlaceDetail, lastResult: () => state.result, pickPoint };
+  return { hasPet: () => Boolean(pet()), petId: () => state.petId, selectPet: (id) => { endEdit(); selectPet(id); }, catalogReady, openPlaceDetail, lastResult: () => state.result, pickPoint };
 }

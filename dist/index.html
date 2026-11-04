@@ -42,7 +42,24 @@
       <!-- D35: the season design replaced the draft picker; drafts still open from a ?theme= link. -->
       <section class="theme-picker" aria-labelledby="theme-heading" hidden><div class="section-heading"><h2 id="theme-heading">디자인 시안</h2><span class="muted">고르기 전 비교용</span></div><p class="field-help">고르면 모든 화면이 바로 그 디자인으로 바뀌어요. 이 브라우저에만 기억돼요.</p><fieldset class="pet-fieldset"><legend class="visually-hidden">디자인 시안</legend><div id="theme-options" class="theme-options"></div></fieldset></section>
       <button id="home-resume" class="text-button" type="button" hidden>입력 중인 여행 이어가기</button>
+      <button id="home-follow" class="button primary full home-follow" type="button" data-screen-target="follow" hidden>따라가던 코스 이어 가기</button>
+      <button id="home-restart" class="text-button home-restart" type="button" data-screen-target="start">처음 질문 다시 하기</button>
       <div class="primary-action-bar"><button id="home-ai" class="button primary full" type="button" data-screen-target="pet">펫 고르고 출발하기</button><button id="home-start" class="button primary full" type="button" data-screen-target="profile" hidden>여행 계획하기</button></div>
+    </section>
+    <!-- D50/P66: the first start. Pet → hello → who the traveller is (each answer chosen or typed, all skippable) → done. -->
+    <section id="start-panel" class="setup-panel app-screen cond-screen start-screen" aria-labelledby="start-heading" hidden>
+      <div class="cond-top"><p id="start-count" class="eyebrow">처음 시작 1 / 7</p><div id="start-progress" class="cond-progress" role="progressbar" aria-label="처음 시작 단계" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1"><i></i></div><button id="start-later" class="text-button start-later" type="button">나중에 할게요</button></div>
+      <div id="start-pet-row" class="cond-pet" hidden><span id="start-pet-face" class="cond-pet-face" aria-hidden="true"></span><p id="start-pet-line" class="cond-bubble"></p></div>
+      <h2 id="start-heading" class="cond-question" tabindex="-1">어떤 여행을 좋아해요?</h2>
+      <p id="start-hint" class="cond-hint"></p>
+      <div class="ai-step start-step" data-step="pet"><fieldset><legend class="visually-hidden">여행 스타일이 될 펫</legend><div id="start-pets" class="start-pets"></div></fieldset></div>
+      <div class="ai-step start-step" data-step="hello" hidden><div class="start-hello"><span id="start-hello-face" class="start-hello-face" aria-hidden="true"></span><p id="start-hello-line" class="start-hello-line"></p></div></div>
+      <div class="ai-step start-step" data-step="taste" hidden><fieldset><legend class="visually-hidden">좋아하는 것, 여러 개 고를 수 있어요</legend><div id="start-tastes" class="start-tiles"></div></fieldset><label class="start-note"><span>직접 적기</span><input id="start-taste-note" type="text" maxlength="40" autocomplete="off" placeholder="예: 한옥 카페, 조용한 골목"></label></div>
+      <div class="ai-step start-step" data-step="style" hidden><fieldset><legend class="visually-hidden">자주 한 여행 방식</legend><div id="start-styles" class="start-tiles"></div></fieldset><label class="start-note"><span>직접 적기</span><input id="start-style-note" type="text" maxlength="40" autocomplete="off" placeholder="예: 아침 일찍 나가서 저녁 전에 와요"></label></div>
+      <div class="ai-step start-step" data-step="age" hidden><label class="start-note"><span>만 나이</span><input id="start-age" type="number" inputmode="numeric" min="1" max="120" step="1" autocomplete="off" placeholder="예: 22" aria-describedby="start-age-error"></label><p id="start-age-error" class="field-error"></p><fieldset class="start-fieldset"><legend class="start-legend">대학생이에요?</legend><div id="start-student" class="station-options"></div></fieldset></div>
+      <div class="ai-step start-step" data-step="home" hidden><fieldset><legend class="visually-hidden">사는 시·도</legend><div id="start-regions" class="start-regions"></div></fieldset></div>
+      <div class="ai-step start-step" data-step="done" hidden><ul id="start-summary" class="start-summary"></ul><p id="start-save-message" class="field-help" role="status"></p></div>
+      <div class="primary-action-bar start-actions"><button id="start-skip" class="button subtle" type="button">건너뛰기</button><button id="start-next" class="button primary" type="button">다음</button></div>
     </section>
     <section id="pet-panel" class="setup-panel app-screen" aria-labelledby="pet-heading" hidden>
       <p class="eyebrow">펫 추천 1 / 3</p><h2 id="pet-heading">누구랑 같이 갈까요?</h2>
@@ -96,12 +113,31 @@
       <p id="ai-results-where" class="results-where" hidden></p>
       <p id="ai-results-conditions" class="panel-intro"></p>
       <p id="ai-results-source" class="ai-source-note"></p>
+      <!-- D49/P68: 2~3 courses first; the places below can be put into a course while following it. -->
+      <section id="ai-courses" class="course-section" aria-label="추천 코스" hidden><ol id="ai-course-cards" class="course-cards"></ol></section>
+      <h3 id="ai-places-heading" class="places-heading" hidden>코스에 넣을 수 있는 근처 장소</h3>
       <ol id="ai-results-list" class="ai-result-list"></ol>
       <section id="ai-results-events" class="arrival-section ai-events" aria-labelledby="ai-events-heading" hidden><h3 id="ai-events-heading">지금 이 근처에서 하는 행사</h3><ul id="ai-events-list" class="ai-event-list"></ul><p class="field-help">행사 정보는 한국관광공사 TourAPI 자료예요. 일정과 장소는 바뀔 수 있으니 출발 전에 확인해 주세요.</p></section>
       <section id="ai-results-more" class="arrival-section ai-more" aria-labelledby="ai-more-heading" hidden><h3 id="ai-more-heading"></h3><p class="field-help">쓸 수 있는 시간 안에 다녀올 수 있는 곳을 목적·이동 부담·현장 소식 순서로 정리했어요.</p><button id="ai-more-toggle" type="button" class="button subtle full" aria-expanded="false" aria-controls="ai-more-list"></button><ul id="ai-more-list" class="arrival-list" hidden></ul><button id="ai-more-next" type="button" class="button subtle full" hidden></button></section>
       <p id="ai-results-note" class="field-help">이동 시간은 직선거리로 계산한 추정치예요. 현장 소식은 여행자가 남긴 당시 상황이니, 운영 시간과 경로는 출발 전에 확인해 주세요.</p>
       <section class="friend-entry compact" aria-label="구 도착 알림"><p class="field-help">출발하면 위치를 켜 두세요. 새 구에 들어서면 동네 친구가 나타나요.</p><p class="arrival-status field-help" role="status" aria-live="polite"></p><button type="button" class="button subtle arrival-toggle">구 도착 알림 켜기</button></section>
       <div class="primary-action-bar"><button id="ai-results-map" class="button primary full" type="button">추천 3곳 지도에서 보기</button><button id="ai-change-conditions" class="button subtle full" type="button" data-screen-target="ai">조건 바꿔서 다시 추천받기</button></div>
+    </section>
+    <!-- D49/P69·P70: following a course one stop at a time, with live help and changes on the way. -->
+    <section id="follow-panel" class="app-screen follow-screen" aria-labelledby="follow-heading" hidden>
+      <p class="eyebrow">코스 따라가기</p><h2 id="follow-heading" tabindex="-1"></h2>
+      <div class="follow-status"><div id="follow-progress" class="cond-progress" role="progressbar" aria-label="다녀온 장소" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"><i></i></div><p id="follow-count" class="follow-count"></p></div>
+      <p id="follow-time" class="follow-time"></p>
+      <p id="follow-late" class="follow-late" role="status" hidden></p>
+      <section id="follow-now" class="follow-now" aria-live="polite"></section>
+      <p id="follow-message" class="field-help follow-message" role="status" aria-live="polite"></p>
+      <div id="follow-confirm" class="follow-confirm" role="alertdialog" aria-label="코스 바꾸기 확인" hidden></div>
+      <section id="follow-live" class="arrival-section follow-live" aria-labelledby="follow-live-heading"><div class="section-heading"><h3 id="follow-live-heading">가는 길에 이런 곳도 있어요</h3><button id="follow-refresh" class="text-button" type="button">새로 찾기</button></div><p id="follow-live-status" class="field-help" role="status" aria-live="polite"></p><ul id="follow-suggestions" class="follow-suggestions"></ul></section>
+      <section id="follow-events" class="arrival-section ai-events" aria-labelledby="follow-events-heading" hidden><h3 id="follow-events-heading">지금 근처에서 하는 행사</h3><ul id="follow-events-list" class="ai-event-list"></ul></section>
+      <section class="arrival-section" aria-labelledby="follow-timeline-heading"><h3 id="follow-timeline-heading">전체 코스</h3><ol id="follow-timeline" class="trip-timeline follow-timeline"></ol></section>
+      <section class="friend-entry compact" aria-label="구 도착 알림"><p class="field-help">위치를 켜 두면 새 구에 들어설 때 동네 친구가 나타나고, 추천지도 지금 위치 근처에서 찾아요.</p><p class="arrival-status field-help" role="status" aria-live="polite"></p><button type="button" class="button subtle arrival-toggle">구 도착 알림 켜기</button></section>
+      <p class="field-help">이동·머무는 시간은 추정이에요. 코스는 이 기기에만 저장돼요.</p>
+      <div class="primary-action-bar follow-actions"><button id="follow-end" class="button subtle" type="button">그만두기</button><button id="follow-main" class="button primary" type="button">도착했어요</button></div>
     </section>
     <section id="arrival-panel" class="app-screen" aria-labelledby="arrival-heading" hidden>
       <p id="arrival-eyebrow" class="eyebrow"></p>
