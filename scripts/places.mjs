@@ -44,8 +44,22 @@ export function validateCatalog({ pets: petFile, districts: districtFile, friend
     if (!ID.test(friend?.id ?? '') || !districtIds.has(friend?.gu) || friendGu.has(friend.gu)) errors.push(`${at}: id와 아직 친구가 없는 gu 필요`);
     friendGu.add(friend?.gu);
     if (!text(friend?.name) || !text(friend?.concept) || !text(friend?.greeting)) errors.push(`${at}: name·concept·greeting 필요`);
+    // D46: each friend carries its own personality, catchphrase and look (for whoever draws it).
+    if (!text(friend?.personality) || !text(friend?.catchphrase) || !text(friend?.look)) errors.push(`${at}: personality·catchphrase·look 필요`);
   });
   for (const id of districtIds) if (!friendGu.has(id)) errors.push(`gu_friends.json: ${id}의 동네 친구가 없어요.`);
+  const friendById = new Map(friends.map((friend) => [friend?.id, friend]));
+  for (const key of ['name', 'personality']) {
+    const counted = new Map();
+    for (const friend of friends) counted.set(friend?.[key], (counted.get(friend?.[key]) ?? 0) + 1);
+    for (const [value, count] of counted) if (count > 1) errors.push(`gu_friends.json: ${key} "${value}"가 ${count}명에게 겹쳐요.`);
+  }
+  // A pal is written on both sides, so either friend can mention the other.
+  for (const friend of friends) {
+    if (friend?.pal === undefined) continue;
+    const pal = friendById.get(friend.pal?.id);
+    if (!pal || pal === friend || !text(friend.pal?.note) || pal.pal?.id !== friend.id) errors.push(`friends (${friend?.id}): pal은 다른 친구 id와 note가 필요하고 양쪽에 적어야 해요.`);
+  }
 
   const places = Array.isArray(placeFile?.places) ? placeFile.places : [];
   if (!places.length) errors.push('places.json: places 배열이 없어요.');

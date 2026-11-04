@@ -38,7 +38,23 @@ test('each district has one neighborhood friend that is not an animal (명세 2-
   assert.equal(catalog.friends.length, 25);
   assert.deepEqual(new Set(catalog.friends.map((friend) => friend.gu)), new Set(catalog.districts.map((district) => district.id)));
   const animalWords = ['강아지', '고양이', '호랑이', '토끼', '여우', '사슴', '까치', '비둘기', '물고기', '동물', '드래곤'];
-  for (const friend of catalog.friends) for (const word of animalWords) assert.ok(!`${friend.name} ${friend.concept} ${friend.greeting}`.includes(word), `${friend.id}: ${word}`);
+  for (const friend of catalog.friends) for (const word of animalWords) assert.ok(!`${friend.name} ${friend.concept} ${friend.greeting} ${friend.look} ${friend.pal?.note ?? ''}`.includes(word), `${friend.id}: ${word}`);
+});
+
+test('D46 every friend has its own name, personality, catchphrase and look, and pals name each other', async () => {
+  for (const key of ['name', 'personality', 'catchphrase', 'look']) assert.equal(new Set(catalog.friends.map((friend) => friend[key])).size, 25, `${key} is not shared`);
+  const byId = new Map(catalog.friends.map((friend) => [friend.id, friend]));
+  const pals = catalog.friends.filter((friend) => friend.pal);
+  assert.ok(pals.length >= 2);
+  for (const friend of pals) assert.equal(byId.get(friend.pal.id)?.pal?.id, friend.id, `${friend.id} ↔ ${friend.pal.id}`);
+  const raw = { pets: await readRaw('pets.json'), districts: await readRaw('districts.json'), friends: await readRaw('gu_friends.json'), places: await readRaw('places.json') };
+  const [first, second] = raw.friends.friends;
+  const same = validateCatalog({ ...raw, friends: { friends: [{ ...first }, { ...second, personality: first.personality }, ...raw.friends.friends.slice(2)] } });
+  assert.ok(same.errors.some((error) => error.includes('personality')), 'two friends may not share a personality');
+  const oneSided = validateCatalog({ ...raw, friends: { friends: [{ ...first, pal: { id: second.id, note: '한쪽만' } }, ...raw.friends.friends.slice(1)] } });
+  assert.ok(oneSided.errors.some((error) => error.includes('pal')), 'a pal is written on both sides');
+  const bare = validateCatalog({ ...raw, friends: { friends: [{ ...first, look: '' }, ...raw.friends.friends.slice(1)] } });
+  assert.ok(bare.errors.some((error) => error.includes('look')));
 });
 
 test('places cover every district with 5-10 candidates and each pet has enough to fill 20', () => {
