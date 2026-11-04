@@ -3,6 +3,7 @@ import { postReport, reportAge } from './field-reports.mjs';
 import { distanceLabel, latestReportLine, petFace } from './ai-flow.mjs';
 import { josa } from './ai-conditions.mjs';
 import { createSeoulBoard } from './seoul-board.mjs';
+import { drawFriend } from './friend-art.mjs';
 import { distanceKm } from './geo.mjs';
 
 // Stage 5 (명세 2-5 ⑤·⑥, 단계 5): district arrival → 동네 친구 → one field question → 도감. The device location is
@@ -19,13 +20,26 @@ const round4 = (value) => Math.round(value * 1e4) / 1e4;
 const dateLabel = (iso) => (iso ? new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(iso)) : '이전 기록');
 const ANSWER_COPY = { ...Object.fromEntries(Object.entries(ANSWERS).map(([key, answer]) => [key, answer.label])), not_near: '후보지 근처가 아니어서 인사만 했어요' };
 
-// A plain teardrop stands in until the team draws the friends (명세 5): every friend is a silhouette for now,
-// tinted by region once met. Not an animal, so friends stay apart from the pets.
+// D48/P65: each friend has its own placeholder drawing (friend-art.mjs) on a disc tinted by its region; before it is
+// met it shows as a silhouette with "?". A friend without a drawing falls back to the plain teardrop (명세 5).
 const SVG = 'http://www.w3.org/2000/svg';
-export function friendArt({ region = '', initial = '', met = false } = {}) {
+export function friendArt({ region = '', initial = '', met = false, id = '' } = {}) {
   const svg = document.createElementNS(SVG, 'svg');
   svg.setAttribute('viewBox', '0 0 40 40'); svg.setAttribute('aria-hidden', 'true');
-  svg.setAttribute('class', `friend-art ${met ? `met region-${region}` : 'unmet'}`);
+  svg.setAttribute('class', `friend-art ${met ? 'met' : 'unmet'} region-${region}`);
+  const disc = document.createElementNS(SVG, 'circle');
+  disc.setAttribute('cx', '20'); disc.setAttribute('cy', '21'); disc.setAttribute('r', '19'); disc.setAttribute('class', 'friend-bg');
+  svg.append(disc);
+  if (drawFriend(svg, id)) {
+    svg.classList.add('drawn');
+    if (!met) {
+      const mark = document.createElementNS(SVG, 'text');
+      mark.setAttribute('x', '20'); mark.setAttribute('y', '25'); mark.setAttribute('text-anchor', 'middle'); mark.setAttribute('class', 'friend-mark');
+      mark.textContent = '?';
+      svg.append(mark);
+    }
+    return svg;
+  }
   const body = document.createElementNS(SVG, 'path');
   body.setAttribute('d', 'M20 3c6 8 14 14 14 22a14 14 0 0 1-28 0C6 17 14 11 20 3Z'); body.setAttribute('class', 'friend-body');
   const mark = document.createElementNS(SVG, 'text');
@@ -140,7 +154,7 @@ export function setupArrivalFlow({ goScreen, pets }) {
     const { district, friend } = state.info;
     const met = metEntry(district.id);
     $('arrival-eyebrow').textContent = `${district.regionName} · ${district.name}에 도착`;
-    $('arrival-friend-art').replaceChildren(friendArt({ region: district.region, initial: friend.name[0], met: Boolean(met) }));
+    $('arrival-friend-art').replaceChildren(friendArt({ region: district.region, initial: friend.name[0], met: Boolean(met), id: friend.id }));
     $('arrival-heading').textContent = friend.name;
     $('arrival-met').textContent = met ? `다시 만났어요 · 처음 만난 날 ${dateLabel(met.metAt)}` : '처음 만났어요';
     $('arrival-greeting').textContent = `“${friend.greeting}”`;
@@ -275,8 +289,8 @@ export function setupArrivalFlow({ goScreen, pets }) {
     const facts = node('dl', 'place-facts');
     const met = entry ? [['처음 만난 날', dateLabel(entry.metAt)], ['현장 질문', ANSWER_COPY[entry.answer] ?? '이전 기록']] : [['만난 날', `아직 못 만났어요. ${district.name}에 가면 만나요`]];
     for (const [label, text] of [...friendProfile(friend, state.catalog?.friends ?? []), ...met]) facts.append(node('dt', '', label), node('dd', '', text));
-    const note = `${entry ? '' : '시연용 미리 보기예요. '}이름과 설정은 팀이 최종 이름·그림을 정하기 전의 임시안이에요.`;
-    content.replaceChildren(node('span', 'small-label', `${region.name} · ${district.name}${entry ? '' : ' · 아직 못 만남'}`), friendArt({ region: region.id, initial: friend.name[0], met: true }), heading,
+    const note = `${entry ? '' : '시연용 미리 보기예요. '}이름·설정·그림은 팀이 최종안을 정하기 전의 임시안이에요.`;
+    content.replaceChildren(node('span', 'small-label', `${region.name} · ${district.name}${entry ? '' : ' · 아직 못 만남'}`), friendArt({ region: region.id, initial: friend.name[0], met: true, id: friend.id }), heading,
       node('p', 'friend-greeting', `“${friend.greeting}”`), node('p', 'intro', friend.concept), facts, node('p', 'field-help', note));
     $('evidence-dialog').showModal(); heading.focus();
   }
@@ -284,7 +298,7 @@ export function setupArrivalFlow({ goScreen, pets }) {
     const count = metCount();
     document.querySelectorAll('.dex-count').forEach((element) => { element.textContent = String(count); });
     document.querySelectorAll('.dex-progress').forEach((element) => element.style.setProperty('--progress', `${(count / 25) * 100}%`));
-    if (PREVIEW_ALL_FRIENDS) $('dex-intro').textContent = '구에 도착하면 그 구의 동네 친구를 만날 수 있어요. 지금은 시연용으로 못 만난 친구도 눌러서 미리 볼 수 있어요. 진한 테두리 칸이 실제로 만난 친구고, 도감은 이 기기에만 저장돼요.';
+    if (PREVIEW_ALL_FRIENDS) $('dex-intro').textContent = '구에 도착하면 그 구의 동네 친구를 만날 수 있어요. 지금은 시연용으로 못 만난 친구도 눌러서 미리 볼 수 있어요. 진한 테두리 칸이 실제로 만난 친구고, 그림은 팀이 정하기 전의 임시 그림이에요. 도감은 이 기기에만 저장돼요.';
     if (!state.catalog) return;
     const log = new Map(readFriendLog().map((entry) => [entry.gu, entry]));
     $('dex-regions').replaceChildren(...state.catalog.regions.map((region) => {
@@ -298,7 +312,7 @@ export function setupArrivalFlow({ goScreen, pets }) {
         const entry = log.get(district.id) ?? null;
         const open = Boolean(entry) || PREVIEW_ALL_FRIENDS;
         const slot = open ? button('', `dex-slot ${entry ? 'met' : 'preview'}`, () => openFriend(friend, district, region, entry)) : node('div', 'dex-slot');
-        slot.append(friendArt({ region: region.id, initial: friend.name[0], met: open }), node('b', '', open ? friend.name : '???'), node('small', '', district.name));
+        slot.append(friendArt({ region: region.id, initial: friend.name[0], met: open, id: friend.id }), node('b', '', open ? friend.name : '???'), node('small', '', district.name));
         if (open) slot.setAttribute('aria-label', `${district.name} 동네 친구 ${friend.name}${entry ? '' : ', 아직 못 만났어요'}, 자세히 보기`);
         // A friend met just now springs into its slot the first time the 도감 is shown.
         if (entry && district.id === state.justMet) {

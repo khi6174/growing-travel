@@ -333,6 +333,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .friend-art .friend-body{fill:#3a3c42}
 .friend-art .friend-mark{fill:#fff;font-size:13px;font-weight:700;font-family:inherit}
 .friend-art.met .friend-body{fill:var(--region,var(--green))}
+.friend-art .friend-bg{fill:#3a3c42;opacity:.12}
+.friend-art.met .friend-bg{fill:var(--region,var(--green));opacity:.16}
+.friend-art.unmet .friend-figure{filter:brightness(0) opacity(.75)}
+.friend-art.drawn .friend-mark{font-size:12px}
+.friend-art.revealing .friend-figure{filter:none;animation:gt-reveal-art .9s ease-out both}
+.friend-art.revealing .friend-mark{opacity:0;transition:opacity .4s}
+.friend-art.revealing .friend-bg{fill:var(--region,var(--green));opacity:.16;transition:fill .9s,opacity .9s}
+@keyframes gt-reveal-art{from{filter:brightness(0) opacity(.75)}to{filter:brightness(1) opacity(1)}}
 :is(.friend-art,.gu,.burst).region-dosim{--region:#3651e8}:is(.friend-art,.gu,.burst).region-seobuk{--region:#1f7a5c}:is(.friend-art,.gu,.burst).region-dongbuk{--region:#9a4c12}:is(.friend-art,.gu,.burst).region-seonam{--region:#6b3fb0}:is(.friend-art,.gu,.burst).region-dongnam{--region:#b0274a}
 .app-frame .friend-entry{border-top:1px solid var(--line);padding:var(--refine-space-20) 0 0;margin-top:var(--travel-space-section);display:grid;gap:var(--refine-space-8);justify-items:start}
 .app-frame .friend-entry .section-heading{width:100%}
