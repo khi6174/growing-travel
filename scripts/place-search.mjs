@@ -1,7 +1,7 @@
 // D39/P55: turn a typed departure (주소·역·건물·가게 이름) into a point in Seoul. With KAKAO_REST_KEY the server asks
 // Kakao Local (address search plus keyword search limited to the Seoul box); without a key, or when Kakao fails,
 // it looks through the app's own stations and candidate places. The query is neither logged nor stored.
-import { SEOUL_STATIONS, SEOUL_BOUNDS, insideSeoul } from '../dist/ai-conditions.mjs';
+import { SEOUL_STATIONS, SEOUL_CAMPUSES, SEOUL_BOUNDS, insideSeoul } from '../dist/ai-conditions.mjs';
 
 const BASE = 'https://dapi.kakao.com/v2/local/search';
 const RECT = `${SEOUL_BOUNDS.lng[0]},${SEOUL_BOUNDS.lat[0]},${SEOUL_BOUNDS.lng[1]},${SEOUL_BOUNDS.lat[1]}`;
@@ -14,6 +14,7 @@ export function localMatches(query, places = []) {
   if (q.length < 1) return [];
   const pool = [
     ...SEOUL_STATIONS.map((station) => ({ label: station.label, address: '역 대표 지점', lat: station.lat, lng: station.lng })),
+    ...SEOUL_CAMPUSES.map((campus) => ({ label: campus.name, address: '학교 대표 지점', lat: campus.lat, lng: campus.lng })),
     ...places.map((place) => ({ label: place.name, address: place.address ?? '', lat: place.lat, lng: place.lng })),
   ];
   return pool.filter((item) => squash(item.label).includes(q) || (q.length >= 2 && q.includes(squash(item.label).replace(/역$/, '')))).slice(0, MAX_RESULTS);

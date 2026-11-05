@@ -28,6 +28,29 @@ export function stayMinutes(tags = [], { factor = 1, style = '' } = {}) {
 }
 export const REST_TAGS = Object.freeze(['quiet_cafe', 'cafe', 'dessert', 'restaurant', 'old_restaurant']);
 
+// D54/P78: what a course may cost one person, always an estimate ("약 N원(추정)"). A transit leg counts one basic
+// Seoul card fare (transfers and distance surcharges are not counted); a café or a meal counts a usual price for one;
+// parks, walks and streets count 0. Palaces, museums and other places whose admission is not in the data count as
+// "확인 필요" (null): nothing is made up for them.
+export const TRANSIT_FARE_WON = 1550;
+const SPEND_WON = Object.freeze({ quiet_cafe: 6000, cafe: 6000, dessert: 6000, restaurant: 10000, old_restaurant: 10000, food_street: 10000, market: 10000 });
+const FREE_TAGS = new Set(['park', 'hangang', 'trail', 'view_walk', 'garden', 'low_crowd', 'photo_spot', 'aesthetic_alley', 'night_view', 'bookstore']);
+const UNKNOWN_TAGS = new Set(['palace', 'museum', 'exhibition', 'hanok', 'attraction', 'heritage', 'leisure']);
+export function placeCost(place) {
+  const tags = place?.tags ?? [];
+  const spend = tags.map((tag) => SPEND_WON[tag]).find((won) => won != null);
+  if (spend != null) return spend;
+  if (tags.some((tag) => UNKNOWN_TAGS.has(tag))) return null;
+  return tags.some((tag) => FREE_TAGS.has(tag)) ? 0 : null;
+}
+export const legCost = (leg) => (leg?.mode === 'transit' ? TRANSIT_FARE_WON : 0);
+export function courseCost(stops, back) {
+  const transit = stops.reduce((sum, stop) => sum + legCost(stop.leg), 0) + legCost(back);
+  const known = stops.map((stop) => placeCost(stop.place));
+  const places = known.reduce((sum, won) => sum + (won ?? 0), 0);
+  return { transit, places, total: transit + places, unknown: known.filter((won) => won === null).length };
+}
+
 // The three kinds of course (D49): 알찬 has the most stops, 여유 fewer and longer ones (quiet places first), 걸어서
 // only legs a person walks. The usual way of travelling (D50) decides which comes first.
 export const COURSE_KINDS = Object.freeze({
@@ -51,24 +74,33 @@ export function retime(course, origin, budgetMinutes) {
   const stops = course.stops.map((stop) => ({ ...stop }));
   const { legs, back, total } = timeline(origin, stops);
   stops.forEach((stop, index) => { stop.leg = legs[index]; });
-  return { ...course, stops, back, totalMinutes: total, budgetMinutes, overBy: Math.max(0, total - budgetMinutes) };
+  const cost = courseCost(stops, back);
+  const budgetWon = course.budgetWon ?? null;
+  return { ...course, stops, back, totalMinutes: total, budgetMinutes, overBy: Math.max(0, total - budgetMinutes), cost, budgetWon, overWon: budgetWon === null ? 0 : Math.max(0, cost.total - budgetWon) };
 }
 
 // Greedy: from the departure, take the best next place that still leaves time to get back; tastes and quiet places
 // (for 여유) count more, a far leg counts against it, and a kind of place already taken counts a little less.
-export function buildCourse(kindId, { origin, pool, rests = [], budgetMinutes, tastes = [], style = '', seen = new Map() }) {
+export function buildCourse(kindId, { origin, pool, rests = [], budgetMinutes, budgetWon = null, tastes = [], style = '', seen = new Map() }) {
   const kind = COURSE_KINDS[kindId];
   const liked = new Set(tastes);
   const stops = [];
   const used = [];
-  let at = origin; let spent = 0;
+  let at = origin; let spent = 0; let spentWon = 0;
+  // With a budget, a place must also leave money for the way back (places of unknown admission count 0 here and are
+  // marked 확인 필요 on the card).
+  const affordable = (place, leg) => budgetWon === null || spentWon + legCost(leg) + (placeCost(place) ?? 0) + legCost(legBetween(place, origin)) <= budgetWon;
   const fits = (place, stay, from) => {
     const leg = legBetween(from, place);
     if (kind.walkOnly && leg.mode !== 'walk') return null;
     const back = legBetween(place, origin);
     if (kind.walkOnly && back.mode !== 'walk' && back.minutes > WALK_LIMIT_MINUTES * 2) return null;
+    if (!affordable(place, leg)) return null;
     return spent + leg.minutes + stay + back.minutes <= budgetMinutes ? leg : null;
   };
+  // A small budget leans to free places; places of unknown admission count a little less.
+  const thrift = budgetWon === null ? 0 : budgetWon <= 10000 ? 2 : budgetWon <= 30000 ? 1 : 0;
+  const moneyValue = (place) => { const won = placeCost(place); return won === 0 ? thrift : won === null ? -thrift / 2 : 0; };
   while (stops.length < kind.maxStops) {
     let best = null;
     for (const entry of pool) {
@@ -82,12 +114,12 @@ export function buildCourse(kindId, { origin, pool, rests = [], budgetMinutes, t
       // The same kind of place again counts 3 less each time (P67: three bookstores or four bakeries in a row).
       const repeat = stops.filter((stop) => stop.place.tags[0] === place.tags[0]).length * 3;
       // A place an earlier course already took counts 2.5 less, so the 2~3 courses offer different days out.
-      const value = entry.score + taste + crowd - repeat - leg.minutes / 8 - (seen.get(place.id) ?? 0) * 2.5;
+      const value = entry.score + taste + crowd + moneyValue(place) - repeat - leg.minutes / 8 - (seen.get(place.id) ?? 0) * 2.5;
       if (!best || value > best.value) best = { entry, stay, leg, value };
     }
     if (!best) break;
     stops.push({ place: best.entry.place, stay: best.stay, crowd: best.entry.crowd ?? null, matched: best.entry.matched ?? [], rest: false });
-    used.push(best.entry.place); spent += best.leg.minutes + best.stay; at = best.entry.place;
+    used.push(best.entry.place); spent += best.leg.minutes + best.stay; spentWon += legCost(best.leg) + (placeCost(best.entry.place) ?? 0); at = best.entry.place;
   }
   // A long day (3 hours or more, not on foot only) gets one café or meal after the second stop when one is close.
   if (budgetMinutes >= 180 && stops.length >= 2 && !stops.some((stop) => stop.place.tags.some((tag) => REST_TAGS.includes(tag)))) {
@@ -101,25 +133,28 @@ export function buildCourse(kindId, { origin, pool, rests = [], budgetMinutes, t
       // Room is made by dropping the last stop if the café would not fit otherwise.
       let fitted = trial;
       while (fitted.length > 2 && timeline(origin, fitted).total > budgetMinutes) fitted = fitted.slice(0, -1);
-      if (timeline(origin, fitted).total <= budgetMinutes && fitted.includes(restStop)) stops.splice(0, stops.length, ...fitted);
+      const money = (list) => { const { legs, back } = timeline(origin, list); return courseCost(list.map((stop, index) => ({ ...stop, leg: legs[index] })), back).total; };
+      if (timeline(origin, fitted).total <= budgetMinutes && fitted.includes(restStop) && (budgetWon === null || money(fitted) <= budgetWon)) stops.splice(0, stops.length, ...fitted);
     }
   }
   if (!stops.length) return null;
-  return retime({ id: kindId, title: kind.title, blurb: kind.blurb, stops }, origin, budgetMinutes);
+  return retime({ id: kindId, title: kind.title, blurb: kind.blurb, stops, budgetWon }, origin, budgetMinutes);
 }
 
 // 2~3 courses in the order the usual way of travelling suggests; one that repeats another's stops is left out.
-export function buildCourses({ origin, pool, rests = [], budgetMinutes, tastes = [], style = '' }) {
+export function buildCourses({ origin, pool, rests = [], budgetMinutes, budgetWon = null, tastes = [], style = '' }) {
   const courses = [];
   const seen = new Map();
   for (const kindId of KIND_ORDER[style] ?? KIND_ORDER['']) {
-    const course = buildCourse(kindId, { origin, pool, rests, budgetMinutes, tastes, style, seen });
+    const course = buildCourse(kindId, { origin, pool, rests, budgetMinutes, budgetWon, tastes, style, seen });
     if (!course) continue;
     for (const stop of course.stops) seen.set(stop.place.id, (seen.get(stop.place.id) ?? 0) + 1);
     const key = course.stops.map((stop) => stop.place.id).join('|');
     if (courses.some((other) => other.stops.map((stop) => stop.place.id).join('|') === key)) continue;
     courses.push(course);
   }
+  // D54: with a budget, the courses that fit it come first (their own order kept otherwise).
+  if (budgetWon !== null) courses.sort((a, b) => Number(a.overWon > 0) - Number(b.overWon > 0));
   return courses.slice(0, 3);
 }
 

@@ -1,4 +1,5 @@
 import { resolveScreen, navigationTab, parentScreen } from './navigation.mjs';
+import { t, onLang } from './i18n.mjs';
 
 const screenPanels = Object.freeze({ home:'home-panel', profile:'profile-panel', settings:'profile-panel', trip:'trip-panel', regions:'regions-panel', experiences:'experience-screen', course:'course-panel', saved:'saved-view', benefits:'benefits-view', pet:'pet-panel', ai:'ai-panel', 'ai-results':'ai-results-panel', arrival:'arrival-panel', dex:'dex-panel', map:'map-panel', start:'start-panel', follow:'follow-panel' });
 const screenTitles = Object.freeze({ home:'여행 시작', profile:'내 여행 취향', settings:'내 설정', trip:'이번 여행 조건', regions:'지역 비교', experiences:'경험 고르기', course:'나의 여행 코스', saved:'저장한 코스', benefits:'나에게 맞는 혜택', pet:'펫 고르기', ai:'여행 조건', 'ai-results':'추천 결과', arrival:'구 도착', dex:'동네 친구 도감', map:'살아 있는 지도', start:'처음 시작', follow:'코스 따라가기' });
@@ -69,6 +70,8 @@ export function createScreenNavigation({ state, availability, enterProfile, refr
     $('profile-save').classList.toggle('subtle', !settings);
   }
 
+  // D53: a language chosen on the first start renames the screen at once.
+  onLang(() => { $('screen-caption').textContent = t(`screen.${state.screen}`, screenTitles[state.screen]); });
   let shown = false;
   function goScreen(requested, { replace = false, focus = true, allowBusy = false } = {}) {
     if (!allowBusy && (state.saving || state.requesting)) {
@@ -93,7 +96,7 @@ export function createScreenNavigation({ state, availability, enterProfile, refr
       $('discover-view').hidden = ['home','saved','benefits','pet','ai','ai-results','arrival','dex','map','start','follow'].includes(target);
       $('demo-note').hidden = ['home','benefits','pet','ai','ai-results','arrival','dex','map','start','follow'].includes(target);
       for (const id of new Set(Object.values(screenPanels))) $(id).hidden = id !== screenPanels[target];
-      $('screen-caption').textContent = screenTitles[target];
+      $('screen-caption').textContent = t(`screen.${target}`, screenTitles[target]);
       $('navigation-notice').textContent = target !== requested ? '앞 단계의 입력과 선택을 먼저 확인해 주세요. 저장한 코스는 하단 메뉴에서 열 수 있어요.' : '';
       updateNavigation();
       if (target === 'saved') refreshSaved();

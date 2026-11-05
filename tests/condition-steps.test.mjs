@@ -4,25 +4,25 @@ import { CONDITION_STEPS, LAST_STEP, clampStep, stepDirection, nextStep, actionL
 import { normalizeConditions } from '../dist/ai-conditions.mjs';
 
 const petIds = ['golden', 'shiba', 'corgi', 'bichon', 'baekgu'];
-const answered = answerLabels({ departure: '경복궁역', hours: 4, partySize: 2, walkLevel: 2, timeOfDay: 'day' });
+const answered = answerLabels({ departure: '경복궁역', hours: 4, partySize: 2, walkLevel: 2, budget: 30000, timeOfDay: 'day' });
 
 test('D42 steps ask every condition field exactly once, in screen order', () => {
-  assert.deepEqual(CONDITION_STEPS.map((step) => step.id), ['departure', 'hours', 'party', 'time']);
-  assert.deepEqual(CONDITION_STEPS.flatMap((step) => step.fields), ['departure', 'hours', 'partySize', 'walkLevel', 'timeOfDay']);
-  assert.equal(LAST_STEP, 3);
-  assert.deepEqual(CONDITION_STEPS.map((step) => step.auto), [true, true, false, false]);
+  assert.deepEqual(CONDITION_STEPS.map((step) => step.id), ['departure', 'hours', 'party', 'budget', 'time']);
+  assert.deepEqual(CONDITION_STEPS.flatMap((step) => step.fields), ['departure', 'hours', 'partySize', 'walkLevel', 'budget', 'timeOfDay']);
+  assert.equal(LAST_STEP, 4);
+  assert.deepEqual(CONDITION_STEPS.map((step) => step.auto), [true, true, false, true, false]);
   // Every field the conditions check can reject (except pet and metFriends, which are not on this screen) has a step.
-  try { normalizeConditions({ pet: 'golden', departure: '', hours: NaN, partySize: 0, walkLevel: 9, timeOfDay: 'x', metFriends: [] }, { petIds }); assert.fail('should reject'); }
-  catch (error) { assert.deepEqual(Object.keys(error.fields).map(stepOfField), [0, 1, 2, 2, 3]); }
+  try { normalizeConditions({ pet: 'golden', departure: '', hours: NaN, partySize: 0, walkLevel: 9, budget: 1500, timeOfDay: 'x', metFriends: [] }, { petIds }); assert.fail('should reject'); }
+  catch (error) { assert.deepEqual(Object.keys(error.fields).map(stepOfField), [0, 1, 2, 2, 3, 4]); }
 });
 
-test('step moves stay inside the four steps and know their direction', () => {
-  assert.equal(clampStep(-1), 0); assert.equal(clampStep(9), 3); assert.equal(clampStep(2), 2); assert.equal(clampStep(undefined), 0);
+test('step moves stay inside the five steps and know their direction', () => {
+  assert.equal(clampStep(-1), 0); assert.equal(clampStep(9), 4); assert.equal(clampStep(2), 2); assert.equal(clampStep(undefined), 0);
   assert.equal(stepDirection(0, 1), 'forward'); assert.equal(stepDirection(3, 1), 'back'); assert.equal(stepDirection(2, 2), 'none');
 });
 
 test('D43 a question opened with 바꾸기 goes straight back to the review once answered', () => {
-  assert.equal(nextStep(0), 1); assert.equal(nextStep(2), 3); assert.equal(nextStep(3), 3);
+  assert.equal(nextStep(0), 1); assert.equal(nextStep(2), 3); assert.equal(nextStep(4), 4);
   assert.equal(nextStep(0, LAST_STEP), LAST_STEP); assert.equal(nextStep(1, LAST_STEP), LAST_STEP);
   assert.equal(actionLabel(0), '다음'); assert.equal(actionLabel(2), '다음');
   assert.equal(actionLabel(1, LAST_STEP), '바꾸고 돌아가기');
@@ -39,24 +39,29 @@ test('a failed check jumps to the earliest step with an error and shows only tha
 });
 
 test('answer labels read like the chips and stay empty until a valid answer', () => {
-  assert.deepEqual(answered, { departure: '경복궁역', hours: '4시간', people: '2명', walk: '적당히', party: '2명 · 적당히 걷기', time: '낮' });
+  assert.deepEqual(answered, { departure: '경복궁역', hours: '4시간', people: '2명', walk: '적당히', party: '2명 · 적당히 걷기', budget: '3만 원', time: '낮' });
   assert.equal(answerLabels({ partySize: 1, walkLevel: 1 }).party, '혼자 · 조금만 걷기');
   assert.equal(answerLabels({ hours: 2.5 }).hours, '2시간 30분');
-  const empty = answerLabels({ departure: '', hours: NaN, partySize: NaN, walkLevel: NaN, timeOfDay: undefined });
-  assert.deepEqual(Object.values(empty), ['', '', '', '', '', '']);
+  const empty = answerLabels({ departure: '', hours: NaN, partySize: NaN, walkLevel: NaN, budget: undefined, timeOfDay: undefined });
+  assert.deepEqual(Object.values(empty), ['', '', '', '', '', '', '']);
+  // D54: null is 상관없음 (an answer); a typed amount reads in 만 원 or won.
+  assert.deepEqual([null, 10000, 20000, 25000, NaN, 1500].map((budget) => answerLabels({ budget }).budget), ['상관없음', '1만 원 이하', '2만 원', '25,000원', '', '']);
   assert.equal(answerLabels({ hours: 0.25 }).hours, '');
 });
 
 test('each pet speaks every step in its own tone without empty labels', () => {
   for (const id of [...petIds, 'unknown']) {
-    for (const moment of ['departure', 'hours', 'party', 'time', 'ready', 'oops']) {
+    for (const moment of ['departure', 'hours', 'party', 'budget', 'time', 'ready', 'oops']) {
       const line = petLine(id, moment, answered);
       assert.ok(line.length > 4, `${id} ${moment}`);
       assert.doesNotMatch(line, /undefined|NaN|null/);
     }
   }
   assert.equal(petLine('baekgu', 'hours', answered), '경복궁역에서 출발하시는군요. 시간은 얼마나 되십니까?');
-  assert.equal(petLine('golden', 'time', answered), '2명, 적당히 걷기! 언제 출발할까?');
+  assert.equal(petLine('golden', 'budget', answered), '2명, 적당히 걷기! 한 사람 예산은 얼마야?');
+  assert.equal(petLine('golden', 'time', answered), '예산 3만 원! 언제 출발할까?');
+  assert.equal(petLine('bichon', 'time', answerLabels({ budget: null })), '예산은 상관없음으로 할게요. 언제 출발할까요?');
+  assert.equal(petLine('bichon', 'time', answerLabels({ budget: 10000 })), '예산은 1만 원 이하로 할게요. 언제 출발할까요?');
   assert.equal(petLine('shiba', 'party', answerLabels({ hours: 8 })), '하루면 여유롭겠네요. 몇 분이서 가나요?');
   assert.equal(petLine('bichon', 'party', answerLabels({ hours: 0.5 })), '30분이면 사진 많이 남길 수 있어요. 몇 분이서 가세요?');
   // Without the earlier answer the pet just asks the step's question.

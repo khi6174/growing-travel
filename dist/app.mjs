@@ -18,6 +18,7 @@ import { setupArrivalFlow } from './arrival-flow.mjs';
 import { setupStartFlow } from './start-flow.mjs';
 import { setupCourseView } from './course-view.mjs';
 import { setupFollowFlow } from './follow-flow.mjs';
+import { applyStatic, setupLanguagePicker } from './i18n.mjs';
 import { setupLivingMap } from './living-map.mjs';
 import { setupThemePicker } from './theme-picker.mjs';
 import { setupSky } from './sky.mjs';
@@ -760,5 +761,7 @@ syncHomeFollow();
 setupLivingMap({ goScreen, pets: petFlow, arrival: arrivalFlow });
 // D50/P66: the first start (pet → who the traveller is). It opens once for a new visitor; benefit answers fill the profile.
 const startFlow = setupStartFlow({ goScreen, pets: petFlow, onProfile: (profile) => { fillProfile(profile); captureBenefitInput(true); capturePreferences(); renderBenefits(); } });
+// D53/P72: the static words in the chosen language, and the header language button.
+applyStatic(); setupLanguagePicker();
 const firstScreen = location.hash.slice(1) || 'home';
 goScreen(firstScreen === 'home' && startFlow.needed() ? 'start' : firstScreen, { replace:true, focus:false });

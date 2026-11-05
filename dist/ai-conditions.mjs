@@ -1,3 +1,6 @@
+import { phraseIn } from './i18n.mjs';
+// A budget in another language: a choice's own label, else ₩ and the amount.
+const budgetLabelIn = (lang, won) => (BUDGET_CHOICES.some((item) => item.won === won) ? phraseIn(lang, budgetLabel(won)) : `₩${won.toLocaleString('en-US')}`);
 // D27: conditions for the pet recommendation flow (펫 → 출발 위치 → 시간 → 인원 → 걷기). Shared by the
 // browser form and the local server, so this module stays free of DOM access.
 
@@ -20,6 +23,43 @@ export const SEOUL_STATIONS = Object.freeze([
   { id: 'express-terminal', label: '고속터미널역', lat: 37.5049, lng: 127.0049 },
   { id: 'sadang', label: '사당역', lat: 37.4766, lng: 126.9816 },
 ]);
+// D53/P75 (4단계): start from a university. Points are each campus's place on Kakao place search (2026-11-05),
+// not a gate or a station; the walk out of a large campus is not counted.
+export const SEOUL_CAMPUSES = Object.freeze([
+  { id: 'campus-snu', label: '서울대', name: '서울대학교 관악캠퍼스', lat: 37.4598, lng: 126.9511 },
+  { id: 'campus-yonsei', label: '연세대', name: '연세대학교 신촌캠퍼스', lat: 37.5643, lng: 126.9389 },
+  { id: 'campus-korea', label: '고려대', name: '고려대학교 서울캠퍼스', lat: 37.5895, lng: 127.0323 },
+  { id: 'campus-skku', label: '성균관대', name: '성균관대학교 인문사회과학캠퍼스', lat: 37.5883, lng: 126.994 },
+  { id: 'campus-hanyang', label: '한양대', name: '한양대학교 서울캠퍼스', lat: 37.5566, lng: 127.0445 },
+  { id: 'campus-khu', label: '경희대', name: '경희대학교 서울캠퍼스', lat: 37.5972, lng: 127.0517 },
+  { id: 'campus-ewha', label: '이화여대', name: '이화여자대학교', lat: 37.5625, lng: 126.9477 },
+  { id: 'campus-sogang', label: '서강대', name: '서강대학교', lat: 37.5511, lng: 126.9401 },
+  { id: 'campus-hongik', label: '홍익대', name: '홍익대학교 서울캠퍼스', lat: 37.5509, lng: 126.9256 },
+  { id: 'campus-konkuk', label: '건국대', name: '건국대학교 서울캠퍼스', lat: 37.5435, lng: 127.0774 },
+  { id: 'campus-cau', label: '중앙대', name: '중앙대학교 서울캠퍼스', lat: 37.5051, lng: 126.9572 },
+  { id: 'campus-hufs', label: '한국외대', name: '한국외국어대학교 서울캠퍼스', lat: 37.5975, lng: 127.0578 },
+  { id: 'campus-dongguk', label: '동국대', name: '동국대학교 서울캠퍼스', lat: 37.5581, lng: 127.0009 },
+  { id: 'campus-sookmyung', label: '숙명여대', name: '숙명여자대학교', lat: 37.5464, lng: 126.9647 },
+  { id: 'campus-kookmin', label: '국민대', name: '국민대학교', lat: 37.6108, lng: 126.997 },
+  { id: 'campus-uos', label: '서울시립대', name: '서울시립대학교', lat: 37.5848, lng: 127.0577 },
+]);
+// Every fixed departure: stations, then campuses.
+export const FIXED_ORIGINS = Object.freeze([...SEOUL_STATIONS, ...SEOUL_CAMPUSES]);
+// D54/P78: one person's money for the trip in won (transit, admission, café, meals). null = 상관없음 (no limit).
+export const BUDGET_CHOICES = Object.freeze([
+  { won: 10000, label: '1만 원 이하', hint: '무료인 곳 위주' },
+  { won: 30000, label: '3만 원', hint: '카페 한 번쯤' },
+  { won: 50000, label: '5만 원', hint: '식사까지 넉넉히' },
+  { won: null, label: '상관없음', hint: '비용은 보기만' },
+]);
+export const MAX_BUDGET_WON = 1000000;
+export const validBudget = (won) => won === null || (Number.isInteger(won) && won >= 0 && won <= MAX_BUDGET_WON && won % 1000 === 0);
+// "3만 원", "1만 원 이하", "25,000원", "상관없음".
+export function budgetLabel(won) {
+  const choice = BUDGET_CHOICES.find((item) => item.won === won);
+  if (choice) return choice.label;
+  return won % 10000 === 0 ? `${won / 10000}만 원` : `${won.toLocaleString('ko-KR')}원`;
+}
 export const CURRENT_LOCATION = 'current';
 // D39: a place the traveler typed and picked from search results (주소·역·건물·가게 이름).
 export const SEARCHED_PLACE = 'place';
@@ -90,13 +130,16 @@ export function normalizeConditions(raw, { petIds }) {
     if (!label || !Number.isFinite(lat) || !Number.isFinite(lng)) fields.departure = '출발 위치를 찾아서 결과 중 하나를 골라 주세요.';
     else if (!insideSeoul({ lat, lng })) fields.departure = '서울 밖 위치예요. 서울 안의 출발 위치를 찾아 주세요.';
     else { location = { lat: round3(lat), lng: round3(lng) }; departureLabel = label; }
-  } else if (!SEOUL_STATIONS.some((station) => station.id === departure)) fields.departure = '출발 위치를 찾거나 목록에서 골라 주세요.';
+  } else if (!FIXED_ORIGINS.some((station) => station.id === departure)) fields.departure = '출발 위치를 찾거나 목록에서 골라 주세요.';
   const hours = Number(raw?.hours);
   if (!validHours(hours)) fields.hours = '쓸 수 있는 시간을 고르거나 30분~12시간, 10분 단위로 적어 주세요.';
   const partySize = Number(raw?.partySize);
   if (!Number.isInteger(partySize) || partySize < 1 || partySize > MAX_PARTY) fields.partySize = `인원은 1~${MAX_PARTY}명으로 입력해 주세요.`;
   const walkLevel = Number(raw?.walkLevel);
   if (!WALK_CHOICES.some((choice) => choice.level === walkLevel)) fields.walkLevel = '걷기 정도를 골라 주세요.';
+  // A missing budget is 상관없음, so conditions saved before D54 still read.
+  const budget = raw?.budget === undefined || raw?.budget === null || raw?.budget === '' ? null : Number(raw.budget);
+  if (!validBudget(budget)) fields.budget = '예산은 0원~100만 원, 천 원 단위로 적어 주세요.';
   const timeOfDay = String(raw?.timeOfDay ?? '');
   if (!TIME_OF_DAY.some((slot) => slot.id === timeOfDay)) fields.timeOfDay = '출발 시간대를 골라 주세요.';
   // District ids of friends already met (도감). Unknown ids are dropped by the server, which knows the districts.
@@ -106,13 +149,13 @@ export function normalizeConditions(raw, { petIds }) {
   // D50: hints from the first start shape the courses; anything unknown is dropped quietly (they are optional).
   const tastes = Array.isArray(raw?.tastes) ? [...new Set(raw.tastes.filter((tag) => typeof tag === 'string' && /^[a-z][a-z_]{1,29}$/.test(tag)))].slice(0, 8) : [];
   const travelStyle = TRAVEL_STYLE_IDS.includes(raw?.travelStyle) ? raw.travelStyle : '';
-  return { pet, departure, location, ...(departureLabel ? { departureLabel } : {}), hours, partySize, walkLevel, timeOfDay, metFriends: [...new Set(met)], ...(tastes.length ? { tastes } : {}), ...(travelStyle ? { travelStyle } : {}) };
+  return { pet, departure, location, ...(departureLabel ? { departureLabel } : {}), hours, partySize, walkLevel, timeOfDay, metFriends: [...new Set(met)], ...(budget !== null ? { budget } : {}), ...(tastes.length ? { tastes } : {}), ...(travelStyle ? { travelStyle } : {}) };
 }
 
 export function departurePoint(conditions) {
   if (conditions.departure === CURRENT_LOCATION) return { label: '현재 위치', ...conditions.location };
   if (conditions.departure === SEARCHED_PLACE) return { label: conditions.departureLabel, ...conditions.location };
-  const { label, lat, lng } = SEOUL_STATIONS.find((station) => station.id === conditions.departure);
+  const { label, lat, lng } = FIXED_ORIGINS.find((station) => station.id === conditions.departure);
   return { label, lat, lng };
 }
 
@@ -123,8 +166,21 @@ export function josa(word, withFinal, withoutFinal) {
 }
 
 // One-line Korean summary used on screen and in the recommendation prompt.
-export function describeConditions(conditions, { petName }) {
+export function describeConditions(conditions, { petName, lang = 'ko' }) {
   const label = (list, value, key) => list.find((item) => item[key] === value).label;
+  // D53/P76: another language reads the same pieces from the phrase table (the AI prompt keeps the Korean line).
+  if (lang !== 'ko') {
+    const p = (ko, vars) => phraseIn(lang, ko, vars);
+    const minutes = Math.round(conditions.hours * 60);
+    const choice = HOUR_CHOICES.find((item) => item.hours === conditions.hours);
+    const duration = choice ? p(choice.label) : [Math.floor(minutes / 60) && p('{h}시간', { h: Math.floor(minutes / 60) }), minutes % 60 && p('{m}분', { m: minutes % 60 })].filter(Boolean).join(' ');
+    return [
+      p('{pet}와(과) 함께', { pet: petName }), p('{label} 출발', { label: p(departurePoint(conditions).label) }), duration,
+      conditions.partySize === 1 ? p('혼자') : p('{n}명', { n: conditions.partySize }),
+      p('{label} 걷기', { label: p(label(WALK_CHOICES, conditions.walkLevel, 'level')) }), p(label(TIME_OF_DAY, conditions.timeOfDay, 'id')),
+      ...(conditions.budget != null ? [p('1인 {won}', { won: budgetLabelIn(lang, conditions.budget) })] : []),
+    ].join(' · ');
+  }
   return [
     `${josa(petName, '과', '와')} 함께`,
     `${departurePoint(conditions).label} 출발`,
@@ -132,5 +188,6 @@ export function describeConditions(conditions, { petName }) {
     conditions.partySize === 1 ? '혼자' : `${conditions.partySize}명`,
     `${label(WALK_CHOICES, conditions.walkLevel, 'level')} 걷기`,
     label(TIME_OF_DAY, conditions.timeOfDay, 'id'),
+    ...(conditions.budget != null ? [`1인 ${budgetLabel(conditions.budget)}`] : []),
   ].join(' · ');
 }

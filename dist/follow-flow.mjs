@@ -7,6 +7,7 @@ import { retime, insertStop, replaceStop, dropStop, dropCandidate, legUrl } from
 import { minutesLabel, legLabel, stopRow, stopKind } from './course-view.mjs';
 import { loadStart, courseHints } from './onboarding.mjs';
 import { photoCredit } from './ai-flow.mjs';
+import { tk, lang, districtName, friendText, englishLine } from './i18n.mjs';
 
 export const FOLLOW_KEY = 'growing-travel.follow.v1';
 const $ = (id) => document.getElementById(id);
@@ -63,7 +64,7 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
     const elapsed = Math.max(0, Math.round((now() - Date.parse(state.startedAt)) / 60000));
     const left = state.course.budgetMinutes - elapsed;
     const planned = plannedLeft(state.course, state);
-    const text = `남은 일정 ${minutesLabel(planned)} · 쓸 수 있는 시간 ${left > 0 ? `${left}분` : '끝'} 남음`;
+    const text = tk('남은 일정 {planned} · 쓸 수 있는 시간 {left} 남음', { planned: minutesLabel(planned), left: left > 0 ? tk('{m}분', { m: left }) : tk('끝') });
     const late = planned - left;
     return { text, late: late > 5 ? late : 0 };
   }
@@ -71,10 +72,10 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
     const box = node('div', 'follow-next-live');
     const info = live?.next && live.next.id === stop.place.id ? live.next : null;
     const crowd = info?.crowd ?? stop.crowd;
-    if (crowd) box.append(node('span', `crowd-chip crowd-${['여유', '보통', '약간 붐빔', '붐빔'].indexOf(crowd.level)}`, `지금 ${crowd.level}`));
-    if (info?.latest_report) box.append(node('p', 'follow-report', `최근 제보: ${info.latest_report.categoryLabel} · ${info.latest_report.text}`));
-    if (crowd && BUSY.has(crowd.level)) box.append(node('p', 'follow-busy', '지금 붐벼요. 아래 추천지로 바꿔 볼까요?'));
-    if (!box.childElementCount) box.append(node('p', 'field-help', live ? '아직 올라온 현장 소식이 없어요.' : '현장 소식을 불러오는 중이에요.'));
+    if (crowd) box.append(node('span', `crowd-chip crowd-${['여유', '보통', '약간 붐빔', '붐빔'].indexOf(crowd.level)}`, tk('지금 {level}', { level: tk(crowd.level) })));
+    if (info?.latest_report) box.append(node('p', 'follow-report', tk('최근 제보: {category} · {text}', { category: tk(info.latest_report.categoryLabel), text: info.latest_report.text })));
+    if (crowd && BUSY.has(crowd.level)) box.append(node('p', 'follow-busy', tk('지금 붐벼요. 아래 추천지로 바꿔 볼까요?')));
+    if (!box.childElementCount) box.append(node('p', 'field-help', live ? tk('아직 올라온 현장 소식이 없어요.') : tk('현장 소식을 불러오는 중이에요.')));
     return box;
   }
   function renderNow() {
@@ -82,23 +83,23 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
     const { course, index, phase } = state;
     if (phase === 'done') {
       const minutes = Math.round((now() - Date.parse(state.startedAt)) / 60000);
-      box.replaceChildren(node('p', 'small-label', '코스 끝'), node('h3', '', '코스를 다 돌았어요!'), node('p', 'panel-intro', `${course.stops.length}곳을 ${minutes}분 동안 다녔어요.${state.changes ? ` 가는 길에 코스를 ${state.changes}번 고쳤어요.` : ''}`));
-      $('follow-main').textContent = '홈으로';
+      box.replaceChildren(node('p', 'small-label', tk('코스 끝')), node('h3', '', tk('코스를 다 돌았어요!')), node('p', 'panel-intro', `${tk('{n}곳을 {m}분 동안 다녔어요.', { n: course.stops.length, m: minutes })}${state.changes ? tk(' 가는 길에 코스를 {n}번 고쳤어요.', { n: state.changes }) : ''}`));
+      $('follow-main').textContent = tk('홈으로');
       return;
     }
     const stop = course.stops[index];
     const from = index === 0 ? course.origin : course.stops[index - 1].place;
     const list = node('ul', 'trip-timeline'); list.append(stopRow(stop, index, { compact: false }));
     if (phase === 'moving') {
-      const leg = node('p', 'follow-leg', `${from.name ?? from.label}에서 ${legLabel(stop.leg)}(추정)`);
-      const link = node('a', 'button subtle follow-route', '카카오맵 길찾기'); link.href = legUrl(from, stop.place, stop.leg.mode); link.target = '_blank'; link.rel = 'noopener noreferrer';
-      box.replaceChildren(node('p', 'small-label', index === 0 ? '첫 장소로 가는 중' : '다음 장소로 가는 중'), list, leg, link, nextInfo(stop));
-      $('follow-main').textContent = '도착했어요';
+      const leg = node('p', 'follow-leg', tk('{from}에서 {leg}(추정)', { from: from.name ?? tk(from.label), leg: legLabel(stop.leg) }));
+      const link = node('a', 'button subtle follow-route', tk('카카오맵 길찾기')); link.href = legUrl(from, stop.place, stop.leg.mode); link.target = '_blank'; link.rel = 'noopener noreferrer';
+      box.replaceChildren(node('p', 'small-label', index === 0 ? tk('첫 장소로 가는 중') : tk('다음 장소로 가는 중')), list, leg, link, nextInfo(stop));
+      $('follow-main').textContent = tk('도착했어요');
     } else {
       const last = index === course.stops.length - 1;
-      box.replaceChildren(node('p', 'small-label', '지금 여기 있어요'), list, node('p', 'follow-leg', `약 ${stop.stay}분 머물기 · ${stopKind(stop)}`));
-      if (stop.friend && !stop.friend.met) box.append(node('p', 'field-help', `${stop.guName ?? '이 구'}의 동네 친구 ‘${stop.friend.name}’을(를) 만날 수 있어요. 구 도착 알림을 켜 두세요.`));
-      $('follow-main').textContent = last ? '코스 마치기' : '다음 장소로 출발';
+      box.replaceChildren(node('p', 'small-label', tk('지금 여기 있어요')), list, node('p', 'follow-leg', tk('약 {stay}분 머물기 · {kind}', { stay: stop.stay, kind: stopKind(stop) })));
+      if (stop.friend && !stop.friend.met) box.append(node('p', 'field-help', tk('{gu}의 동네 친구 ‘{name}’을(를) 만날 수 있어요. 구 도착 알림을 켜 두세요.', { gu: (stop.place?.guName && districtName(stop.place.gu, stop.place.guName)) ?? tk('이 구'), name: friendText(stop.friend).name })));
+      $('follow-main').textContent = last ? tk('코스 마치기') : tk('다음 장소로 출발');
     }
   }
   function renderTimeline() {
@@ -108,9 +109,9 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
       const row = stopRow(stop, at);
       const status = state.phase === 'done' || at < state.index ? 'done' : at === state.index ? 'current' : 'upcoming';
       row.classList.add(status);
-      if (stop.added) row.querySelector('.course-badges, .course-stop-text')?.append(node('span', 'course-badge-added', '가는 길에 넣음'));
+      if (stop.added) row.querySelector('.course-badges, .course-stop-text')?.append(node('span', 'course-badge-added', tk('가는 길에 넣음')));
       // A stop not reached yet can be taken out (the course is re-timed).
-      if (status === 'upcoming' && state.course.stops.length > 1) row.append(button('빼기', 'text-button follow-drop', () => change(dropStop(state.course, at), { label: `‘${stop.place.name}’을(를) 뺐어요.` })));
+      if (status === 'upcoming' && state.course.stops.length > 1) row.append(button(tk('빼기'), 'text-button follow-drop', () => change(dropStop(state.course, at), { label: tk('‘{name}’을(를) 뺐어요.', { name: stop.place.name }) })));
       list.append(row);
     });
   }
@@ -119,25 +120,25 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
     box.hidden = !pending;
     if (!pending) return;
     const drop = pending.drop >= 0 ? pending.course.stops[pending.drop] : null;
-    box.replaceChildren(node('p', '', `이렇게 바꾸면 ${pending.course.overBy}분 넘쳐요.${drop ? ` 마지막 ‘${drop.place.name}’을(를) 뺄까요?` : ''}`));
+    box.replaceChildren(node('p', '', `${tk('이렇게 바꾸면 {n}분 넘쳐요.', { n: pending.course.overBy })}${drop ? tk(' 마지막 ‘{name}’을(를) 뺄까요?', { name: drop.place.name }) : ''}`));
     const actions = node('div', 'follow-confirm-actions');
-    if (drop) actions.append(button('빼고 바꾸기', 'button primary', () => { const next = retime(dropStop(pending.course, pending.drop), state.course.origin, state.course.budgetMinutes); apply(next, pending.label); }));
-    actions.append(button('그래도 바꾸기', 'button subtle', () => apply(pending.course, pending.label)), button('취소', 'text-button', () => { pending = null; renderConfirm(); }));
+    if (drop) actions.append(button(tk('빼고 바꾸기'), 'button primary', () => { const next = retime(dropStop(pending.course, pending.drop), state.course.origin, state.course.budgetMinutes); apply(next, pending.label); }));
+    actions.append(button(tk('그래도 바꾸기'), 'button subtle', () => apply(pending.course, pending.label)), button(tk('취소'), 'text-button', () => { pending = null; renderConfirm(); }));
     box.append(actions);
     box.querySelector('button')?.focus();
   }
   function render() {
     if (!state) return;
-    $('follow-heading').textContent = state.course.title;
+    $('follow-heading').textContent = tk(state.course.title);
     const total = state.course.stops.length;
     const doneCount = state.phase === 'done' ? total : state.index + (state.phase === 'at' ? 1 : 0);
-    $('follow-count').textContent = state.phase === 'done' ? `${total}곳 모두 다녀왔어요` : `${state.index + 1} / ${total}곳`;
+    $('follow-count').textContent = state.phase === 'done' ? tk('{total}곳 모두 다녀왔어요', { total }) : tk('{n} / {total}곳', { n: state.index + 1, total });
     $('follow-progress').setAttribute('aria-valuenow', String(doneCount)); $('follow-progress').setAttribute('aria-valuemax', String(total));
     $('follow-progress').firstElementChild.style.setProperty('--progress', `${(doneCount / total) * 100}%`);
     const time = timeLine();
     $('follow-time').textContent = state.phase === 'done' ? '' : time.text;
     $('follow-late').hidden = !time.late || state.phase === 'done';
-    $('follow-late').textContent = `예정보다 약 ${time.late}분 늦어지고 있어요. 남은 장소 하나를 빼도 돼요.`;
+    $('follow-late').textContent = tk('예정보다 약 {n}분 늦어지고 있어요. 남은 장소 하나를 빼도 돼요.', { n: time.late });
     $('follow-live').hidden = state.phase === 'done';
     renderNow(); renderTimeline(); renderConfirm(); renderSuggestions();
   }
@@ -159,16 +160,17 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
     const src = item.place.photo_thumb || item.place.photo;
     if (src) { const img = node('img'); img.src = src; img.alt = ''; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer'; img.title = photoCredit(item.place); img.addEventListener('error', () => img.remove()); media.append(img); }
     const text = node('div', 'course-stop-text');
-    text.append(node('b', '', item.place.name), node('small', '', `${item.place.kind || item.place.tags.slice(0, 2).join('·')} · ${legLabel(item.leg)} · ${item.stay}분 머물기`));
+    const name = node('b', '', item.place.name); const english = englishLine(item.place); if (english) name.append(english);
+    text.append(name, node('small', '', tk('{kind} · {leg} · {stay}분 머물기', { kind: stopKind({ place: item.place }), leg: legLabel(item.leg), stay: item.stay })));
     const tags = node('span', 'course-badges');
-    if (item.taste) tags.append(node('span', 'course-badge-taste', '내 취향'));
-    if (item.crowd) tags.append(node('span', BUSY.has(item.crowd.level) ? 'course-badge-busy' : 'course-badge-taste', `지금 ${item.crowd.level}`));
+    if (item.taste) tags.append(node('span', 'course-badge-taste', tk('내 취향')));
+    if (item.crowd) tags.append(node('span', BUSY.has(item.crowd.level) ? 'course-badge-busy' : 'course-badge-taste', tk('지금 {level}', { level: tk(item.crowd.level) })));
     if (tags.childElementCount) text.append(tags);
     const { nextIndex, next } = focusOf(state.course, state);
     const actions = node('div', 'follow-suggestion-actions');
     const stop = { place: item.place, stay: item.stay };
-    actions.append(button('다음에 넣기', 'button subtle', () => change(insertStop(state.course, stop, nextIndex), { label: `‘${item.place.name}’을(를) 다음 장소로 넣었어요.`, keep: nextIndex })));
-    if (next) actions.append(button(`${next.place.name} 대신`, 'button subtle', () => change(replaceStop(state.course, nextIndex, stop), { label: `‘${next.place.name}’ 대신 ‘${item.place.name}’에 가요.`, keep: nextIndex })));
+    actions.append(button(tk('다음에 넣기'), 'button subtle', () => change(insertStop(state.course, stop, nextIndex), { label: tk('‘{name}’을(를) 다음 장소로 넣었어요.', { name: item.place.name }), keep: nextIndex })));
+    if (next) actions.append(button(tk('{name} 대신', { name: next.place.name }), 'button subtle', () => change(replaceStop(state.course, nextIndex, stop), { label: tk('‘{from}’ 대신 ‘{to}’에 가요.', { from: next.place.name, to: item.place.name }), keep: nextIndex })));
     li.append(media, text, actions);
     return li;
   }
@@ -178,7 +180,7 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
     const inCourse = new Set(state.course.stops.map((stop) => stop.place.id));
     const items = (live.suggestions ?? []).filter((item) => !inCourse.has(item.place.id));
     list.replaceChildren(...items.map(suggestionItem));
-    $('follow-live-status').textContent = items.length ? '' : '지금 근처에서 더 넣을 만한 곳을 찾지 못했어요.';
+    $('follow-live-status').textContent = items.length ? '' : tk('지금 근처에서 더 넣을 만한 곳을 찾지 못했어요.');
     const events = live.festivals ?? [];
     $('follow-events').hidden = !events.length;
     $('follow-events-list').replaceChildren(...events.map((event) => { const li = node('li', 'ai-event'); li.append(node('b', '', event.title), node('small', '', `${event.place ?? ''} · ${Math.round((event.km ?? 0) * 10) / 10}km`)); return li; }));
@@ -189,15 +191,15 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
     const { next, here } = focusOf(state.course, state);
     const position = arrival?.position?.()?.point ?? null;
     const point = position ?? { lat: here.lat, lng: here.lng };
-    $('follow-live-status').textContent = position ? '지금 위치 근처를 찾고 있어요.' : `${here.name ?? here.label} 근처를 찾고 있어요.`;
+    $('follow-live-status').textContent = position ? tk('지금 위치 근처를 찾고 있어요.') : tk('{name} 근처를 찾고 있어요.', { name: here.name ?? tk(here.label) });
     try {
-      const response = await fetch('/api/course/live', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ point, pet: state.pet?.id, next: next?.place.id ?? null, exclude: state.course.stops.map((stop) => stop.place.id), tastes: state.tastes }) });
+      const response = await fetch('/api/course/live', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ point, lang: lang(), pet: state.pet?.id, next: next?.place.id ?? null, exclude: state.course.stops.map((stop) => stop.place.id), tastes: state.tastes }) });
       if (!response.ok) throw new Error();
       const body = await response.json();
       if (token !== liveToken) return;
       live = body; render();
     } catch {
-      if (token === liveToken) $('follow-live-status').textContent = '실시간 정보를 불러오지 못했어요. 코스는 그대로 따라갈 수 있어요.';
+      if (token === liveToken) $('follow-live-status').textContent = tk('실시간 정보를 불러오지 못했어요. 코스는 그대로 따라갈 수 있어요.');
     }
   }
 

@@ -75,3 +75,30 @@ test('P67 putting a place in or swapping one re-times the course and offers the 
   assert.match(legUrl(origin, added.place, 'walk'), /^https:\/\/map\.kakao\.com\/link\/by\/walk\//);
   assert.match(legUrl(origin, added.place, 'transit'), /\/link\/by\/traffic\//);
 });
+
+test('D54/P78 a course says what it may cost one person; unknown admission is counted apart, never guessed', async () => {
+  const { placeCost, courseCost, TRANSIT_FARE_WON } = await import('../dist/course-plan.mjs');
+  assert.deepEqual(['park', 'cafe', 'restaurant', 'palace', 'museum', 'zzz'].map((tag) => placeCost({ tags: [tag] })), [0, 6000, 10000, null, null, null]);
+  assert.equal(placeCost({ tags: ['photo_spot', 'palace'] }), null, 'a palace that is also a photo spot is still 확인 필요');
+  assert.equal(placeCost({ tags: ['market', 'photo_spot'] }), 10000, 'eating at a market counts a meal');
+  const walk = { mode: 'walk' }; const ride = { mode: 'transit' };
+  assert.deepEqual(courseCost([{ place: { tags: ['cafe'] }, leg: ride }, { place: { tags: ['museum'] }, leg: walk }], ride),
+    { transit: TRANSIT_FARE_WON * 2, places: 6000, total: TRANSIT_FARE_WON * 2 + 6000, unknown: 1 });
+});
+
+test('D54/P78 a small budget keeps the course inside it and leans to free places; no budget changes nothing', () => {
+  const mixed = [
+    entry(place('cafe1', 0.3, ['cafe']), 12), entry(place('meal1', 0.5, ['restaurant']), 12), entry(place('park1', 0.7, ['park']), 9),
+    entry(place('trail1', 0.9, ['trail']), 9), entry(place('cafe2', 1.1, ['cafe']), 11),
+  ];
+  const free = buildCourse('full', { origin, pool: mixed, budgetMinutes: 240, budgetWon: 5000 });
+  assert.ok(free.cost.total <= 5000, `${free.cost.total}`);
+  assert.equal(free.overWon, 0); assert.equal(free.budgetWon, 5000);
+  assert.ok(free.stops.every((stop) => !['cafe', 'restaurant'].includes(stop.place.tags[0])), 'nothing paid fits ₩5,000');
+  const open = buildCourse('full', { origin, pool: mixed, budgetMinutes: 240 });
+  assert.equal(open.budgetWon, null); assert.equal(open.overWon, 0);
+  assert.ok(open.stops.some((stop) => stop.place.tags[0] === 'cafe'), 'without a budget the higher-scored café is kept');
+  // A stop put in on the way is re-costed against the same budget.
+  const grown = retime(insertStop(free, { place: mixed[1].place, stay: 50 }, 0), origin, 240);
+  assert.ok(grown.overWon > 0, 'a meal pushes it over');
+});

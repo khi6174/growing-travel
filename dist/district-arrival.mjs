@@ -1,4 +1,5 @@
 import { featureAt, kmOutside } from './geo.mjs';
+import { tk } from './i18n.mjs';
 
 // Stage 5 (명세 2-5 ⑤·⑥): which district the traveler is in, and the device-only 도감 of friends met.
 // No DOM access; the boundary features carry `properties.gu` (GET /api/boundaries).
@@ -28,10 +29,10 @@ export function boardMet(log, friends, demo = DEMO_RAISED_GU) {
 // friend it talks about. Rows whose data is missing are left out.
 export function friendProfile(friend, friends = []) {
   const rows = [];
-  if (friend?.personality) rows.push(['성격', friend.personality]);
-  if (friend?.catchphrase) rows.push(['말버릇', `“${friend.catchphrase}”`]);
-  if (friend?.look) rows.push(['모습', friend.look]);
-  if (friend?.pal?.note && friends.some((item) => item.id === friend.pal.id)) rows.push(['아는 친구', friend.pal.note]);
+  if (friend?.personality) rows.push([tk('성격'), friend.personality]);
+  if (friend?.catchphrase) rows.push([tk('말버릇'), `“${friend.catchphrase}”`]);
+  if (friend?.look) rows.push([tk('모습'), friend.look]);
+  if (friend?.pal?.note && friends.some((item) => item.id === friend.pal.id)) rows.push([tk('아는 친구'), friend.pal.note]);
   return rows;
 }
 // The friend's one question about the place the traveler is at; busy/calm become shared field reports.

@@ -908,3 +908,33 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .home-follow[hidden]{display:none}
 /* D51: an action bar whose buttons are all hidden (home after the start button went) takes no room. */
 .app-frame .primary-action-bar:not(:has(> :not([hidden]))){display:none}
+/* D53/P72 languages: the header button, its dialog, the first-start tiles, and Burmese (no Pretendard glyphs). */
+.site-header .lang-button{display:inline-flex;align-items:center;gap:4px;min-height:36px;margin-left:8px;padding:0 10px;border:1px solid var(--line);border-radius:99px;background:var(--white);color:var(--ink);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.site-header .lang-button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6}
+.lang-dialog{max-width:340px;width:calc(100% - 32px);padding:20px;border:0;border-radius:20px}
+.lang-dialog::backdrop{background:#0006}
+.lang-dialog h2{margin:0 0 4px;font-size:20px}
+.lang-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.lang-option{min-height:48px;border:1px solid var(--line);border-radius:14px;background:var(--white);font:inherit;font-weight:700;cursor:pointer}
+.lang-option.active{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green);color:var(--green-dark)}
+.app-frame .start-langs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .start-lang .cond-tile-face{min-height:64px}
+.app-frame .start-lang .cond-tile-face b{font-size:var(--refine-type-title,18px)}
+:root[lang=my] body,:root[lang=my] button,:root[lang=my] input{font-family:'Noto Sans Myanmar','Myanmar Text','Myanmar Sangam MN','Padauk',"Pretendard Variable",sans-serif;line-height:1.85}
+:root[lang=my] .app-frame .cond-question{line-height:1.6}
+.app-frame .site-header{grid-template-columns:44px minmax(0,1fr) auto auto}
+.app-frame .site-header .lang-button{margin-left:0}
+/* D53: longer words in other languages wrap inside the small tiles instead of running over. */
+.app-frame :is(.home-pet,.home-entry,.cond-tile-face) :is(b,small){overflow-wrap:anywhere;min-width:0;max-width:100%}
+:root:not([lang=ko]) .app-frame .home-pet small{font-size:10px;line-height:1.35}
+.app-frame .screen-caption{min-width:0;max-width:112px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* D53: Korean-only descriptions from the team data are hidden in other languages until they are translated. */
+:root:not([lang=ko]) .app-frame .course-stop-summary{display:none}
+/* D53/P77: an English TourAPI name under a Korean place name */
+.app-frame .place-en{display:block;margin-top:2px;font-size:.78em;font-weight:500;line-height:1.3;color:var(--muted);letter-spacing:0}
+/* D54/P78: a course's estimated money and whether it fits the budget */
+.app-frame .course-cost{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:6px 0 0;font-size:.86rem;font-weight:600}
+.app-frame .course-cost-note{font-weight:500;color:var(--muted)}
+.app-frame .course-badge{padding:2px 8px;border-radius:999px;font-size:.78rem;font-weight:700}
+.app-frame .course-badge.fit{background:color-mix(in srgb,#2f9e6b 16%,transparent);color:#1f7a50}
+.app-frame .course-badge.over{background:color-mix(in srgb,#d9534f 14%,transparent);color:#b23b37}

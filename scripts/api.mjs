@@ -1,3 +1,4 @@
+import { langOr } from '../dist/i18n.mjs';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { REAL_PLACES } from '../dist/real-catalog.mjs';
@@ -17,6 +18,7 @@ import { createPlaceSearch } from './place-search.mjs';
 import { createTransit } from './transit.mjs';
 import { createStatsStore } from './stats.mjs';
 import { trending, TRENDING_DAYS } from './trending.mjs';
+import { createEnglishNames } from './english-names.mjs';
 
 const MAX_BODY = 4096;
 
@@ -67,7 +69,7 @@ function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
   };
 }
 
-export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, tourKey = null, seoulKey = null, searchFetch = fetch }) {
+export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, tourKey = null, seoulKey = null, tourEnKey = null, searchFetch = fetch }) {
   // D39: typed departures; the app's own places are the fallback when Kakao is not set up or does not answer.
   const placeSearch = createPlaceSearch({ key: kakaoRestKey, fetchImpl: searchFetch, places: async () => (await loadCatalog(dataDir)).places });
   // D40: real transit times for the three picks, with the same REST key; null without one (cards keep the estimate).
@@ -83,6 +85,8 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
   } });
   // P62: a photo for each shown place (한국관광공사 first, then Kakao image search with its source).
   const photos = createPhotos({ tourKey, kakaoKey: kakaoRestKey, fetchImpl: searchFetch });
+  // D53/P77: English names from the English TourAPI, shown beside the Korean name in languages other than Korean.
+  const englishNames = createEnglishNames({ key: tourEnKey, fetchImpl: searchFetch });
   async function placeById(id, catalog) {
     return catalog.places.find((place) => place.id === id) ?? (NEARBY_ID.test(id) ? await registry.get(id) : null);
   }
@@ -132,6 +136,7 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         const catalog = await loadCatalog(dataDir);
         if (catalog.errors.length) throw new ReportError('NO_CANDIDATES', '후보지 파일 형식을 먼저 고쳐 주세요.', 503);
         let conditions;
+        const lang = langOr(body?.lang);
         try { conditions = normalizeConditions(body?.conditions, { petIds: catalog.pets.map((pet) => pet.id) }); }
         catch (error) { if (error.name !== 'ConditionError') throw error; return send(res, 400, { error: { code: 'INVALID_CONDITIONS', message: error.message, fields: error.fields } }); }
         const districtIds = new Set(catalog.districts.map((district) => district.id));
@@ -151,7 +156,7 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         }
         const pool = found?.places?.length ? found.places : catalog.places;
         const reportSummaries = await reports.recentSummaries(pool.map((place) => place.id));
-        const result = await recommendPlaces({ conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit, rests: found?.rests ?? [], nearby: found, crowd: congestion.configured ? (places) => congestion.forPlaces(places) : null });
+        const result = await recommendPlaces({ lang,  conditions, catalog, reportSummaries, provider: aiProvider, timeoutMs: aiTimeoutMs, transit, rests: found?.rests ?? [], nearby: found, crowd: congestion.configured ? (places) => congestion.forPlaces(places) : null });
         if (photos.configured) {
           const found = await photos.forPlaces(result.items.map((item) => item.place), new Map(catalog.districts.map((district) => [district.id, district.name])));
           for (const item of result.items) Object.assign(item.place, found.get(item.place.id) ?? {});
@@ -160,6 +165,9 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
           const unique = [...new Map(stops.map((place) => [place.id, place])).values()].slice(0, 12);
           const more = await photos.forPlaces(unique, new Map(catalog.districts.map((district) => [district.id, district.name])));
           for (const place of stops) Object.assign(place, found.get(place.id) ?? more.get(place.id) ?? {});
+        }
+        if (lang !== 'ko' && englishNames.configured) {
+          await englishNames.addTo([...result.items.map((item) => item.place), ...result.courses.flatMap((course) => course.stops.map((stop) => stop.place)), ...result.more.map((entry) => entry.place)]);
         }
         const counted = [];
         for (const item of result.items) if (await isPublic(item.place_id)) counted.push(item.place_id);
@@ -237,9 +245,11 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         const crowds = congestion.configured && picks.length ? await congestion.forPlaces(picks.map(({ place }) => place)).catch(() => new Map()) : new Map();
         const photoMap = photos.configured && picks.length ? await photos.forPlaces(picks.map(({ place }) => place), guNames) : new Map();
         const latest = nextPlace ? (nextReports[nextPlace.id] ?? []).find((report) => report.active) ?? null : null;
+        const suggestions = picks.map(({ place, leg }) => ({ place: { ...publicPlace(place, { ...catalog, tagLabels }), ...(photoMap.get(place.id) ?? {}) }, leg, stay: stayMinutes(place.tags), crowd: crowds.get(place.id) ?? null, taste: place.tags.some((tag) => liked.has(tag)), guName: guNames.get(place.gu) ?? null }));
+        if (langOr(body?.lang) !== 'ko' && englishNames.configured) await englishNames.addTo(suggestions.map((item) => item.place));
         return send(res, 200, {
           next: nextPlace ? { id: nextPlace.id, crowd: nextCrowd.get(nextPlace.id) ?? null, latest_report: latest } : null,
-          suggestions: picks.map(({ place, leg }) => ({ place: { ...publicPlace(place, { ...catalog, tagLabels }), ...(photoMap.get(place.id) ?? {}) }, leg, stay: stayMinutes(place.tags), crowd: crowds.get(place.id) ?? null, taste: place.tags.some((tag) => liked.has(tag)), guName: guNames.get(place.gu) ?? null })),
+          suggestions,
           festivals: festivals.slice(0, 2),
         });
       }
