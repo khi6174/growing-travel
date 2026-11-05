@@ -62,6 +62,9 @@ const httpsOnly = (url) => (typeof url === 'string' && /^https?:\/\/tong\.visitk
 const kakaoPage = (url) => (typeof url === 'string' && /^https?:\/\/place\.map\.kakao\.com\/\d+$/.test(url) ? url.replace(/^http:/, 'https:') : null);
 
 // Rooms and games that share the 카페 category are not trips (방탈출, 보드게임 등).
+// A keyword search ("공원", "서점") also finds offices and crossings named after a place; whole Kakao groups that are never a
+// trip stop are left out (P67: "알파수랑공원 · 금융서비스", "여의도공원앞교차로").
+const NOT_A_STOP = ['금융,보험', '교통,수송', '부동산', '서비스,산업', '의료,건강', '가정,생활', '산업'];
 const NOT_A_TRIP = ['방탈출', '보드카페', '룸카페', 'PC방', '노래방', '키즈카페', '만화카페', '스터디카페', '멀티방', '파티룸', '사주카페', '흡연카페'];
 // Water parks only in summer, ice and snow only in winter (Seoul months).
 export function inSeason(name, month) {
@@ -78,7 +81,7 @@ export function fromKakao(doc, districts) {
   const gu = guOf(doc.address_name || address, districts);
   if (!/^\d{1,12}$/.test(String(doc.id)) || !doc.place_name || !insideSeoul({ lat, lng }) || !gu) return null;
   const path = doc.category_name ?? '';
-  if (has(path, NOT_A_TRIP)) return null;
+  if (has(path, NOT_A_TRIP) || NOT_A_STOP.includes(path.split('>')[0].trim())) return null;
   const tags = inferTags({ name: doc.place_name, path, group: doc.category_group_code });
   if (!tags.length) return null;
   // Kakao puts a franchise's brand as the last step of the category ("… > 커피전문점 > 스타벅스").
@@ -218,6 +221,17 @@ export function createNearby({ kakaoKey = null, tourKey = null, fetchImpl = fetc
       .map((place) => (place.source === 'catalog' ? place : { ...place, purposes: purposesFor(place.tags, pets) })).filter((place) => place.purposes.includes(pet));
     return { places: found, radiusKm, reason: !ok.length ? 'UNAVAILABLE' : !found.length ? 'NO_MATCH' : null, answered: ok.length, asked: searches.length };
   }
+  // D49/P67: cafés and restaurants around the point for a course's break (one page each, nearest first, 3 km at most).
+  async function rests({ point, hours, districts }) {
+    if (!kakaoKey) return [];
+    const radiusM = Math.round(Math.min(searchRadiusKm(hours), 3) * 1000);
+    const at = `${point.lat.toFixed(3)},${point.lng.toFixed(3)}`;
+    const lists = await Promise.all(['CE7', 'FD6'].map((code) => cached(`rest|${code}|${at}|${radiusM}`, ttlMs, async () => {
+      const docs = await kakaoSearch({ kakao: code }, point, radiusM, 1);
+      return docs && docs.map((doc) => fromKakao(doc, districts)).filter(Boolean);
+    })));
+    return lists.filter(Boolean).flat();
+  }
   // 행사·축제 going on today in Seoul, from one list fetched at most every 6 hours.
   async function festivals(point, { withinKm = 3 } = {}) {
     if (!tourKey) return [];
@@ -243,5 +257,5 @@ export function createNearby({ kakaoKey = null, tourKey = null, fetchImpl = fetc
       return doc ? { dong: doc.region_3depth_name || '', gu: doc.region_2depth_name || '' } : null;
     });
   }
-  return { places, festivals, region, configured: Boolean(kakaoKey || tourKey) };
+  return { places, festivals, region, rests, configured: Boolean(kakaoKey || tourKey) };
 }

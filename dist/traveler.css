@@ -333,6 +333,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .friend-art .friend-body{fill:#3a3c42}
 .friend-art .friend-mark{fill:#fff;font-size:13px;font-weight:700;font-family:inherit}
 .friend-art.met .friend-body{fill:var(--region,var(--green))}
+.friend-art .friend-bg{fill:#3a3c42;opacity:.12}
+.friend-art.met .friend-bg{fill:var(--region,var(--green));opacity:.16}
+.friend-art.unmet .friend-figure{filter:brightness(0) opacity(.75)}
+.friend-art.drawn .friend-mark{font-size:12px}
+.friend-art.revealing .friend-figure{filter:none;animation:gt-reveal-art .9s ease-out both}
+.friend-art.revealing .friend-mark{opacity:0;transition:opacity .4s}
+.friend-art.revealing .friend-bg{fill:var(--region,var(--green));opacity:.16;transition:fill .9s,opacity .9s}
+@keyframes gt-reveal-art{from{filter:brightness(0) opacity(.75)}to{filter:brightness(1) opacity(1)}}
 :is(.friend-art,.gu,.burst).region-dosim{--region:#3651e8}:is(.friend-art,.gu,.burst).region-seobuk{--region:#1f7a5c}:is(.friend-art,.gu,.burst).region-dongbuk{--region:#9a4c12}:is(.friend-art,.gu,.burst).region-seonam{--region:#6b3fb0}:is(.friend-art,.gu,.burst).region-dongnam{--region:#b0274a}
 .app-frame .friend-entry{border-top:1px solid var(--line);padding:var(--refine-space-20) 0 0;margin-top:var(--travel-space-section);display:grid;gap:var(--refine-space-8);justify-items:start}
 .app-frame .friend-entry .section-heading{width:100%}
@@ -793,3 +801,140 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .more-place .arrival-place-head{flex-direction:column;align-items:flex-start;gap:2px}
 .app-frame .more-place .arrival-place-head b{word-break:keep-all}
 .app-frame .ai-result-card .place-photo:not(.small)+.ai-result-head .place-photo.small{display:none}
+/* D50/P66 first start: the same one-question screens as the conditions, with the pet large on its hello. */
+.app-frame[data-screen=start]{overflow-x:clip}
+.app-frame .start-later{flex:none;min-height:36px;padding:0 4px;font-size:var(--refine-type-caption)}
+.app-frame .start-pets,.app-frame .start-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .start-pet .cond-tile-face{min-height:128px;padding-top:var(--refine-space-12)}
+.app-frame .start-pet .pet-face{width:60px;height:60px}
+.app-frame .start-pets .start-pet:last-child{grid-column:1 / -1}
+.app-frame .start-pets.shake{animation:cond-shake .4s ease-in-out}
+.app-frame .start-tiles .cond-chip .cond-tile-face{min-height:48px}
+.app-frame .start-note{display:grid;gap:var(--refine-space-6);margin-top:var(--refine-space-16);color:var(--muted);font-size:var(--refine-type-caption);font-weight:600}
+.app-frame .start-note input{width:100%;min-height:48px;padding:0 var(--refine-space-14);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);color:var(--ink);font:inherit;font-size:16px;font-weight:400}
+.app-frame .start-note input:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.app-frame .start-fieldset{margin-top:var(--refine-space-8)}
+.app-frame .start-legend{margin:var(--refine-space-12) 0 var(--refine-space-6);font-size:var(--refine-type-label);font-weight:700}
+.app-frame .start-regions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--refine-space-6)}
+.app-frame .start-regions .cond-chip:last-child{grid-column:span 2}
+.app-frame .start-hello{display:flex;flex-direction:column;align-items:center;gap:var(--refine-space-12);margin-top:var(--refine-space-8);text-align:center}
+.app-frame .start-hello-face{display:block;width:148px;height:148px}
+.app-frame .start-hello-face .pet-face{width:100%;height:100%}
+.app-frame .start-hello-face.hop .pet3d .pet-rig{animation:pet-jump .7s cubic-bezier(.3,1.3,.5,1) both,pet-breathe 3s ease-in-out .7s infinite}
+.app-frame .start-hello-face.hop .pet3d .pet-tail{animation:pet-wag-fast .26s ease-in-out 6 alternate,pet-wag 3.2s ease-in-out 1.6s infinite}
+.app-frame .start-hello-face.hop .pet3d .pet-eyes{display:none}
+.app-frame .start-hello-face.hop .pet3d :is(.pet-happy,.pet-tongue){display:inline}
+.app-frame .start-hello-line{max-width:320px;margin:0;padding:var(--refine-space-12) var(--refine-space-16);border-radius:var(--radius-box);background:var(--mint);color:var(--green-dark);font-weight:600;line-height:1.6;word-break:keep-all;animation:gt-pop .38s cubic-bezier(.3,1.5,.5,1) .2s both}
+.app-frame .start-summary{list-style:none;display:grid;gap:var(--refine-space-8);margin:var(--refine-space-4) 0 0;padding:0}
+.app-frame .start-summary li{display:flex;justify-content:space-between;align-items:baseline;gap:var(--refine-space-12);padding:var(--refine-space-12) var(--refine-space-14);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white)}
+.app-frame .start-summary span{flex:none;color:var(--muted);font-size:var(--refine-type-caption)}
+.app-frame .start-summary b{text-align:right;word-break:keep-all}
+.app-frame .start-actions{flex-direction:row}
+.app-frame .start-actions .button{flex:1}
+.app-frame .start-actions .button[hidden]{display:none}
+.app-frame .home-restart{display:block;margin:var(--refine-space-8) auto 0}
+.app-frame .start-actions #start-skip{order:0;flex:0 0 32%}
+.app-frame .start-actions #start-next{order:1}
+/* D49/P68 course cards: stops in order with the leg between them; nothing here loops (lag, see P65). */
+.app-frame .course-section{margin-top:var(--refine-space-12)}
+.app-frame .course-section[hidden],.app-frame .places-heading[hidden]{display:none}
+.app-frame .course-cards{list-style:none;display:grid;gap:var(--refine-space-12);margin:0;padding:0}
+.app-frame .course-card{padding:var(--refine-space-16);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white);box-shadow:0 4px 0 var(--edge-card)}
+.app-frame .course-card:first-child{border-color:var(--travel-selected-line,var(--green));box-shadow:0 4px 0 color-mix(in srgb,var(--green) 35%,var(--edge-card))}
+.app-frame .course-card-head h3{margin:2px 0 0;font-size:var(--refine-type-title,20px);letter-spacing:-.4px}
+.app-frame .course-rank{display:inline-block;padding:2px 8px;border-radius:99px;background:var(--mint);color:var(--green-dark);font-size:var(--travel-type-micro,11px);font-weight:700}
+.app-frame .course-blurb{margin:2px 0 0;color:var(--muted);font-size:var(--refine-type-caption)}
+.app-frame .course-meta{margin:var(--refine-space-8) 0 0;font-weight:700;font-size:var(--refine-type-label)}
+.app-frame .trip-timeline{list-style:none;margin:var(--refine-space-12) 0 0;padding:0}
+.app-frame .course-stop{display:flex;align-items:flex-start;gap:var(--refine-space-10)}
+.app-frame .course-thumb{flex:none;width:48px;height:48px;border-radius:12px;overflow:hidden;background:var(--travel-subtle)}
+.app-frame .course-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.app-frame .course-stop-text{display:grid;gap:2px;min-width:0}
+.app-frame .course-stop-text b{font-size:var(--refine-type-label);word-break:keep-all}
+.app-frame .course-stop-text small{color:var(--muted);font-size:var(--refine-type-caption)}
+.app-frame .course-stop-summary{line-height:1.5}
+.app-frame .course-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.app-frame .course-badges span{padding:1px 7px;border-radius:99px;font-size:var(--travel-type-micro,11px);font-weight:700;background:var(--travel-subtle);color:var(--muted)}
+.app-frame .course-badges .course-badge-taste{background:var(--mint);color:var(--green-dark)}
+.app-frame .course-badges .course-badge-rest{background:#fff3d6;color:#8a5a00}
+.app-frame .course-badges .course-badge-busy{background:#fde4e1;color:#a62b25}
+.app-frame .course-badges .course-badge-friend{background:#efe8fb;color:#5b3aa0}
+.app-frame .course-leg{display:flex;align-items:center;gap:var(--refine-space-8);min-height:30px;margin-left:23px;padding-left:var(--refine-space-16);border-left:2px dashed var(--line);color:var(--muted);font-size:var(--refine-type-caption)}
+.app-frame .course-leg.transit{border-left-style:solid;border-left-color:color-mix(in srgb,var(--green) 40%,var(--line))}
+.app-frame .course-leg-line{display:none}
+.app-frame .course-leg-link{margin-left:auto;font-weight:700}
+.app-frame .course-end b{font-size:var(--refine-type-caption);color:var(--muted)}
+.app-frame .trip-timeline.detail .course-end{padding:4px 0 4px 14px}
+.app-frame .course-benefits{display:block;margin-top:var(--refine-space-10);font-size:var(--refine-type-caption)}
+.app-frame .course-actions{display:flex;gap:var(--refine-space-8);margin-top:var(--refine-space-12)}
+.app-frame .course-actions .button{flex:1;min-height:44px}
+.app-frame .course-actions .button.subtle{flex:0 0 34%}
+.app-frame .places-heading{margin:var(--refine-space-20,20px) 0 var(--refine-space-8);font-size:var(--refine-type-label)}
+/* D49/P69·P70 following a course */
+.app-frame .follow-status{display:flex;align-items:center;gap:var(--refine-space-12);margin-top:var(--refine-space-8)}
+.app-frame .follow-count{flex:none;margin:0;font-weight:700;font-size:var(--refine-type-caption)}
+.app-frame .follow-time{margin:var(--refine-space-8) 0 0;color:var(--muted);font-size:var(--refine-type-caption)}
+.app-frame .follow-late{margin:var(--refine-space-6) 0 0;padding:var(--refine-space-8) var(--refine-space-12);border-radius:var(--radius-box);background:#fff3d6;color:#7a4f00;font-size:var(--refine-type-caption)}
+.app-frame .follow-late[hidden],.app-frame .follow-confirm[hidden]{display:none}
+.app-frame .follow-now{margin-top:var(--refine-space-12);padding:var(--refine-space-16);border:1px solid var(--travel-selected-line,var(--green));border-radius:var(--radius-box);background:var(--white);box-shadow:0 4px 0 color-mix(in srgb,var(--green) 30%,var(--edge-card))}
+.app-frame .follow-now h3{margin:4px 0}
+.app-frame .follow-now .trip-timeline{margin-top:var(--refine-space-8)}
+.app-frame .follow-now .course-thumb{width:64px;height:64px}
+.app-frame .follow-leg{margin:var(--refine-space-10) 0 0;font-weight:700;font-size:var(--refine-type-label)}
+.app-frame .follow-route{display:inline-flex;margin-top:var(--refine-space-8);min-height:40px;padding:0 var(--refine-space-14)}
+.app-frame .follow-next-live{display:grid;gap:var(--refine-space-6);margin-top:var(--refine-space-10)}
+.app-frame .follow-next-live .crowd-chip{justify-self:start}
+.app-frame .follow-report{margin:0;font-size:var(--refine-type-caption)}
+.app-frame .follow-busy{margin:0;color:#a62b25;font-weight:700;font-size:var(--refine-type-caption)}
+.app-frame .follow-message:empty{display:none}
+.app-frame .follow-confirm{margin-top:var(--refine-space-10);padding:var(--refine-space-12) var(--refine-space-14);border-radius:var(--radius-box);background:#fff3d6;color:#5c3b00}
+.app-frame .follow-confirm p{margin:0 0 var(--refine-space-8);font-weight:600}
+.app-frame .follow-confirm-actions{display:flex;flex-wrap:wrap;gap:var(--refine-space-6)}
+.app-frame .follow-suggestions{list-style:none;display:grid;gap:var(--refine-space-8);margin:var(--refine-space-8) 0 0;padding:0}
+.app-frame .follow-suggestion{display:grid;grid-template-columns:48px 1fr;gap:var(--refine-space-6) var(--refine-space-10);padding:var(--refine-space-10);border:1px solid var(--line);border-radius:var(--radius-box);background:var(--white)}
+.app-frame .follow-suggestion-actions{grid-column:1 / -1;display:flex;gap:var(--refine-space-6)}
+.app-frame .follow-suggestion-actions .button{flex:1;min-height:40px;font-size:var(--refine-type-caption)}
+.app-frame .follow-timeline .course-stop{position:relative}
+.app-frame .follow-timeline .course-stop.done{opacity:.55}
+.app-frame .follow-timeline .course-stop.current .course-stop-text b{color:var(--green-dark)}
+.app-frame .follow-timeline .course-stop.current .course-thumb{box-shadow:0 0 0 2px var(--green)}
+.app-frame .follow-drop{margin-left:auto;align-self:center;font-size:var(--refine-type-caption)}
+.app-frame .course-badge-added{padding:1px 7px;border-radius:99px;background:#e3f5ea;color:#1f6b3f;font-size:var(--travel-type-micro,11px);font-weight:700;justify-self:start}
+.app-frame .follow-actions{flex-direction:row}
+.app-frame .follow-actions .button{flex:1}
+.app-frame .follow-actions #follow-end{flex:0 0 30%;order:0}
+.app-frame .follow-actions #follow-main{order:1}
+.app-frame .home-follow{margin-top:var(--refine-space-8)}
+.app-frame .home-follow[hidden]{display:none}
+/* D51: an action bar whose buttons are all hidden (home after the start button went) takes no room. */
+.app-frame .primary-action-bar:not(:has(> :not([hidden]))){display:none}
+/* D53/P72 languages: the header button, its dialog, the first-start tiles, and Burmese (no Pretendard glyphs). */
+.site-header .lang-button{display:inline-flex;align-items:center;gap:4px;min-height:36px;margin-left:8px;padding:0 10px;border:1px solid var(--line);border-radius:99px;background:var(--white);color:var(--ink);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.site-header .lang-button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6}
+.lang-dialog{max-width:340px;width:calc(100% - 32px);padding:20px;border:0;border-radius:20px}
+.lang-dialog::backdrop{background:#0006}
+.lang-dialog h2{margin:0 0 4px;font-size:20px}
+.lang-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.lang-option{min-height:48px;border:1px solid var(--line);border-radius:14px;background:var(--white);font:inherit;font-weight:700;cursor:pointer}
+.lang-option.active{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green);color:var(--green-dark)}
+.app-frame .start-langs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--refine-space-8)}
+.app-frame .start-lang .cond-tile-face{min-height:64px}
+.app-frame .start-lang .cond-tile-face b{font-size:var(--refine-type-title,18px)}
+:root[lang=my] body,:root[lang=my] button,:root[lang=my] input{font-family:'Noto Sans Myanmar','Myanmar Text','Myanmar Sangam MN','Padauk',"Pretendard Variable",sans-serif;line-height:1.85}
+:root[lang=my] .app-frame .cond-question{line-height:1.6}
+.app-frame .site-header{grid-template-columns:44px minmax(0,1fr) auto auto}
+.app-frame .site-header .lang-button{margin-left:0}
+/* D53: longer words in other languages wrap inside the small tiles instead of running over. */
+.app-frame :is(.home-pet,.home-entry,.cond-tile-face) :is(b,small){overflow-wrap:anywhere;min-width:0;max-width:100%}
+:root:not([lang=ko]) .app-frame .home-pet small{font-size:10px;line-height:1.35}
+.app-frame .screen-caption{min-width:0;max-width:112px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* D53: Korean-only descriptions from the team data are hidden in other languages until they are translated. */
+:root:not([lang=ko]) .app-frame .course-stop-summary{display:none}
+/* D53/P77: an English TourAPI name under a Korean place name */
+.app-frame .place-en{display:block;margin-top:2px;font-size:.78em;font-weight:500;line-height:1.3;color:var(--muted);letter-spacing:0}
+/* D54/P78: a course's estimated money and whether it fits the budget */
+.app-frame .course-cost{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:6px 0 0;font-size:.86rem;font-weight:600}
+.app-frame .course-cost-note{font-weight:500;color:var(--muted)}
+.app-frame .course-badge{padding:2px 8px;border-radius:999px;font-size:.78rem;font-weight:700}
+.app-frame .course-badge.fit{background:color-mix(in srgb,#2f9e6b 16%,transparent);color:#1f7a50}
+.app-frame .course-badge.over{background:color-mix(in srgb,#d9534f 14%,transparent);color:#b23b37}

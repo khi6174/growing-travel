@@ -1,3 +1,4 @@
+import { phraseIn, wonIn } from '../dist/i18n.mjs';
 // D40/P56: real public-transit time for the three picks, from Kakao Map 대중교통 경로 조회 (S32) with the same REST key
 // as the departure search. Only what the card shows (minutes, transfers, fare, line names and Kakao's own route link)
 // is kept, for this response only; nothing is stored. Without a key, or when Kakao is slow or has no route, the card
@@ -28,9 +29,10 @@ export function summariseRoute(body) {
     landingUrl: typeof landing === 'string' && landing.startsWith('https://map.kakao.com/') ? landing : null,
   };
 }
-export function transitLine(route) {
-  const ride = route.lines.length ? route.lines.join(' → ') : '대중교통';
-  return [ride, `약 ${route.minutes}분`, route.transfers ? `환승 ${route.transfers}회` : '환승 없음', route.fare].filter(Boolean).join(' · ');
+export function transitLine(route, lang = 'ko') {
+  const p = (ko, vars) => phraseIn(lang, ko, vars);
+  const ride = route.lines.length ? route.lines.join(' → ') : p('대중교통');
+  return [ride, p('약 {m}분', { m: route.minutes }), route.transfers ? p('환승 {n}회', { n: route.transfers }) : p('환승 없음'), wonIn(lang, route.fare)].filter(Boolean).join(' · ');
 }
 
 export function createTransit({ key = null, fetchImpl = fetch, timeoutMs = 4000 } = {}) {

@@ -21,7 +21,7 @@ export function trending({ gu, catalog, activity = {}, totals = {}, now = Date.n
     .map((place) => ({ place: card(place), reports: activity[place.id].reports, confirmations: activity[place.id].confirmations }));
   const picked = top(places, (place) => totals.picks?.[place.id] ?? 0).map((place) => ({
     place: card(place), picks: totals.picks[place.id],
-    pets: Object.entries(totals.petPicks?.[place.id] ?? {}).sort((a, b) => b[1] - a[1]).map(([id, count]) => ({ name: petName.get(id) ?? id, count })),
+    pets: Object.entries(totals.petPicks?.[place.id] ?? {}).sort((a, b) => b[1] - a[1]).map(([id, count]) => ({ id, name: petName.get(id) ?? id, count })),
   }));
   const routed = top(places, (place) => totals.routes?.[place.id] ?? 0).map((place) => ({ place: card(place), routes: totals.routes[place.id] }));
   const ranked = catalog.districts.map((district) => ({ gu: district.id, name: district.name, arrivals: totals.arrivals?.[district.id] ?? 0 }))

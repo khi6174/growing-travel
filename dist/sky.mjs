@@ -2,6 +2,7 @@
 // The season sets the palette and the scene in the home hero; the weather sets the sky, clouds and what falls; the
 // time of day (from the sun's height over Seoul, P52) turns the sky to dawn, day, dusk or night.
 // Anyone can preview another season, weather or time (for the demo, too); a preview lasts until the tab is closed.
+import { tk } from './i18n.mjs';
 export const SEASONS = Object.freeze([{ id: 'spring', label: '봄' }, { id: 'summer', label: '여름' }, { id: 'autumn', label: '가을' }, { id: 'winter', label: '겨울' }]);
 export const WEATHERS = Object.freeze([{ id: 'clear', label: '맑음' }, { id: 'cloudy', label: '구름 많음' }, { id: 'overcast', label: '흐림' }, { id: 'rain', label: '비' }, { id: 'snow', label: '눈' }]);
 export const TIMES = Object.freeze([{ id: 'dawn', label: '해 뜰 녘' }, { id: 'day', label: '낮' }, { id: 'dusk', label: '해 질 녘' }, { id: 'night', label: '밤' }]);
@@ -10,7 +11,7 @@ const SEOUL = { lat: 37.5665, lng: 126.978 };
 const SVG = 'http://www.w3.org/2000/svg';
 const $ = (id) => document.getElementById(id);
 const known = (list, value) => (list.some((item) => item.id === value) ? value : null);
-const labelOf = (list, id) => list.find((item) => item.id === id)?.label ?? '';
+const labelOf = (list, id) => tk(list.find((item) => item.id === id)?.label ?? '');
 
 export function seasonOf(date = new Date()) {
   const month = Number(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', month: 'numeric' }).format(date));
@@ -119,18 +120,18 @@ export function setupSky({ root = document.documentElement, storage = globalThis
     const temp = !state.previewing && live?.tempC != null ? ` ${live.tempC}°` : '';
     $('sky-summary').textContent = `${labelOf(SEASONS, state.season)} · ${labelOf(WEATHERS, state.weather)}${temp}`;
     $('sky-summary').classList.toggle('previewing', state.previewing);
-    $('sky-source').textContent = state.previewing ? '미리 보기 중이에요. 실제 날씨로 돌아가려면 아래 버튼을 누르세요.'
-      : live ? `서울 날씨 자료: 기상청 (${live.observedAt?.slice(11, 16) ?? ''} 관측, ${live.label})` : '실제 날씨를 받지 못해 계절만 반영했어요.';
+    $('sky-source').textContent = state.previewing ? tk('미리 보기 중이에요. 실제 날씨로 돌아가려면 아래 버튼을 누르세요.')
+      : live ? tk('서울 날씨 자료: 기상청 ({time} 관측, {label})', { time: live.observedAt?.slice(11, 16) ?? '', label: tk(live.label) }) : tk('실제 날씨를 받지 못해 계절만 반영했어요.');
     for (const input of document.querySelectorAll('#sky-preview input')) input.checked = input.value === (preview[field[input.name]] ?? 'auto');
     document.querySelector('meta[name=theme-color]')?.setAttribute('content', getComputedStyle(root).getPropertyValue('--sky-top').trim() || '#3651E8');
   }
-  for (const [name, list, autoLabel] of [['sky-season', SEASONS, '지금 계절'], ['sky-weather', WEATHERS, '실제 날씨'], ['sky-time', TIMES, '지금 시간']]) {
+  for (const [name, list, autoLabel] of [['sky-season', SEASONS, tk('지금 계절')], ['sky-weather', WEATHERS, tk('실제 날씨')], ['sky-time', TIMES, tk('지금 시간')]]) {
     const box = $(`${name}-options`);
     for (const { id, label } of [{ id: 'auto', label: autoLabel }, ...list]) {
       const option = document.createElement('label'); option.className = 'interest-option';
       const input = document.createElement('input'); input.type = 'radio'; input.name = name; input.value = id;
       input.addEventListener('change', () => { preview = { ...preview, [field[name]]: id === 'auto' ? undefined : id }; writePreview(storage, preview); apply(); });
-      option.append(input, Object.assign(document.createElement('span'), { textContent: label })); box.append(option);
+      option.append(input, Object.assign(document.createElement('span'), { textContent: tk(label) })); box.append(option);
     }
   }
   $('sky-reset').addEventListener('click', () => { preview = {}; writePreview(storage, preview); apply(); });

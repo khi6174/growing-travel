@@ -70,3 +70,8 @@ test('D39: when Kakao answers but knows no such name, the app list is tried and 
   const result = await createPlaceSearch({ key: 'k'.repeat(32), fetchImpl: empty, places })('연남동');
   assert.deepEqual([result.source, result.reason, result.results.map((item) => item.label)], ['local', 'NO_MATCH', ['연남동 경의선숲길']]);
 });
+
+test('D53/P75 a school name finds its campus without the Kakao key', () => {
+  assert.deepEqual(localMatches('연세대', []).map((item) => item.label), ['연세대학교 신촌캠퍼스']);
+  assert.equal(localMatches('한국외국어대', [])[0]?.address, '학교 대표 지점');
+});

@@ -217,3 +217,20 @@ test('GET /api/catalog and POST /api/recommend validate and answer without expos
     assert.equal(provider.calls.length, 1);
   } finally { await new Promise((resolve) => server.close(resolve)); }
 });
+
+test('D53/P76 the server writes its rule sentences in the asked language; Korean stays the default', async () => {
+  const provider = providerFromEnv({ AI_PROVIDER: 'none' });
+  const ko = await recommendPlaces({ conditions: demo, catalog, provider });
+  const en = await recommendPlaces({ conditions: demo, catalog, provider, lang: 'en' });
+  assert.equal(ko.conditionsText, '골든과 함께 · 홍대입구역 출발 · 4시간 · 2명 · 많이 걷기 · 낮');
+  assert.equal(en.conditionsText, 'With Golden · From Hongik Univ. Stn. · 4 hours · 2 people · Walking: A lot · Daytime');
+  assert.deepEqual(en.items.map((item) => item.place_id), ko.items.map((item) => item.place_id), 'the language changes words, not picks');
+  for (const item of en.items) {
+    assert.doesNotMatch(item.reason.replace(item.place.name, ''), /[가-힣]/, item.reason);
+    assert.doesNotMatch(item.route_summary.replace(item.place.nearest_station ?? '', ''), /[가-힣]/, item.route_summary);
+    if (item.friend_hint) assert.doesNotMatch(item.friend_hint, /[가-힣]/, item.friend_hint);
+  }
+  const prompt = buildPrompt(demo, catalog, top(demo), Date.now(), 'vi');
+  assert.match(prompt, /사용자 언어\(vi\)/, 'the AI is asked to answer in the language');
+  assert.match(prompt, /사용자 조건: 골든과 함께/, 'its instructions stay Korean');
+});

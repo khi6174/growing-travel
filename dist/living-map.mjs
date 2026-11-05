@@ -2,6 +2,7 @@ import { distanceKm } from './geo.mjs';
 import { reportAge } from './field-reports.mjs';
 import { distanceLabel } from './ai-flow.mjs';
 import { josa } from './ai-conditions.mjs';
+import { tk, lang, districtName } from './i18n.mjs';
 
 // Stage 6 (명세 2-5 ④, 단계 6, D30): the living map. Live reports are speech bubbles, expired ones fade, and places
 // with no news for 48 hours wait to be woken by the next report. The Kakao map draws them when a key is set
@@ -12,7 +13,7 @@ const node = (tag, className = '', text) => {
   if (text !== undefined) result.textContent = text;
   return result;
 };
-const STATE_LABEL = { live: '지금 유효한 소식', fading: '유효시간이 지난 소식', sleeping: '48시간 넘게 소식 없음' };
+const STATE_LABEL = { live: tk('지금 유효한 소식'), fading: tk('유효시간이 지난 소식'), sleeping: tk('48시간 넘게 소식 없음') };
 const SEOUL = { lat: 37.5665, lng: 126.978 };
 const SLEEPING_SHOWN = 6;
 const POLL_MS = 30000;
@@ -24,9 +25,9 @@ const short = (text, size = 22) => (text.length > size ? `${text.slice(0, size -
 async function json(path) {
   let response;
   try { response = await fetch(path); }
-  catch { throw new Error('서버에 연결하지 못했어요. 서버를 켠 주소로 들어왔는지 확인해 주세요.'); }
+  catch { throw new Error(tk('서버에 연결하지 못했어요. 서버를 켠 주소로 들어왔는지 확인해 주세요.')); }
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error?.message ?? '잠시 후 다시 시도해 주세요.');
+  if (!response.ok) throw new Error(body.error?.message ?? tk('잠시 후 다시 시도해 주세요.'));
   return body;
 }
 
@@ -89,9 +90,9 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     const item = node('li', `arrival-place map-item state-${place.state}`);
     const head = node('div', 'arrival-place-head');
     const rank = rankOf(place);
-    head.append(node('b', '', `${rank ? `${rank}. ` : ''}${place.name}`), node('span', 'muted', place.guName));
-    const open = node('button', 'button subtle', place.state === 'sleeping' ? '소식 남겨 깨우기' : '상세·현장 소식'); open.type = 'button';
-    open.setAttribute('aria-label', `${place.name} 상세와 현장 소식 보기`);
+    head.append(node('b', '', `${rank ? `${rank}. ` : ''}${place.name}`), node('span', 'muted', districtName(place.gu, place.guName)));
+    const open = node('button', 'button subtle', place.state === 'sleeping' ? tk('소식 남겨 깨우기') : tk('상세·현장 소식')); open.type = 'button';
+    open.setAttribute('aria-label', tk('{name} 상세와 현장 소식 보기', { name: place.name }));
     open.addEventListener('click', () => openDetail(place));
     item.append(head, node('p', 'field-help', line), open);
     return item;
@@ -100,28 +101,28 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     const places = state.data.places.filter(inScope);
     const withNews = places.filter((place) => place.state !== 'sleeping').sort((a, b) => b.report.createdAt.localeCompare(a.report.createdAt));
     $('map-live-list').replaceChildren(...(withNews.length
-      ? withNews.map((place) => listItem(place, `${STATE_LABEL[place.state]} · ${place.report.categoryLabel} · ${reportAge(place.report.createdAt)} · ${place.report.text}`))
-      : [node('li', 'report-empty', '아직 이 범위에 남겨진 소식이 없어요.')]));
+      ? withNews.map((place) => listItem(place, `${STATE_LABEL[place.state]} · ${tk(place.report.categoryLabel)} · ${reportAge(place.report.createdAt)} · ${place.report.text}`))
+      : [node('li', 'report-empty', tk('아직 이 범위에 남겨진 소식이 없어요.'))]));
     const from = reference();
     const sleeping = places.filter((place) => place.state === 'sleeping')
       .map((place) => ({ place, km: distanceKm(from, place) }))
       // Recommended places first in their order, then the nearest.
       .sort((a, b) => (rankOf(a.place) || Infinity) - (rankOf(b.place) || Infinity) || a.km - b.km).slice(0, SLEEPING_SHOWN);
     $('map-sleep-list').replaceChildren(...(sleeping.length
-      ? sleeping.map(({ place, km }) => listItem(place, `${place.lastNewsAt ? `마지막 소식 ${reportAge(place.lastNewsAt)}` : '아직 소식이 없어요'}${from === SEOUL ? '' : ` · ${distanceLabel(km)}`}`))
-      : [node('li', 'report-empty', '이 범위의 모든 곳에 최근 소식이 있어요.')]));
-    const district = state.focus.gu && state.data.places.find((place) => place.gu === state.focus.gu)?.guName;
-    $('map-heading').textContent = district ? `지금 ${district}의 현장 소식` : '지금 서울의 현장 소식';
+      ? sleeping.map(({ place, km }) => listItem(place, `${place.lastNewsAt ? tk('마지막 소식 {age}', { age: reportAge(place.lastNewsAt) }) : tk('아직 소식이 없어요')}${from === SEOUL ? '' : ` · ${distanceLabel(km)}`}`))
+      : [node('li', 'report-empty', tk('이 범위의 모든 곳에 최근 소식이 있어요.'))]));
+    const district = state.focus.gu && districtName(state.focus.gu, state.data.places.find((place) => place.gu === state.focus.gu)?.guName);
+    $('map-heading').textContent = district ? tk('지금 {gu}의 현장 소식', { gu: district }) : tk('지금 서울의 현장 소식');
     $('map-scope').textContent = state.focus.places?.length
-      ? `추천 ${state.focus.places.length}곳을 번호로 표시했어요. 소식 있는 곳 ${withNews.length}곳 · 깨워 줄 곳 ${places.length - withNews.length}곳`
-      : `${district ?? '서울 25개 구'} 후보지 ${places.length}곳 · 소식 있는 곳 ${withNews.length}곳 · 깨워 줄 곳 ${places.length - withNews.length}곳`;
+      ? tk('추천 {n}곳을 번호로 표시했어요. 소식 있는 곳 {news}곳 · 깨워 줄 곳 {sleep}곳', { n: state.focus.places.length, news: withNews.length, sleep: places.length - withNews.length })
+      : tk('{area} 후보지 {n}곳 · 소식 있는 곳 {news}곳 · 깨워 줄 곳 {sleep}곳', { area: district ?? tk('서울 25개 구'), n: places.length, news: withNews.length, sleep: places.length - withNews.length });
   }
 
   // ---- Kakao map ----
   function pin(place) {
     const rank = rankOf(place);
     const wrap = node('div', `map-pin state-${place.state}${rank ? ' ranked' : ''}${state.woke?.has(place.id) ? ' just-woke' : ''}`);
-    if (place.report) wrap.append(node('span', 'map-bubble', short(`${place.report.categoryLabel} · ${place.report.text}`)));
+    if (place.report) wrap.append(node('span', 'map-bubble', short(`${tk(place.report.categoryLabel)} · ${place.report.text}`)));
     const dot = node('button', 'map-dot', rank ? String(rank) : place.state === 'sleeping' ? 'z' : ''); dot.type = 'button';
     dot.setAttribute('aria-label', `${place.name}, ${STATE_LABEL[place.state]}`);
     // The whole pin, bubble included, opens the place; the dot is the keyboard-reachable button.
@@ -145,7 +146,7 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     const shown = state.data.places.filter(inScope);
     state.overlays = shown.map((place) => new kakao.maps.CustomOverlay({ map: state.map, position: new kakao.maps.LatLng(place.lat, place.lng), content: pin(place), xAnchor: 0.5, yAnchor: 0.5, zIndex: rankOf(place) ? 3 : place.state === 'sleeping' ? 1 : 2, clickable: true }));
     const here = arrival.position();
-    if (here) state.overlays.push(new kakao.maps.CustomOverlay({ map: state.map, position: new kakao.maps.LatLng(here.point.lat, here.point.lng), content: node('span', 'map-me', '나'), zIndex: 4 }));
+    if (here) state.overlays.push(new kakao.maps.CustomOverlay({ map: state.map, position: new kakao.maps.LatLng(here.point.lat, here.point.lng), content: node('span', 'map-me', tk('나')), zIndex: 4 }));
     container.classList.toggle('show-bubbles', state.map.getLevel() <= BUBBLE_LEVEL);
     spreadRanked();
   }
@@ -179,8 +180,8 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
       if (fit) await new Promise((resolve) => setTimeout(() => { state.map.relayout(); fitMap(kakao); resolve(); }, 0));
     } catch (error) {
       $('living-map').hidden = true; $('map-zoom').hidden = true; $('map-here').hidden = true; $('map-crosshair').hidden = true;
-      say(error.message === 'no-key' ? '카카오맵 키가 설정되지 않아 지도 대신 목록으로 보여 드려요.'
-        : error.message === 'load' ? '카카오맵을 불러오지 못했어요. 이 주소가 카카오 앱의 JavaScript SDK 도메인에 등록됐는지 확인해 주세요. 목록은 그대로 쓸 수 있어요.'
+      say(error.message === 'no-key' ? tk('카카오맵 키가 설정되지 않아 지도 대신 목록으로 보여 드려요.')
+        : error.message === 'load' ? tk('카카오맵을 불러오지 못했어요. 이 주소가 카카오 앱의 JavaScript SDK 도메인에 등록됐는지 확인해 주세요. 목록은 그대로 쓸 수 있어요.')
           : error.message);
     }
   }
@@ -198,7 +199,7 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     state.data = data;
     renderLists();
     const woke = data.places.filter((place) => state.woke.has(place.id));
-    if (woke.length) $('map-news').textContent = `${josa(woke[0].name, '이', '가')} 깨어났어요! 새 현장 소식이 올라왔어요.`;
+    if (woke.length) $('map-news').textContent = (lang() === 'ko' ? `${josa(woke[0].name, '이', '가')} 깨어났어요! 새 현장 소식이 올라왔어요.` : tk('{name}이(가) 깨어났어요! 새 현장 소식이 올라왔어요.', { name: woke[0].name }));
     await showMap({ fit });
   }
   function startPolling() {
@@ -222,13 +223,13 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     if (!state.map) return;
     const centre = state.map.getCenter();
     const point = { lat: Math.round(centre.getLat() * 1000) / 1000, lng: Math.round(centre.getLng() * 1000) / 1000 };
-    $('map-here').disabled = true; say('고른 곳의 동네 이름을 찾는 중이에요.');
-    let label = '지도에서 고른 곳';
+    $('map-here').disabled = true; say(tk('고른 곳의 동네 이름을 찾는 중이에요.'));
+    let label = tk('지도에서 고른 곳');
     try {
       const response = await fetch('/api/places/region', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(point) });
       const body = await response.json();
-      if (!response.ok) { say(body.error?.message ?? '이 위치는 쓸 수 없어요.'); return; }
-      if (body.region?.dong) label = `${body.region.dong} 근처`;
+      if (!response.ok) { say(body.error?.message ?? tk('이 위치는 쓸 수 없어요.')); return; }
+      if (body.region?.dong) label = tk('{dong} 근처', { dong: body.region.dong });
     } catch { /* keep the plain label */ } finally { $('map-here').disabled = false; }
     say('');
     pets.pickPoint({ ...point, label });

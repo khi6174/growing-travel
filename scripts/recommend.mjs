@@ -1,9 +1,11 @@
 import { departurePoint, describeConditions, josa } from '../dist/ai-conditions.mjs';
 import { transitLine } from './transit.mjs';
+import { phraseIn, tagIn, petNameIn, districtIn, friendNameIn } from '../dist/i18n.mjs';
 import { distanceKm } from '../dist/geo.mjs';
 import { CAUTION_CATEGORIES } from './field-reports.mjs';
 import { NEARBY_TAG_LABELS, PET_EXTRA_TAGS, walkMinutes } from './nearby.mjs';
 import { CROWD_LEVELS } from './congestion.mjs';
+import { buildCourses, REST_TAGS } from '../dist/course-plan.mjs';
 
 // D27 (명세 2-4): the app filters by purpose and a 60-minute reach, the AI picks 3 of the top 20 and explains
 // them in the pet's voice, and anything it returns is checked against those 20. Rule ranking (principles 1-3)
@@ -108,7 +110,7 @@ export function rankCandidates(conditions, catalog, reportSummaries = {}, { esti
 
 const hoursAgo = (iso, now) => Math.max(0, Math.round((now - Date.parse(iso)) / 3600_000));
 
-export function buildPrompt(conditions, catalog, candidates, now = Date.now()) {
+export function buildPrompt(conditions, catalog, candidates, now = Date.now(), lang = 'ko') {
   const pet = catalog.pets.find((item) => item.id === conditions.pet);
   const guName = new Map(catalog.districts.map((district) => [district.id, district.name]));
   const label = (tag) => catalog.tagLabels[tag];
@@ -122,12 +124,13 @@ export function buildPrompt(conditions, catalog, candidates, now = Date.now()) {
   }));
   return [
     `사용자 조건: ${describeConditions(conditions, { petName: pet.name })}`,
-    `조건(JSON): ${JSON.stringify({ hours: conditions.hours, partySize: conditions.partySize, walkLevel: conditions.walkLevel, timeOfDay: conditions.timeOfDay, departure: departurePoint(conditions).label })}`,
+    `조건(JSON): ${JSON.stringify({ hours: conditions.hours, partySize: conditions.partySize, walkLevel: conditions.walkLevel, timeOfDay: conditions.timeOfDay, budgetWonPerPerson: conditions.budget ?? null, departure: departurePoint(conditions).label })}`,
     '걷기 기준: 1=조금만(평지·역 근처), 2=적당히(30~90분), 3=많이(오르막·성곽·등산로).',
     `minutes_est는 직선거리로 계산한 대중교통 추정 시간이다. 한쪽 이동은 쓸 수 있는 시간의 1/4(최대 60분) 안이면 부담이 적다(이번에는 ${oneWayBudget(conditions.hours)}분).`,
     `후보지 ${list.length}곳(JSON):`,
     JSON.stringify(list),
     `위 후보 중 ${RESULT_COUNT}곳을 골라 순위대로 JSON으로만 답하세요.`,
+    ...(lang === 'ko' ? [] : [`reason·route_summary·live_note·friend_hint는 사용자 언어(${lang})로 쓴다. 장소 이름은 후보의 name 그대로 둔다.`]),
   ].join('\n');
 }
 
@@ -157,36 +160,69 @@ function withTimeout(run, ms) {
 }
 
 const metres = (km) => (km < 1 ? `${Math.max(10, Math.round(km * 100) * 10)}m` : `${km.toFixed(1)}km`);
-function routeLine(origin, { place, minutes, mode, km }) {
+function routeLine(origin, { place, minutes, mode, km }, lang = 'ko') {
+  // D53/P76: another language leaves out the Korean exit and walking notes (official Korean text) and keeps the station name.
+  if (lang !== 'ko') {
+    const p = (ko, vars) => phraseIn(lang, ko, vars);
+    const from = p(origin.label);
+    if (mode === 'walk') return p('{from}에서 걸어서 약 {m}분(직선 {d}, 추정)', { from, m: minutes, d: metres(km) });
+    if (!place.nearest_station) return p('{from}에서 대중교통 약 {m}분(추정). 자세한 길은 카카오맵 길찾기로 확인해 주세요.', { from, m: minutes });
+    if (place.nearest_station.startsWith(origin.label)) return p('{station}에서 가까워요. 자세한 길은 카카오맵 길찾기로 확인해 주세요.', { station: place.nearest_station });
+    return p('{from}에서 {station}까지 대중교통 약 {m}분(추정)', { from, station: place.nearest_station, m: minutes });
+  }
   if (mode === 'walk') return `${origin.label}에서 걸어서 약 ${minutes}분(직선 ${metres(km)}, 추정)`;
   if (!place.nearest_station) return `${origin.label}에서 대중교통 약 ${minutes}분(추정). 자세한 길은 카카오맵 길찾기로 확인해 주세요.`;
   if (place.nearest_station.startsWith(origin.label)) return `${place.nearest_station} ${place.access_summary}`;
   return `${origin.label}에서 ${place.nearest_station}까지 대중교통 약 ${minutes}분(추정), ${place.access_summary}`;
 }
-function friendHint(entry, guName) {
+function friendHint(entry, guName, lang = 'ko') {
   if (entry.friendMet) return '';
+  if (lang !== 'ko') return phraseIn(lang, '{gu}에 가면 동네 친구 ‘{name}’을(를) 만날 수 있어요.', { gu: districtIn(lang, entry.place.gu, guName), name: friendNameIn(lang, entry.friend) });
   const name = entry.friend.name;
   return `${guName}에 가면 동네 친구 ‘${name}’${josa(name, '을', '를').slice(name.length)} 만날 수 있어요.`;
 }
-function tagText(entry, catalog) {
-  const specific = entry.matched.filter((tag) => !GENERIC_TAGS.has(tag)).map((tag) => catalog.tagLabels[tag]);
-  return specific.length ? specific.join('·') : entry.place.kind || entry.matched.map((tag) => catalog.tagLabels[tag]).join('·');
+function tagText(entry, catalog, lang = 'ko') {
+  const label = (tag) => tagIn(lang, tag, catalog.tagLabels[tag]);
+  const specific = entry.matched.filter((tag) => !GENERIC_TAGS.has(tag)).map(label);
+  const joiner = lang === 'ko' ? '·' : ', ';
+  return specific.length ? specific.join(joiner) : (lang === 'ko' && entry.place.kind) || entry.matched.map(label).join(joiner);
 }
 const activeReport = (entry) => entry.reports.find((report) => report.active) ?? null;
 // What a card or detail view shows of a place; the stage 5 arrival screen uses the same shape.
 export function publicPlace(place, catalog) {
   const guName = catalog.districts.find((district) => district.id === place.gu)?.name;
-  return { id: place.id, name: place.name, gu: place.gu, guName, lat: place.lat, lng: place.lng, tags: place.tags.map((tag) => catalog.tagLabels[tag]), nearest_station: place.nearest_station, access_summary: place.access_summary, walk_level: place.walk_level, summary: place.summary, needs_check: place.needs_check, coords_source: place.coords_source, address: place.address ?? null, access_source: place.access_source ?? null, access_checked_at: place.access_checked_at ?? null, kind: place.kind ?? null, photo: place.photo ?? null, source: place.source ?? 'catalog', source_url: place.source_url ?? null };
+  return { id: place.id, name: place.name, gu: place.gu, guName, lat: place.lat, lng: place.lng, tags: place.tags.map((tag) => catalog.tagLabels[tag]), tag_ids: [...place.tags], nearest_station: place.nearest_station, access_summary: place.access_summary, walk_level: place.walk_level, summary: place.summary, needs_check: place.needs_check, coords_source: place.coords_source, address: place.address ?? null, access_source: place.access_source ?? null, access_checked_at: place.access_checked_at ?? null, kind: place.kind ?? null, photo: place.photo ?? null, source: place.source ?? 'catalog', source_url: place.source_url ?? null };
 }
-const reportNote = (report) => `최근 제보: ${report.categoryLabel} · ${report.text}`.slice(0, LIMITS.live_note);
+const reportNote = (report, lang = 'ko') => phraseIn(lang, '최근 제보: {category} · {text}', { category: phraseIn(lang, report.categoryLabel), text: report.text }).slice(0, LIMITS.live_note);
 
 // Kakao Map's walking route between two points (its own link scheme; nothing is asked of Kakao here).
 export const walkUrl = (origin, place) => `https://map.kakao.com/link/by/walk/${encodeURIComponent(origin.label)},${origin.lat},${origin.lng}/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
 const GENERIC_TAGS = new Set(Object.keys(NEARBY_TAG_LABELS));
 
+// D49/P67: the courses as the app shows them. Tastes count only when they are the pet's own tags; a break comes from
+// the places around (cafés, meals) found for the course. Each stop says which friend lives in its district.
+function courseList({ conditions, catalog, ranked, origin, pet, rests, guName }) {
+  const own = new Set([...pet.tags, ...(PET_EXTRA_TAGS[pet.id] ?? [])]);
+  const tastes = (conditions.tastes ?? []).filter((tag) => own.has(tag));
+  const restPool = [...catalog.places.filter((place) => place.tags.some((tag) => REST_TAGS.includes(tag))), ...rests];
+  const met = new Set(conditions.metFriends);
+  const friendByGu = new Map(catalog.friends.map((friend) => [friend.gu, friend]));
+  const tagLabels = { ...catalog.tagLabels, ...NEARBY_TAG_LABELS };
+  return buildCourses({ origin, pool: ranked.slice(0, 30), rests: restPool, budgetMinutes: conditions.hours * 60, budgetWon: conditions.budget ?? null, tastes, style: conditions.travelStyle ?? '' }).map((course) => ({
+    id: course.id, title: course.title, blurb: course.blurb, totalMinutes: course.totalMinutes, budgetMinutes: course.budgetMinutes, back: course.back,
+    cost: course.cost, budgetWon: course.budgetWon, overWon: course.overWon,
+    origin: { label: origin.label, lat: origin.lat, lng: origin.lng },
+    stops: course.stops.map((stop) => {
+      const friend = friendByGu.get(stop.place.gu);
+      return { place: publicPlace(stop.place, { ...catalog, tagLabels }), stay: stop.stay, leg: stop.leg, rest: stop.rest, crowd: stop.crowd, purpose_tags: stop.matched.map((tag) => tagLabels[tag]).filter(Boolean),
+        taste: stop.place.tags.some((tag) => tastes.includes(tag)), guName: guName.get(stop.place.gu) ?? null, friend: friend ? { id: friend.id, name: friend.name, met: met.has(stop.place.gu) } : null };
+    }),
+  }));
+}
+
 // D44: with `nearby` (scripts/nearby.mjs found places around the point), the candidates are those places instead of
 // data/places.json; without them, or when the search found nothing, the catalog way below stays as the fallback.
-export async function recommendPlaces({ conditions, catalog: baseCatalog, reportSummaries = {}, provider, timeoutMs = 10000, now = Date.now(), transit = null, nearby = null, crowd = null }) {
+export async function recommendPlaces({ conditions, catalog: baseCatalog, reportSummaries = {}, provider, timeoutMs = 10000, now = Date.now(), transit = null, nearby = null, crowd = null, rests = [], lang = 'ko' }) {
   const useNearby = Boolean(nearby?.places?.length);
   const catalog = useNearby ? { ...baseCatalog, places: nearby.places, tagLabels: { ...baseCatalog.tagLabels, ...NEARBY_TAG_LABELS } } : baseCatalog;
   const pet = catalog.pets.find((item) => item.id === conditions.pet);
@@ -210,7 +246,7 @@ export async function recommendPlaces({ conditions, catalog: baseCatalog, report
   else if (!provider?.configured) fallbackReason = 'not_configured';
   else {
     try {
-      const text = await withTimeout((signal) => provider.complete({ system: systemPrompt(pet), user: buildPrompt(conditions, catalog, candidates, now), schema: RESPONSE_SCHEMA, signal }), timeoutMs);
+      const text = await withTimeout((signal) => provider.complete({ system: systemPrompt(pet), user: buildPrompt(conditions, catalog, candidates, now, lang), schema: RESPONSE_SCHEMA, signal }), timeoutMs);
       const parsed = parseRecommendations(text, new Set(candidates.map((entry) => entry.place.id)));
       aiItems = parsed.items.slice(0, want); dropped = parsed.dropped;
       if (parsed.invalid) fallbackReason = 'invalid_response';
@@ -221,8 +257,8 @@ export async function recommendPlaces({ conditions, catalog: baseCatalog, report
   const chosen = new Set(aiItems.map((item) => item.place_id));
   const filled = candidates.filter((entry) => !chosen.has(entry.place.id)).slice(0, want - aiItems.length).map((entry) => ({
     place_id: entry.place.id,
-    reason: pet.reason_template.replace('{place}', entry.place.name).replace('{tags}', tagText(entry, catalog)),
-    route_summary: routeLine(origin, entry),
+    reason: phraseIn(lang, pet.reason_template).replace('{place}', entry.place.name).replace('{tags}', tagText(entry, catalog, lang)),
+    route_summary: routeLine(origin, entry, lang),
     live_note: '',
     friend_hint: '',
     source: 'rules',
@@ -236,21 +272,21 @@ export async function recommendPlaces({ conditions, catalog: baseCatalog, report
   console.log(`[recommend] pet=${pet.id} nearby=${useNearby ? catalog.places.length : "-"} crowd=${crowding.size} candidates=${candidates.length} source=${source} provider=${provider?.name ?? 'none'} dropped=${dropped} fallback=${fallbackReason ?? '-'} transit=${routes.filter(Boolean).length}/${routes.length} ${Date.now() - started}ms`);
   return {
     source, provider: provider?.name ?? 'none', fallbackReason, dropped, candidateCount: candidates.length,
-    pet: { id: pet.id, name: pet.name, purpose: pet.purpose }, conditionsText: describeConditions(conditions, { petName: pet.name }),
+    pet: { id: pet.id, name: pet.name, purpose: pet.purpose }, conditionsText: describeConditions(conditions, { petName: petNameIn(lang, pet), lang }),
     items: picks.map((item, index) => {
       const entry = byId.get(item.place_id); const { place } = entry;
       const route = routes[index];
       const latest = activeReport(entry);
       // Notes the data cannot back are replaced: no active report → no live note; met or unnamed friend → data-driven hint.
-      const friend_hint = entry.friendMet ? '' : item.friend_hint.includes(entry.friend.name) ? item.friend_hint : friendHint(entry, guName.get(place.gu));
+      const friend_hint = entry.friendMet ? '' : lang === 'ko' && item.friend_hint.includes(entry.friend.name) ? item.friend_hint : friendHint(entry, guName.get(place.gu), lang);
       // With a Kakao route the card shows its rides, minutes, transfers and fare, and warns when the real way there and
       // back no longer leaves 10 minutes at the place.
       const timing = route
-        ? { minutes: route.minutes, minutesEstimated: false, route_summary: transitLine(route).slice(0, LIMITS.route_summary), transit: { ...route, tight: route.minutes * 2 + MIN_STAY_MINUTES > conditions.hours * 60 } }
+        ? { minutes: route.minutes, minutesEstimated: false, route_summary: transitLine(route, lang).slice(0, LIMITS.route_summary), transit: { ...route, tight: route.minutes * 2 + MIN_STAY_MINUTES > conditions.hours * 60 } }
         : entry.mode === 'walk' ? { minutes: entry.minutes, minutesEstimated: true, walk: { minutes: entry.minutes, km: Math.round(entry.km * 100) / 100, url: walkUrl(origin, place) } }
           : { minutes: entry.minutes, minutesEstimated: true };
       return {
-        ...item, live_note: latest ? item.live_note || reportNote(latest) : '', friend_hint, ...timing,
+        ...item, live_note: latest ? (lang === 'ko' && item.live_note) || reportNote(latest, lang) : '', friend_hint, ...timing,
         place: publicPlace(place, catalog), crowd: entry.crowd ?? null,
         friend: { id: entry.friend.id, name: entry.friend.name, met: entry.friendMet },
         latest_report: latest,
@@ -260,6 +296,8 @@ export async function recommendPlaces({ conditions, catalog: baseCatalog, report
       place_id: entry.place.id, minutes: entry.minutes, minutesEstimated: true, mode: entry.mode, place: publicPlace(entry.place, catalog),
       purpose_tags: entry.matched.map((tag) => catalog.tagLabels[tag]), latest_report: activeReport(entry),
     })),
+    // D49/P67: 2~3 courses from the same ranked places (rules; the AI picks above stay the place cards' own).
+    courses: courseList({ conditions, catalog, ranked, origin, pet, rests, guName }),
     // What the candidates came from: places found around the point right now, or data/places.json (fallback).
     nearby: { used: useNearby, label: origin.label, radiusKm: nearby?.radiusKm ?? null, region: nearby?.region ?? null, found: nearby?.places?.length ?? 0, reason: useNearby ? null : nearby?.reason ?? null },
     festivals: nearby?.festivals ?? [],

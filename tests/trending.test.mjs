@@ -70,7 +70,7 @@ test('D41: one district in seven tabs, each holding only what this server has se
   assert.deepEqual(data.tabs.crowd.map((item) => item.text), ['대기 20분']);
   assert.deepEqual(data.tabs.woke.map((item) => item.place.id), [inJung[0].id], 'woke within the last day only');
   assert.deepEqual(data.tabs.reports.map((item) => [item.place.id, item.reports, item.confirmations]), [[inJung[0].id, 2, 3], [inJung[1].id, 1, 0]]);
-  assert.deepEqual(data.tabs.picks[0].pets, [{ name: '코기', count: 2 }, { name: '골든', count: 1 }]);
+  assert.deepEqual(data.tabs.picks[0].pets, [{ id: 'corgi', name: '코기', count: 2 }, { id: 'golden', name: '골든', count: 1 }]);
   assert.deepEqual(data.tabs.routes.map((item) => item.routes), [2]);
   assert.deepEqual([data.districts.map((item) => item.name), data.current], [['마포구', '중구'], { arrivals: 2, rank: 2 }]);
   const quiet = trending({ gu: 'jongno', catalog, now });

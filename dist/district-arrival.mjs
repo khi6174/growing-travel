@@ -1,4 +1,5 @@
 import { featureAt, kmOutside } from './geo.mjs';
+import { tk } from './i18n.mjs';
 
 // Stage 5 (명세 2-5 ⑤·⑥): which district the traveler is in, and the device-only 도감 of friends met.
 // No DOM access; the boundary features carry `properties.gu` (GET /api/boundaries).
@@ -12,14 +13,26 @@ export const FRIENDS_KEY = 'growing-travel.friends.v1';
 // the board and the stored log still hold just the friends actually met. Set to false to hide unmet friends again.
 export const PREVIEW_ALL_FRIENDS = true;
 
+// D52 (11/5 demo only; put back to [] after it): these districts stand raised on the 3D Seoul board as if their friend
+// had been met, so the demo shows what a filled 도감 looks like. Nothing is written to the stored 도감, and the met
+// count, region counts and slots stay what was really met.
+export const DEMO_RAISED_GU = Object.freeze(['jongno', 'mapo', 'seongdong', 'yeongdeungpo', 'songpa']);
+// What the board stands up: districts really met, plus the demo ones (marked `demo`).
+export function boardMet(log, friends, demo = DEMO_RAISED_GU) {
+  const initial = (gu) => friends.find((item) => item.gu === gu)?.name[0] ?? '?';
+  const met = new Map(log.map((entry) => [entry.gu, { initial: initial(entry.gu) }]));
+  for (const gu of demo) if (!met.has(gu) && friends.some((item) => item.gu === gu)) met.set(gu, { initial: initial(gu), demo: true });
+  return met;
+}
+
 // D46/P63 character rows for the 도감 detail: personality, catchphrase, look (until there is a drawing) and the
 // friend it talks about. Rows whose data is missing are left out.
 export function friendProfile(friend, friends = []) {
   const rows = [];
-  if (friend?.personality) rows.push(['성격', friend.personality]);
-  if (friend?.catchphrase) rows.push(['말버릇', `“${friend.catchphrase}”`]);
-  if (friend?.look) rows.push(['모습', friend.look]);
-  if (friend?.pal?.note && friends.some((item) => item.id === friend.pal.id)) rows.push(['아는 친구', friend.pal.note]);
+  if (friend?.personality) rows.push([tk('성격'), friend.personality]);
+  if (friend?.catchphrase) rows.push([tk('말버릇'), `“${friend.catchphrase}”`]);
+  if (friend?.look) rows.push([tk('모습'), friend.look]);
+  if (friend?.pal?.note && friends.some((item) => item.id === friend.pal.id)) rows.push([tk('아는 친구'), friend.pal.note]);
   return rows;
 }
 // The friend's one question about the place the traveler is at; busy/calm become shared field reports.

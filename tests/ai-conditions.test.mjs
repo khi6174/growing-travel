@@ -89,3 +89,26 @@ test('D39: a searched departure needs its name and a point inside Seoul, and rea
   assert.ok(fieldsOf({ departure: SEARCHED_PLACE, location: { lat: 37.56, lng: 126.92 } }).departure, 'a name is needed');
   assert.match(fieldsOf({ departure: SEARCHED_PLACE, departureLabel: '부산역', location: { lat: 35.115, lng: 129.041 } }).departure, /서울 밖/);
 });
+
+test('D53/P75 a university campus is a fixed departure inside Seoul with its own id', async () => {
+  const { SEOUL_CAMPUSES, FIXED_ORIGINS, insideSeoul } = await import('../dist/ai-conditions.mjs');
+  assert.equal(SEOUL_CAMPUSES.length, 16);
+  const ids = FIXED_ORIGINS.map((origin) => origin.id);
+  assert.equal(new Set(ids).size, ids.length, 'no campus id repeats a station id');
+  for (const campus of SEOUL_CAMPUSES) assert.ok(insideSeoul(campus) && campus.id.startsWith('campus-') && campus.name, campus.label);
+  const conditions = normalizeConditions({ ...demo, departure: 'campus-yonsei' }, { petIds });
+  assert.deepEqual(departurePoint(conditions), { label: '연세대', lat: 37.5643, lng: 126.9389 });
+  assert.equal(describeConditions(conditions, { petName: '골든' }), '골든과 함께 · 연세대 출발 · 4시간 · 2명 · 많이 걷기 · 낮');
+  assert.throws(() => normalizeConditions({ ...demo, departure: 'campus-nowhere' }, { petIds }), ConditionError);
+});
+
+test('D54/P78 the budget is optional (상관없음), in 1,000-won steps up to ₩1,000,000, and joins the summary line', () => {
+  assert.equal(normalizeConditions(demo, { petIds }).budget, undefined, 'no budget is no limit and leaves older conditions as they were');
+  assert.equal(normalizeConditions({ ...demo, budget: null }, { petIds }).budget, undefined);
+  const withBudget = normalizeConditions({ ...demo, budget: 30000 }, { petIds });
+  assert.equal(withBudget.budget, 30000);
+  assert.equal(describeConditions(withBudget, { petName: '골든' }), '골든과 함께 · 홍대입구역 출발 · 4시간 · 2명 · 많이 걷기 · 낮 · 1인 3만 원');
+  assert.equal(describeConditions({ ...withBudget, budget: 25000 }, { petName: 'Golden', lang: 'en' }).split(' · ').at(-1), '₩25,000 per person');
+  const fieldsOf = (raw) => { try { normalizeConditions({ ...demo, ...raw }, { petIds }); return {}; } catch (error) { return error.fields; } };
+  for (const budget of [1500, -1000, 2000000, 'abc', NaN]) assert.ok(fieldsOf({ budget }).budget, String(budget));
+});
