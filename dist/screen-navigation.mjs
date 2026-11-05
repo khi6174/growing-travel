@@ -56,7 +56,6 @@ export function createScreenNavigation({ state, availability, enterProfile, refr
     $('view-saved').hidden = !state.hasSavedCurrent;
     $('view-saved').disabled = busy;
     $('home-start').disabled = busy;
-    $('home-ai').disabled = busy;
     $('home-resume').hidden = !state.travelStarted;
     $('home-resume').disabled = busy;
     $('home-resume').textContent = state.lastTravelScreen === 'course' ? '만들던 코스 이어보기' : '입력 중인 여행 이어가기';

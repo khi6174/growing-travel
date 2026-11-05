@@ -906,3 +906,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .follow-actions #follow-main{order:1}
 .app-frame .home-follow{margin-top:var(--refine-space-8)}
 .app-frame .home-follow[hidden]{display:none}
+/* D51: an action bar whose buttons are all hidden (home after the start button went) takes no room. */
+.app-frame .primary-action-bar:not(:has(> :not([hidden]))){display:none}

@@ -1,4 +1,4 @@
-import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY, PREVIEW_ALL_FRIENDS, friendProfile } from './district-arrival.mjs';
+import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY, PREVIEW_ALL_FRIENDS, friendProfile, boardMet, DEMO_RAISED_GU } from './district-arrival.mjs';
 import { postReport, reportAge } from './field-reports.mjs';
 import { distanceLabel, latestReportLine, petFace } from './ai-flow.mjs';
 import { josa } from './ai-conditions.mjs';
@@ -298,7 +298,7 @@ export function setupArrivalFlow({ goScreen, pets }) {
     const count = metCount();
     document.querySelectorAll('.dex-count').forEach((element) => { element.textContent = String(count); });
     document.querySelectorAll('.dex-progress').forEach((element) => element.style.setProperty('--progress', `${(count / 25) * 100}%`));
-    if (PREVIEW_ALL_FRIENDS) $('dex-intro').textContent = '구에 도착하면 그 구의 동네 친구를 만날 수 있어요. 지금은 시연용으로 못 만난 친구도 눌러서 미리 볼 수 있어요. 진한 테두리 칸이 실제로 만난 친구고, 그림은 팀이 정하기 전의 임시 그림이에요. 도감은 이 기기에만 저장돼요.';
+    if (PREVIEW_ALL_FRIENDS) $('dex-intro').textContent = `구에 도착하면 그 구의 동네 친구를 만날 수 있어요. 지금은 시연용으로 못 만난 친구도 눌러서 미리 볼 수 있어요. 진한 테두리 칸이 실제로 만난 친구고, 그림은 팀이 정하기 전의 임시 그림이에요.${DEMO_RAISED_GU.length ? ' 위 서울 보드의 솟은 구 몇 곳도 시연용 보기라 만난 수에는 들어가지 않아요.' : ''} 도감은 이 기기에만 저장돼요.`;
     if (!state.catalog) return;
     const log = new Map(readFriendLog().map((entry) => [entry.gu, entry]));
     $('dex-regions').replaceChildren(...state.catalog.regions.map((region) => {
@@ -340,9 +340,14 @@ export function setupArrivalFlow({ goScreen, pets }) {
     if (!state.catalog) return;
     try { state.features ??= (await json('/api/boundaries')).features; }
     catch { $('dex-board').closest('.seoul-board').hidden = true; return; }
-    const met = new Map(readFriendLog().map((entry) => [entry.gu, { initial: state.catalog.friends.find((item) => item.gu === entry.gu)?.name[0] ?? '?' }]));
+    const met = boardMet(readFriendLog(), state.catalog.friends);
     board.update({ features: state.features, districts: state.catalog.districts, met, current: state.watchId === null ? null : state.current, pet: pets.petId() ? () => petFace(pets.petId()) : null });
     if (state.boardRise && met.has(state.boardRise)) { board.rise(state.boardRise); state.boardRise = null; }
+    // D52 demo: the first time the 도감 opens in a visit, the demo districts grow from the board together.
+    const demo = [...met].filter(([, value]) => value.demo).map(([gu]) => gu);
+    if (demo.length && !state.demoRisen) { state.demoRisen = true; demo.forEach((gu) => board.rise(gu)); }
+    const caption = $('dex-board').closest('.seoul-board')?.querySelector('figcaption');
+    if (caption) caption.textContent = demo.length ? `만난 구가 솟아올라요. 시연용으로 ${demo.map((gu) => state.catalog.districts.find((district) => district.id === gu)?.name).join('·')}도 솟아 보여요. 옆으로 밀면 서울이 돌아가요.` : '만난 구가 솟아올라요. 옆으로 밀면 서울이 돌아가요.';
   }
   new MutationObserver(() => { if (frame.dataset.screen === 'dex') showBoard(); }).observe(frame, { attributes: true, attributeFilter: ['data-screen'] });
   window.addEventListener('storage', (event) => { if (event.key === FRIENDS_KEY) { renderDex(); if (state.info) renderFriend(); } });

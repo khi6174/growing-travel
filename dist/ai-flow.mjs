@@ -440,8 +440,6 @@ export function setupAiFlow({ goScreen, showResults }) {
     event.preventDefault(); event.stopPropagation();
     showStep(returnTo >= 0 ? returnTo : step - 1);
   }, true);
-  // 펫 고르고 출발하기 on the home screen starts over, so an open 바꾸기 ends.
-  $('home-ai').addEventListener('click', endEdit);
   $('pet-next').addEventListener('click', () => {
     if (state.petId) { showStep(returnTo >= 0 ? returnTo : 0, { focus: false }); goScreen('ai'); return; }
     $('pet-error').textContent = state.catalog ? '함께 갈 펫을 골라 주세요.' : '펫 정보를 불러오지 못했어요. 홈에서 다시 불러와 주세요.';

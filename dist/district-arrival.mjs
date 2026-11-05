@@ -12,6 +12,18 @@ export const FRIENDS_KEY = 'growing-travel.friends.v1';
 // the board and the stored log still hold just the friends actually met. Set to false to hide unmet friends again.
 export const PREVIEW_ALL_FRIENDS = true;
 
+// D52 (11/5 demo only; put back to [] after it): these districts stand raised on the 3D Seoul board as if their friend
+// had been met, so the demo shows what a filled 도감 looks like. Nothing is written to the stored 도감, and the met
+// count, region counts and slots stay what was really met.
+export const DEMO_RAISED_GU = Object.freeze(['jongno', 'mapo', 'seongdong', 'yeongdeungpo', 'songpa']);
+// What the board stands up: districts really met, plus the demo ones (marked `demo`).
+export function boardMet(log, friends, demo = DEMO_RAISED_GU) {
+  const initial = (gu) => friends.find((item) => item.gu === gu)?.name[0] ?? '?';
+  const met = new Map(log.map((entry) => [entry.gu, { initial: initial(entry.gu) }]));
+  for (const gu of demo) if (!met.has(gu) && friends.some((item) => item.gu === gu)) met.set(gu, { initial: initial(gu), demo: true });
+  return met;
+}
+
 // D46/P63 character rows for the 도감 detail: personality, catchphrase, look (until there is a drawing) and the
 // friend it talks about. Rows whose data is missing are left out.
 export function friendProfile(friend, friends = []) {

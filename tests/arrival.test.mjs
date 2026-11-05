@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY, MAX_ACCURACY_M, PREVIEW_ALL_FRIENDS, friendProfile } from '../dist/district-arrival.mjs';
+import { districtChange, readFriendLog, recordFriend, ANSWERS, FRIENDS_KEY, MAX_ACCURACY_M, PREVIEW_ALL_FRIENDS, friendProfile, boardMet, DEMO_RAISED_GU } from '../dist/district-arrival.mjs';
 import { resolveScreen, parentScreen } from '../dist/navigation.mjs';
 import { metFriends } from '../dist/ai-flow.mjs';
 import { arrivalInfo, normalizeArrival, QUESTION_RADIUS_KM } from '../scripts/arrival.mjs';
@@ -46,6 +46,17 @@ test('the 도감 keeps the first meeting, reads older entries and refuses nothin
   assert.deepEqual(metFriends(storage), ['jongno', 'mapo', 'gangnam'], 'the recommendation reads the same log');
   assert.throws(() => recordFriend({ gu: 'jung' }, { getItem: () => null, setItem() { throw new Error('quota'); } }));
   assert.deepEqual(readFriendLog({ getItem() { throw new Error('blocked'); } }), []);
+});
+
+test('D52 the demo board stands a few districts up without touching what was really met', () => {
+  assert.ok(DEMO_RAISED_GU.length >= 3, 'turned on for the 11/5 demo');
+  const friends = [{ gu: 'jongno', name: '기와단' }, { gu: 'mapo', name: '음표등' }, { gu: 'gangnam', name: '유리빛' }];
+  const board = boardMet([{ gu: 'gangnam' }, { gu: 'mapo' }], friends, ['jongno', 'mapo', 'nowhere']);
+  assert.deepEqual([...board], [['gangnam', { initial: '유' }], ['mapo', { initial: '음' }], ['jongno', { initial: '기', demo: true }]], 'met stays met; only an unmet known district is a demo');
+  assert.deepEqual([...boardMet([{ gu: 'mapo' }], friends, [])], [['mapo', { initial: '음' }]], 'an empty list puts the board back');
+  const storage = memory('[]');
+  boardMet(readFriendLog(storage), friends);
+  assert.deepEqual(readFriendLog(storage), [], 'the stored 도감 is never written');
 });
 
 test('D47 the demo 도감 opens every friend with its character rows', async () => {
