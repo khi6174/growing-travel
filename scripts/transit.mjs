@@ -27,7 +27,16 @@ export function summariseRoute(body) {
     fare: fareLabel(route.properties.fare),
     lines: (route.steps ?? []).filter((step) => ['SUBWAY', 'BUS'].includes(step.properties?.type)).map(lineName).filter(Boolean),
     landingUrl: typeof landing === 'string' && landing.startsWith('https://map.kakao.com/') ? landing : null,
+    // D55/P79: the ride step by step for the in-app guide (Kakao gives names, not the path's coordinates).
+    steps: (route.steps ?? []).map(routeStep).filter(Boolean),
   };
+}
+// { type: 'SUBWAY'|'BUS'|'WALKING', line, from, to, stops, minutes, metres, guidance }
+export function routeStep(step) {
+  const p = step?.properties; if (!p?.type) return null;
+  const stops = (p.stops ?? []).map((stop) => stop?.name).filter(Boolean);
+  return { type: p.type, line: lineName(step), from: stops[0] ?? null, to: stops.at(-1) ?? null, stops: p.type === 'WALKING' ? 0 : Math.max(0, stops.length - 1), stopNames: p.type === 'WALKING' ? [] : stops,
+    minutes: Math.max(1, Math.round((p.time ?? 0) / 60)), metres: Math.round(p.distance ?? 0), guidance: typeof p.guidance === 'string' ? p.guidance.slice(0, 80) : '' };
 }
 export function transitLine(route, lang = 'ko') {
   const p = (ko, vars) => phraseIn(lang, ko, vars);

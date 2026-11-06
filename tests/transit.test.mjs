@@ -16,7 +16,9 @@ const body = {
 };
 
 test('D40: the fastest Kakao route becomes minutes, transfers, fare and its rides in order', () => {
-  assert.deepEqual(summariseRoute(body), { minutes: 29, transfers: 2, fare: '1,550원', lines: ['3호선', '4호선', '마을 성북02'], landingUrl: 'https://map.kakao.com/link/by/traffic/a/b' });
+  const { steps, ...summary } = summariseRoute(body);
+  assert.ok(Array.isArray(steps), 'D55: the ride step by step comes along');
+  assert.deepEqual(summary, { minutes: 29, transfers: 2, fare: '1,550원', lines: ['3호선', '4호선', '마을 성북02'], landingUrl: 'https://map.kakao.com/link/by/traffic/a/b' });
   assert.equal(transitLine(summariseRoute(body)), '3호선 → 4호선 → 마을 성북02 · 약 29분 · 환승 2회 · 1,550원');
   assert.deepEqual([fareLabel({ min: 1500, max: 2500 }), fareLabel({ min: 1500, max: 1500 }), fareLabel({})], ['1,500원~2,500원', '1,500원', null]);
   assert.equal(summariseRoute({ status: 'NO_RESULTS' }), null);

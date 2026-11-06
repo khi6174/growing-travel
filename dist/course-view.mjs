@@ -1,7 +1,7 @@
 // D49/P68: the 2~3 courses on the results screen. Each card shows its stops in order with the leg between them, the
 // total (an estimate), what fits the traveller's tastes, and how many official benefits match the saved profile.
 // "자세히" opens the whole timeline; "이 코스로 출발" hands the course to the following screen (P69).
-import { legUrl } from './course-plan.mjs';
+import { openRouteGuide } from './route-guide.mjs';
 import { createProfileStore } from './profile.mjs';
 import { selectBenefits, seoulToday } from './benefit-catalog.mjs';
 import { rankBenefits } from './benefit-matching.mjs';
@@ -64,8 +64,10 @@ function legRow(leg, from, to, { link = false } = {}) {
   const li = node('li', `course-leg ${leg.mode}`);
   li.append(node('span', 'course-leg-line'), node('span', 'course-leg-text', legLabel(leg)));
   if (link) {
-    const a = node('a', 'course-leg-link', tk('길찾기')); a.href = legUrl(from, to, leg.mode); a.target = '_blank'; a.rel = 'noopener noreferrer';
-    a.setAttribute('aria-label', leg.mode === 'walk' ? tk('{name}까지 카카오맵 걷기 길찾기 (새 창)', { name: to.name ?? tk(to.label) }) : tk('{name}까지 카카오맵 대중교통 길찾기 (새 창)', { name: to.name ?? tk(to.label) }));
+    // D55/P79: the in-app guide for this leg.
+    const a = node('button', 'course-leg-link', tk('길 안내')); a.type = 'button';
+    a.setAttribute('aria-label', tk('{name}까지 길 안내', { name: to.name ?? tk(to.label) }));
+    a.addEventListener('click', () => openRouteGuide({ from, to, mode: leg.mode }));
     li.append(a);
   }
   return li;

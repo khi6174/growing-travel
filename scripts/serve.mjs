@@ -47,8 +47,8 @@ export function contentSecurityPolicy(kakaoJsKey = null, { photos = false, webPh
 
 // Loopback HTTP by default. With `tls`, `hosts` and `accessCode` (the --lan mode) other devices may connect, but only
 // through this computer's own addresses and only after opening the printed address that carries the code once.
-export function createServer({ dataDir = defaultDataDir, aiProvider = providerFromEnv(), aiTimeoutMs = Number(process.env.AI_TIMEOUT_MS) || 10000, tls = null, hosts = LOCAL_HOSTS, accessCode = null, kakaoJsKey = kakaoKeyFrom(process.env.KAKAO_JS_KEY), weather = createWeather({ key: weatherKeyFrom(process.env) }), kakaoRestKey = kakaoKeyFrom(process.env.KAKAO_REST_KEY), tourKey = process.env.TOURAPI_KEY || null, tourEnKey = process.env.TOURAPI_EN_KEY || null, seoulKey = seoulKeyFrom(process.env.SEOUL_DATA_KEY), searchFetch = fetch } = {}) {
-  const api = createApi({ dataDir, aiProvider, aiTimeoutMs, kakaoJsKey, weather, kakaoRestKey, tourKey, tourEnKey, seoulKey, searchFetch });
+export function createServer({ dataDir = defaultDataDir, aiProvider = providerFromEnv(), aiTimeoutMs = Number(process.env.AI_TIMEOUT_MS) || 10000, tls = null, hosts = LOCAL_HOSTS, accessCode = null, kakaoJsKey = kakaoKeyFrom(process.env.KAKAO_JS_KEY), weather = createWeather({ key: weatherKeyFrom(process.env) }), kakaoRestKey = kakaoKeyFrom(process.env.KAKAO_REST_KEY), tourKey = process.env.TOURAPI_KEY || null, tourEnKey = process.env.TOURAPI_EN_KEY || null, walkGraphFile = undefined, seoulKey = seoulKeyFrom(process.env.SEOUL_DATA_KEY), searchFetch = fetch } = {}) {
+  const api = createApi({ dataDir, aiProvider, aiTimeoutMs, kakaoJsKey, weather, kakaoRestKey, tourKey, tourEnKey, seoulKey, searchFetch, walkGraphFile });
   const allowed = new Set(hosts);
   const policy = contentSecurityPolicy(kakaoJsKey, { photos: Boolean(tourKey), webPhotos: Boolean(kakaoRestKey) });
   // Kakao checks the requesting site against the key's registered domains, so map mode sends the origin (never the

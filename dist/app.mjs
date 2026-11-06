@@ -18,6 +18,7 @@ import { setupArrivalFlow } from './arrival-flow.mjs';
 import { setupStartFlow } from './start-flow.mjs';
 import { setupCourseView } from './course-view.mjs';
 import { setupFollowFlow } from './follow-flow.mjs';
+import { setupRouteGuide } from './route-guide.mjs';
 import { applyStatic, setupLanguagePicker } from './i18n.mjs';
 import { setupLivingMap } from './living-map.mjs';
 import { setupThemePicker } from './theme-picker.mjs';
@@ -743,6 +744,7 @@ document.querySelectorAll('[data-screen-target]').forEach((node) => node.addEven
 window.addEventListener('popstate', () => goScreen(location.hash.slice(1) || 'home', { replace:true }));
 window.addEventListener('hashchange', () => { if (location.hash !== `#${state.screen}`) goScreen(location.hash.slice(1), { replace:true }); });
 $('close-evidence').addEventListener('click', () => $('evidence-dialog').close());
+setupRouteGuide();
 $('evidence-dialog').addEventListener('click', (event) => { if (event.target === $('evidence-dialog')) { const rect = event.target.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) event.target.close(); } });
 window.addEventListener('storage', (event) => { if (event.key === STORAGE_KEY) { refreshSaved(); if (state.courseId) saveMessage('다른 탭에서 저장 내용이 바뀌었을 수 있어요. 현재 초안은 유지됩니다. 최신본은 저장한 코스에서 확인하세요.'); } });
 renderRegions(); renderOfficialBenefits(); renderResults(); refreshSaved();

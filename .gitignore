@@ -24,3 +24,6 @@ npm-debug.log*
 
 # Field reports written while running the local demo
 /data/runtime/
+
+# Walking graph built from OpenStreetMap (node scripts/build-walk-graph.mjs, about 20 MB)
+/data/walk/

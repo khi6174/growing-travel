@@ -28,6 +28,8 @@ node --version
 node scripts/serve.mjs
 ```
 
+앱 안 걷기 길 안내(D55·P79)를 쓰려면 처음 한 번 `node scripts/build-walk-graph.mjs`로 서울 걷는 길 자료(OpenStreetMap, 약 20MB, Git에 넣지 않음)를 `data/walk/`에 만든다. 몇 분 걸리고, 공개 Overpass 서버가 바쁘면 실패할 수 있어 잠시 뒤 다시 실행한다. 자료가 없어도 앱은 돌아가며, 길 안내는 방향과 직선거리만 보인다.
+
 서버 시작 메시지 후 브라우저에서 <http://127.0.0.1:4173>을 연다. 종료는 `Ctrl+C`다. Web Locks를 지원하는 Chrome 또는 Edge를 사용한다. HTML 파일을 직접 열지 않는다. 기본 포트가 사용 중이면 `node scripts/serve.mjs --port 4174`로 실행하고 <http://127.0.0.1:4174>를 연다. `PORT` 환경변수는 이 서버의 설정 방법이 아니다. 서버는 해당 컴퓨터의 루프백 주소에만 열리므로 팀원은 각자 실행한다.
 
 ## AI 추천 설정 (2026-10-30 추가)

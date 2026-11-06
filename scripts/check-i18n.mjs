@@ -13,6 +13,7 @@ import { SEASONS, WEATHERS, TIMES } from '../dist/sky.mjs';
 import { ANSWERS } from '../dist/district-arrival.mjs';
 import { REPORT_CATEGORIES } from './field-reports.mjs';
 import { CONDITION_LABELS } from './weather.mjs';
+import { COMPASS } from '../dist/route-guide.mjs';
 
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 export async function missingPhrases() {
@@ -31,7 +32,7 @@ export async function missingPhrases() {
     ...Object.values(FALLBACK_COPY), ...Object.values(NEARBY_MISSING), ...Object.values(SOURCE_NOTE),
     // D53/P74: sky labels, the friend's answers, report kinds and KMA weather words come from the server or data.
     ...[...SEASONS, ...WEATHERS, ...TIMES].map((item) => item.label), ...Object.values(ANSWERS).map((answer) => answer.label),
-    ...Object.values(REPORT_CATEGORIES), ...Object.values(CONDITION_LABELS),
+    ...Object.values(REPORT_CATEGORIES), ...Object.values(CONDITION_LABELS), ...COMPASS,
   ];
   for (const ko of constants) wanted.set(ko, 'constants');
   // Static page text marked data-tk (its own Korean is the key), and data-tk-aria / data-tk-placeholder values.

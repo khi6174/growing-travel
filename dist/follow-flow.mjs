@@ -3,7 +3,8 @@
 // without walking. After each step the app asks /api/course/live for places around the traveller (their position
 // when the 구 도착 switch is on, else the stop just reached) that can be put in or swapped in (P70). The course lives
 // in this browser only.
-import { retime, insertStop, replaceStop, dropStop, dropCandidate, legUrl } from './course-plan.mjs';
+import { retime, insertStop, replaceStop, dropStop, dropCandidate } from './course-plan.mjs';
+import { openRouteGuide } from './route-guide.mjs';
 import { minutesLabel, legLabel, stopRow, stopKind } from './course-view.mjs';
 import { loadStart, courseHints } from './onboarding.mjs';
 import { photoCredit } from './ai-flow.mjs';
@@ -92,7 +93,9 @@ export function setupFollowFlow({ goScreen, arrival = null, now = () => Date.now
     const list = node('ul', 'trip-timeline'); list.append(stopRow(stop, index, { compact: false }));
     if (phase === 'moving') {
       const leg = node('p', 'follow-leg', tk('{from}에서 {leg}(추정)', { from: from.name ?? tk(from.label), leg: legLabel(stop.leg) }));
-      const link = node('a', 'button subtle follow-route', tk('카카오맵 길찾기')); link.href = legUrl(from, stop.place, stop.leg.mode); link.target = '_blank'; link.rel = 'noopener noreferrer';
+      // D55/P79: the way there opens inside the app (map line and steps), not in Kakao Map.
+      const link = node('button', 'button subtle follow-route', tk('길 안내')); link.type = 'button';
+      link.addEventListener('click', () => openRouteGuide({ from, to: stop.place, mode: stop.leg.mode }));
       box.replaceChildren(node('p', 'small-label', index === 0 ? tk('첫 장소로 가는 중') : tk('다음 장소로 가는 중')), list, leg, link, nextInfo(stop));
       $('follow-main').textContent = tk('도착했어요');
     } else {

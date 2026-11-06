@@ -938,3 +938,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .app-frame .course-badge{padding:2px 8px;border-radius:999px;font-size:.78rem;font-weight:700}
 .app-frame .course-badge.fit{background:color-mix(in srgb,#2f9e6b 16%,transparent);color:#1f7a50}
 .app-frame .course-badge.over{background:color-mix(in srgb,#d9534f 14%,transparent);color:#b23b37}
+/* D55/P79: the in-app route guide */
+.route-dialog #route-content{display:grid;gap:10px}
+.route-dialog .route-map{height:230px;border-radius:14px;overflow:hidden;background:var(--surface-2, #eef1f7)}
+.route-dialog .route-map.off{height:auto;padding:10px}
+.route-dialog .route-credit{margin:0;font-size:.74rem;color:var(--muted)}
+.route-dialog .route-steps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.route-dialog .route-step{display:grid;grid-template-columns:28px 1fr;align-items:start;gap:8px;padding:8px 10px;border-radius:12px;background:var(--surface-2, #f3f5fa);font-size:.9rem;line-height:1.4}
+.route-dialog .route-step.end{font-weight:700}
+.route-dialog .route-arrow{font-size:1.1rem;line-height:1.2;text-align:center}
+.route-dialog .route-stops{grid-column:2;font-size:.8rem;color:var(--muted)}
+.route-dialog .route-stops p{margin:4px 0 0}
+.route-dialog .route-kakao{justify-self:start;font-size:.8rem}
+.route-pin{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;background:#d9534f;white-space:nowrap}
+.route-pin.end{background:#2f9e6b}

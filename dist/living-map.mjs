@@ -2,6 +2,7 @@ import { distanceKm } from './geo.mjs';
 import { reportAge } from './field-reports.mjs';
 import { distanceLabel } from './ai-flow.mjs';
 import { josa } from './ai-conditions.mjs';
+import { kakaoSdk } from './kakao-sdk.mjs';
 import { tk, lang, districtName } from './i18n.mjs';
 
 // Stage 6 (명세 2-5 ④, 단계 6, D30): the living map. Live reports are speech bubbles, expired ones fade, and places
@@ -29,25 +30,6 @@ async function json(path) {
   const body = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(body.error?.message ?? tk('잠시 후 다시 시도해 주세요.'));
   return body;
-}
-
-// Loads the Kakao SDK once. Rejects with 'no-key' when no key is set, or 'load' when Kakao refuses it
-// (usually a site address not registered for the key).
-function loadKakao() {
-  return (async () => {
-    const { kakaoJsKey } = await json('/api/map-config');
-    if (!kakaoJsKey) throw new Error('no-key');
-    await new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(kakaoJsKey)}&autoload=false`;
-      script.addEventListener('load', resolve); script.addEventListener('error', () => reject(new Error('load')));
-      setTimeout(() => reject(new Error('load')), 8000);
-      document.head.append(script);
-    });
-    if (!globalThis.kakao?.maps?.load) throw new Error('load');
-    await new Promise((resolve, reject) => { const timer = setTimeout(() => reject(new Error('load')), 8000); globalThis.kakao.maps.load(() => { clearTimeout(timer); resolve(); }); });
-    return globalThis.kakao;
-  })();
 }
 
 // Ranked pins (1·2·3) closer than `gap` px on screen move right one step at a time until they clear the ones before,
@@ -172,7 +154,7 @@ export function setupLivingMap({ goScreen, pets, arrival }) {
     state.map.setBounds(bounds, 60, 80, 24, 80);
   }
   async function showMap({ fit }) {
-    state.sdk ??= loadKakao();
+    state.sdk ??= kakaoSdk();
     try {
       const kakao = await state.sdk;
       drawMap(kakao);

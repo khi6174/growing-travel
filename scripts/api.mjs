@@ -19,6 +19,10 @@ import { createTransit } from './transit.mjs';
 import { createStatsStore } from './stats.mjs';
 import { trending, TRENDING_DAYS } from './trending.mjs';
 import { createEnglishNames } from './english-names.mjs';
+import { loadWalkGraph, walkRoute } from './walk-graph.mjs';
+import { fileURLToPath } from 'node:url';
+
+export const WALK_GRAPH_FILE = fileURLToPath(new URL('../data/walk/seoul-walk.bin', import.meta.url));
 
 const MAX_BODY = 4096;
 
@@ -69,7 +73,7 @@ function publicCatalog({ pets, tagLabels, regions, districts, friends }) {
   };
 }
 
-export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, tourKey = null, seoulKey = null, tourEnKey = null, searchFetch = fetch }) {
+export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kakaoJsKey = null, weather = async () => ({ weather: null, reason: 'NO_KEY' }), kakaoRestKey = null, tourKey = null, seoulKey = null, tourEnKey = null, walkGraphFile = WALK_GRAPH_FILE, searchFetch = fetch }) {
   // D39: typed departures; the app's own places are the fallback when Kakao is not set up or does not answer.
   const placeSearch = createPlaceSearch({ key: kakaoRestKey, fetchImpl: searchFetch, places: async () => (await loadCatalog(dataDir)).places });
   // D40: real transit times for the three picks, with the same REST key; null without one (cards keep the estimate).
@@ -87,6 +91,9 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
   const photos = createPhotos({ tourKey, kakaoKey: kakaoRestKey, fetchImpl: searchFetch });
   // D53/P77: English names from the English TourAPI, shown beside the Korean name in languages other than Korean.
   const englishNames = createEnglishNames({ key: tourEnKey, fetchImpl: searchFetch });
+  // D55/P79: the walking graph is read on the first guide request (about 30 MB); null when it was never built.
+  let walkGraph;
+  const walkGraphOnce = () => (walkGraph === undefined ? (walkGraph = loadWalkGraph(walkGraphFile)) : walkGraph);
   async function placeById(id, catalog) {
     return catalog.places.find((place) => place.id === id) ?? (NEARBY_ID.test(id) ? await registry.get(id) : null);
   }
@@ -254,6 +261,20 @@ export function createApi({ dataDir, aiProvider = null, aiTimeoutMs = 10000, kak
         });
       }
       // D44: the 행정동 of a point picked on the map ("○○동 근처"); the point travels in the body, never the URL.
+      // D55/P79: the way between two points of a course for the in-app guide: a walk computed here from
+      // OpenStreetMap, or Kakao's transit ride step by step. Points travel in the body, never in the URL.
+      if (pathname === '/api/route' && req.method === 'POST') {
+        const body = await readJson(req);
+        const point = (value) => ({ lat: Number(value?.lat), lng: Number(value?.lng) });
+        const from = point(body?.from); const to = point(body?.to);
+        if (!insideSeoul(from) || !insideSeoul(to)) return send(res, 400, { error: { code: 'OUTSIDE_SEOUL', message: '서울 안의 위치를 골라 주세요.' } });
+        const mode = body?.mode === 'transit' ? 'transit' : 'walk';
+        const graph = walkGraphOnce();
+        if (mode === 'walk') return send(res, 200, { mode, walk: walkRoute(graph, from, to), walkData: Boolean(graph) });
+        const label = String(body?.from?.label ?? '').slice(0, 40) || '출발'; const name = String(body?.to?.name ?? '').slice(0, 40) || '도착';
+        const ride = transit ? await transit({ ...from, label }, { ...to, name }) : null;
+        return send(res, 200, { mode, transit: ride, walkData: Boolean(graph) });
+      }
       if (pathname === '/api/places/region' && req.method === 'POST') {
         const body = await readJson(req);
         const point = { lat: Number(body?.lat), lng: Number(body?.lng) };
